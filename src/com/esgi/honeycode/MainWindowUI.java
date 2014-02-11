@@ -20,6 +20,23 @@ public class MainWindowUI extends JComponent{
     private JMenu view = new JMenu("Affichage");
     private JMenu plugin = new JMenu("Plugins");
     private JMenu help = new JMenu("Help");
+    private JMenuItem  newFile = new JMenuItem("Nouveau fichier");
+    private JMenuItem  open = new JMenuItem("Ouvrir...");
+    private JMenuItem  rencentFiles = new JMenuItem("Récents");
+    private JMenuItem saveFile = new JMenuItem("Enregister");
+    private JMenuItem saveFileAS = new JMenuItem("Enregister sous");
+    private JMenuItem settings = new JMenuItem("Préférences");
+    private JMenuItem exitApp = new JMenuItem("Quitter HoneyCode");
+    private JMenuItem copy = new JMenuItem("Copier");
+    private JMenuItem cut = new JMenuItem("Couper");
+    private JMenuItem past = new JMenuItem("Coller");
+    private JMenuItem encoding = new JMenuItem("Encodage");
+    private JMenuItem consoleView = new JMenuItem("Afficher la console");
+    private JMenuItem previewShow = new JMenuItem("Afficher la prévisualisation (HTML)");
+    private JMenuItem highLight = new JMenuItem("Colorisation");
+    private JMenuItem plugLoad = new JMenuItem("Charger un plugin");
+    private JMenuItem plugDown = new JMenuItem("Télécharger des plugins");
+    private JMenuItem plugSubmit = new JMenuItem("Soummettre vos plugins");
 
     public MainWindowUI(){
 
@@ -45,10 +62,28 @@ public class MainWindowUI extends JComponent{
 
         //Adding menus into menubar
         menuBarMain.add(file);
+        file.add(newFile);
+        file.add(open);
+        file.add(rencentFiles);
+        file.add(saveFile);
+        file.add(saveFileAS);
+        file.add(settings);
+        file.add(exitApp);
         menuBarMain.add(edit);
+        edit.add(copy);
+        edit.add(cut);
+        edit.add(past);
+        edit.add(encoding);
         menuBarMain.add(view);
+        view.add(consoleView);
+        view.add(previewShow);
+        view.add(highLight);
         menuBarMain.add(plugin);
+        plugin.add(plugLoad);
+        plugin.add(plugDown);
+        plugin.add(plugSubmit);
         menuBarMain.add(help);
+
         mainWindowUI.setJMenuBar(menuBarMain);
 
 
