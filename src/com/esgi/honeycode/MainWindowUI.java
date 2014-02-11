@@ -37,6 +37,9 @@ public class MainWindowUI extends JComponent{
     private JMenuItem plugLoad = new JMenuItem("Charger un plugin");
     private JMenuItem plugDown = new JMenuItem("Télécharger des plugins");
     private JMenuItem plugSubmit = new JMenuItem("Soummettre vos plugins");
+    private JMenuItem about = new JMenuItem("A propos");
+    private JMenuItem docHC = new JMenuItem("Documentation");
+    private JMenuItem forum = new JMenuItem("Forum");
 
     public MainWindowUI(){
 
@@ -83,6 +86,9 @@ public class MainWindowUI extends JComponent{
         plugin.add(plugDown);
         plugin.add(plugSubmit);
         menuBarMain.add(help);
+        help.add(about);
+        help.add(docHC);
+        help.add(forum);
 
         mainWindowUI.setJMenuBar(menuBarMain);
 
