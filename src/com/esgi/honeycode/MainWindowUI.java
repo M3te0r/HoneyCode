@@ -8,7 +8,7 @@ import java.awt.event.WindowEvent;
 /**
  * Created by Mathieu on 11/02/14.
  */
-// Que20 est passé par là
+// Que20 est pass√© par l√† 2
 public class MainWindowUI extends JComponent{
 
 
@@ -23,7 +23,7 @@ public class MainWindowUI extends JComponent{
     private JMenu help = new JMenu("Help");
     private JMenuItem  newFile = new JMenuItem("Nouveau fichier");
     private JMenuItem  open = new JMenuItem("Ouvrir...");
-    private JMenuItem  rencentFiles = new JMenuItem("Récents");
+    private JMenuItem  rencentFiles = new JMenuItem("RÔøΩcents");
     private JMenuItem saveFile = new JMenuItem("Enregister");
     private JMenuItem saveFileAS = new JMenuItem("Enregister sous");
     private JMenuItem settings = new JMenuItem("Pr√©f√©rences");
