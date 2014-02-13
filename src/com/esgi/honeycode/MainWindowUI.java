@@ -2,13 +2,16 @@ package com.esgi.honeycode;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
  * Created by Mathieu on 11/02/14.
+ * Modified by Kevin on 13/02/14.
  */
-// Que20 est passé par là 2
+
 public class MainWindowUI extends JComponent{
 
 
@@ -44,6 +47,8 @@ public class MainWindowUI extends JComponent{
 
     public MainWindowUI(){
 
+        ActionListenerMenuBar test = new ActionListenerMenuBar();
+        newFile.addActionListener(test);
 
         Toolkit tkMain=Toolkit.getDefaultToolkit();
         //get the screen size
@@ -118,15 +123,16 @@ public class MainWindowUI extends JComponent{
         editorPaneMain.setEditable(true);
         mainPanel.add(editorPaneMain,BorderLayout.CENTER);
 
-
         mainWindowUI.pack();
         mainWindowUI.setVisible(true);
 
-
-
-
-
-
-
+    }
+    public class ActionListenerMenuBar implements ActionListener {
+        public void actionPerformed (ActionEvent e){
+            if(e.getSource() == newFile){
+                System.out.println(e.getSource().toString());
+                System.out.println("New File");
+            }
+        }
     }
 }
