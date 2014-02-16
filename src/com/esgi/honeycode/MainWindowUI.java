@@ -16,14 +16,19 @@ public class MainWindowUI extends JComponent{
 
 
     private JFrame mainWindowUI = new JFrame("HoneyCode");
+
     private JPanel mainPanel = new JPanel();
+
     private JEditorPane editorPaneMain = new JEditorPane();
+
     private JMenuBar menuBarMain = new JMenuBar();
+
     private JMenu file = new JMenu("Fichier");
     private JMenu edit = new JMenu("Edition");
     private JMenu view = new JMenu("Affichage");
     private JMenu plugin = new JMenu("Plugins");
     private JMenu help = new JMenu("Help");
+
     private JMenuItem  newFile = new JMenuItem("Nouveau fichier");
     private JMenuItem  open = new JMenuItem("Ouvrir...");
     private JMenuItem  rencentFiles = new JMenuItem("R�cents");
@@ -49,6 +54,7 @@ public class MainWindowUI extends JComponent{
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newFile.addActionListener(test);
+        about.addActionListener(test);
 
         Toolkit tkMain=Toolkit.getDefaultToolkit();
         //get the screen size
@@ -132,6 +138,13 @@ public class MainWindowUI extends JComponent{
             if(e.getSource() == newFile){
                 System.out.println(e.getSource().toString());
                 System.out.println("New File");
+            }
+
+            if(e.getSource() == about){
+                JOptionPane dialbox = new JOptionPane();
+                dialbox.showMessageDialog(null, "HoneyCode est un projet étudiant développé au sein de l'ESGI, et est libre de droits.\n Développeurs :" +
+                        "\n-Kevin MAAREK \n-Mathieu PEQUIN \n-Alexandre FAYETTE \n Promotion 3iAL ", "A propos", JOptionPane.INFORMATION_MESSAGE);
+
             }
         }
     }
