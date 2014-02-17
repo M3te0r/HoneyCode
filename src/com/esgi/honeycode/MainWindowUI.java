@@ -31,7 +31,7 @@ public class MainWindowUI extends JComponent{
 
     private JMenuItem  newFile = new JMenuItem("Nouveau fichier");
     private JMenuItem  open = new JMenuItem("Ouvrir...");
-    private JMenuItem  rencentFiles = new JMenuItem("R�cents");
+    private JMenuItem  rencentFiles = new JMenuItem("Récents");
     private JMenuItem saveFile = new JMenuItem("Enregister");
     private JMenuItem saveFileAS = new JMenuItem("Enregister sous");
     private JMenuItem settings = new JMenuItem("Préférences");
@@ -141,8 +141,7 @@ public class MainWindowUI extends JComponent{
             }
 
             if(e.getSource() == about){
-                JOptionPane dialbox = new JOptionPane();
-                dialbox.showMessageDialog(null, "HoneyCode est un projet étudiant développé au sein de l'ESGI, et est libre de droits.\n Développeurs :" +
+                JOptionPane.showMessageDialog(null, "HoneyCode est un projet étudiant développé au sein de l'ESGI, et est libre de droits.\n Développeurs :" +
                         "\n-Kevin MAAREK \n-Mathieu PEQUIN \n-Alexandre FAYETTE \n Promotion 3iAL ", "A propos", JOptionPane.INFORMATION_MESSAGE);
 
             }
