@@ -2,6 +2,8 @@ package com.esgi.honeycode;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -66,6 +68,10 @@ public class MainWindowUI extends JFrame{
         exitApp.addActionListener(test);
         plugLoad.addActionListener(test);
         plugDown.addActionListener(test);
+        forum.addActionListener(test);
+        copy.addActionListener(test);
+
+
 
         Toolkit tkMain=Toolkit.getDefaultToolkit();
         //get the screen size
@@ -137,6 +143,8 @@ public class MainWindowUI extends JFrame{
 
 
         editorPaneMain.setEditable(true);
+
+
         mainPanel.add(editorPaneMain,BorderLayout.CENTER);
 
         mainWindowUI.pack();
@@ -168,7 +176,8 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == exitApp){
-                int confirm = JOptionPane.showConfirmDialog(mainWindowUI, "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+                //Parent Component = exitApp (JmenuItem component) or mainWindowUI (the frame) ???
+                int confirm = JOptionPane.showConfirmDialog(exitApp, "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
                 if (confirm == JOptionPane.YES_OPTION){
                     /*
                     TODO :
@@ -189,15 +198,32 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == plugDown){
-                /*    //Throws an exception
+                    //Throws an exception
                 try{
-                    Desktop.getDesktop().browse(new URI("http://google.com/"));
-                } catch (URISyntaxException ex){
+                    Desktop.getDesktop().browse(new URI("http://kevinmaarek.fr/"));
+                } catch (URISyntaxException | IOException ex){
+                    JOptionPane.showMessageDialog(mainWindowUI, "Could not open HoneyCode wep page");
+                }
 
-                }   */
+            }
+
+            if(e.getSource() == forum){
+
+                try{
+                    Desktop.getDesktop().browse(new URI("http://kevinmaarek.fr/"));
+                } catch (URISyntaxException | IOException ex){
+                    JOptionPane.showMessageDialog(mainWindowUI, "Could not open HoneyCode forum Web Page", "Erreur", JOptionPane.ERROR_MESSAGE, null);
+                }
 
 
             }
+
+            if(e.getSource() == copy){
+                StringSelection selectedText = new StringSelection(editorPaneMain.getSelectedText());
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(selectedText,null);
+            }
+
         }
     }
 }
