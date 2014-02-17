@@ -7,6 +7,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * Created by Mathieu on 11/02/14.
@@ -59,33 +63,9 @@ public class MainWindowUI extends JFrame{
         newFile.addActionListener(test);
         about.addActionListener(test);
         open.addActionListener(test);
-
-        exitApp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int confirm = JOptionPane.showConfirmDialog(mainWindowUI, "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
-                if (confirm == JOptionPane.YES_OPTION){
-                    /*
-                    TODO :
-                    Same as Window Closing
-                     */
-                    System.exit(0);
-                }
-
-            }
-        });
-
-        plugLoad.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int returnVal = fileChooserMain.showOpenDialog(mainWindowUI);
-
-                if(returnVal == JFileChooser.APPROVE_OPTION){
-                   File chosenPlugin = fileChooserMain.getSelectedFile();
-                    // Only accept *.jar files
-                }
-            }
-        });
+        exitApp.addActionListener(test);
+        plugLoad.addActionListener(test);
+        plugDown.addActionListener(test);
 
         Toolkit tkMain=Toolkit.getDefaultToolkit();
         //get the screen size
@@ -185,6 +165,38 @@ public class MainWindowUI extends JFrame{
                     //Gestion de l'ouverture des fichiers...
 
                 }
+            }
+
+            if(e.getSource() == exitApp){
+                int confirm = JOptionPane.showConfirmDialog(mainWindowUI, "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+                if (confirm == JOptionPane.YES_OPTION){
+                    /*
+                    TODO :
+                    Same as Window Closing
+                     */
+                    System.exit(0);
+                }
+
+            }
+
+            if(e.getSource() == plugLoad){
+                int returnVal = fileChooserMain.showOpenDialog(mainWindowUI);
+
+                if(returnVal == JFileChooser.APPROVE_OPTION){
+                    File chosenPlugin = fileChooserMain.getSelectedFile();
+                    // Only accept *.jar files
+                }
+            }
+
+            if(e.getSource() == plugDown){
+                /*    //Throws an exception
+                try{
+                    Desktop.getDesktop().browse(new URI("http://google.com/"));
+                } catch (URISyntaxException ex){
+
+                }   */
+
+
             }
         }
     }
