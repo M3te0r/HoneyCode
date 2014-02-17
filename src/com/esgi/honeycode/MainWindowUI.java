@@ -6,13 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 /**
  * Created by Mathieu on 11/02/14.
  * Modified by Kevin on 13/02/14.
  */
 
-public class MainWindowUI extends JComponent{
+public class MainWindowUI extends JFrame{
 
 
     private JFrame mainWindowUI = new JFrame("HoneyCode");
@@ -50,11 +51,41 @@ public class MainWindowUI extends JComponent{
     private JMenuItem docHC = new JMenuItem("Documentation");
     private JMenuItem forum = new JMenuItem("Forum");
 
+    final JFileChooser fileChooserMain = new JFileChooser();
+
     public MainWindowUI(){
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newFile.addActionListener(test);
         about.addActionListener(test);
+        open.addActionListener(test);
+
+        exitApp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(mainWindowUI, "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+                if (confirm == JOptionPane.YES_OPTION){
+                    /*
+                    TODO :
+                    Same as Window Closing
+                     */
+                    System.exit(0);
+                }
+
+            }
+        });
+
+        plugLoad.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int returnVal = fileChooserMain.showOpenDialog(mainWindowUI);
+
+                if(returnVal == JFileChooser.APPROVE_OPTION){
+                   File chosenPlugin = fileChooserMain.getSelectedFile();
+                    // Only accept *.jar files
+                }
+            }
+        });
 
         Toolkit tkMain=Toolkit.getDefaultToolkit();
         //get the screen size
@@ -69,10 +100,8 @@ public class MainWindowUI extends JComponent{
         setLocation(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight());
         mainWindowUI.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight()));
 
-        //Container panel = mainWindowUI.getContentPane();
-
         BorderLayout mainBorderLayout = new BorderLayout();
-        //mainWindowUI.setLayout(mainBorderLayout);
+
         mainPanel.setLayout(mainBorderLayout);
 
         //Adding menus into menubar
@@ -112,8 +141,8 @@ public class MainWindowUI extends JComponent{
         mainWindowUI.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                int confirm = JOptionPane.showOptionDialog(mainWindowUI, "Etes-vous sûr de vouloir quitter HoneyCode ?","Confirmation",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,null,null);
-                if (confirm==JOptionPane.YES_OPTION){
+                int confirm = JOptionPane.showConfirmDialog(mainWindowUI, "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (confirm == JOptionPane.YES_OPTION) {
                     /*
                     TODO :
                           Check des fichiers ouverts et demandes si sauvegarde, avec Oui -> entraine sauvegarde puis fermeture
@@ -124,6 +153,7 @@ public class MainWindowUI extends JComponent{
                 }
             }
         });
+
 
 
         editorPaneMain.setEditable(true);
@@ -141,9 +171,20 @@ public class MainWindowUI extends JComponent{
             }
 
             if(e.getSource() == about){
-                JOptionPane.showMessageDialog(null, "HoneyCode est un projet étudiant développé au sein de l'ESGI, et est libre de droits.\n Développeurs :" +
+                JOptionPane.showMessageDialog(mainWindowUI, "HoneyCode est un projet étudiant développé au sein de l'ESGI, et est libre de droits.\n Développeurs :" +
                         "\n-Kevin MAAREK \n-Mathieu PEQUIN \n-Alexandre FAYETTE \n Promotion 3iAL ", "A propos", JOptionPane.INFORMATION_MESSAGE);
 
+            }
+
+            if(e.getSource() == open){
+                int returnVal = fileChooserMain.showOpenDialog(mainWindowUI);
+
+                if (returnVal == JFileChooser.APPROVE_OPTION){
+                    File chosenFile = fileChooserMain.getSelectedFile();
+                    //Accept all file extensions ?
+                    //Gestion de l'ouverture des fichiers...
+
+                }
             }
         }
     }
