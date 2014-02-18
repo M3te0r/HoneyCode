@@ -1,6 +1,7 @@
 package com.esgi.honeycode;
 
 import javax.swing.*;
+import javax.tools.Tool;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -12,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 /**
  * Created by Mathieu on 11/02/14.
@@ -25,6 +25,7 @@ public class MainWindowUI extends JFrame{
     private JFrame mainWindowUI = new JFrame("HoneyCode");
 
     private JPanel mainPanel = new JPanel();
+    private JPanel consolePane = new JPanel();
 
     private JEditorPane editorPaneMain = new JEditorPane();
 
@@ -38,7 +39,7 @@ public class MainWindowUI extends JFrame{
 
     private JMenuItem  newFile = new JMenuItem("Nouveau fichier");
     private JMenuItem  open = new JMenuItem("Ouvrir...");
-    private JMenuItem  rencentFiles = new JMenuItem("Récents");
+    private JMenuItem  rencentFiles = new JMenuItem("Récents");  //Collections d'objets (nom du fichier, chemin) ??
     private JMenuItem saveFile = new JMenuItem("Enregister");
     private JMenuItem saveFileAS = new JMenuItem("Enregister sous");
     private JMenuItem settings = new JMenuItem("Préférences");
@@ -70,8 +71,7 @@ public class MainWindowUI extends JFrame{
         plugDown.addActionListener(test);
         forum.addActionListener(test);
         copy.addActionListener(test);
-
-
+        cut.addActionListener(test);
 
         Toolkit tkMain=Toolkit.getDefaultToolkit();
         //get the screen size
@@ -140,8 +140,6 @@ public class MainWindowUI extends JFrame{
             }
         });
 
-
-
         editorPaneMain.setEditable(true);
 
 
@@ -196,19 +194,19 @@ public class MainWindowUI extends JFrame{
                     // Only accept *.jar files
                 }
             }
-
             if(e.getSource() == plugDown){
                     //Throws an exception
+                   //Not the good catch, just to test
                 try{
                     Desktop.getDesktop().browse(new URI("http://kevinmaarek.fr/"));
                 } catch (URISyntaxException | IOException ex){
-                    JOptionPane.showMessageDialog(mainWindowUI, "Could not open HoneyCode wep page");
+                    JOptionPane.showMessageDialog(mainWindowUI, ex.getMessage(),"Erreur", JOptionPane.ERROR_MESSAGE,null);
                 }
 
             }
 
             if(e.getSource() == forum){
-
+                //Not the good catch, just to test
                 try{
                     Desktop.getDesktop().browse(new URI("http://kevinmaarek.fr/"));
                 } catch (URISyntaxException | IOException ex){
@@ -224,6 +222,13 @@ public class MainWindowUI extends JFrame{
                 clipboard.setContents(selectedText,null);
             }
 
-        }
+            if(e.getSource() == cut){
+                StringSelection selectedText = new StringSelection(editorPaneMain.getSelectedText());
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(selectedText,null);
+                editorPaneMain.replaceSelection("");
+            }
     }
+}
+
 }
