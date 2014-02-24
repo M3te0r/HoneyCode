@@ -4,10 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -73,6 +70,13 @@ public class MainWindowUI extends JFrame{
 
         setUILanguage();
 
+        open.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_MASK));
+        exitApp.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_MASK));
+        saveFile.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_MASK));
+        saveFileAS.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_MASK & InputEvent.SHIFT_MASK));
+        //Reste des raccourcis
+
+
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newFile.addActionListener(test);
         about.addActionListener(test);
@@ -92,11 +96,13 @@ public class MainWindowUI extends JFrame{
         Insets scnMax = tkMain.getScreenInsets(mainWindowUI.getGraphicsConfiguration());
         int taskBarSize = scnMax.bottom;
 
+
         //Set location and size according to the screen size and taskbar size
         setLocation(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight());
         mainWindowUI.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight()));
         consolePane.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), 250));
 
+        GridBagLayout consoleLayout = new GridBagLayout();
         BorderLayout mainBorderLayout = new BorderLayout();
         mainPanel.setLayout(mainBorderLayout);
 
@@ -130,35 +136,6 @@ public class MainWindowUI extends JFrame{
         mainWindowUI.setJMenuBar(menuBarMain);
         mainWindowUI.setContentPane(mainPanel);
         mainWindowUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-        //Console elements placing -BEGIN
-
-        consolePane.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gbc.gridheight = 1;
-        gbc.gridwidth = 1;
-        consolePane.add(lastBuildLabel, gbc);
-
-        gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.FIRST_LINE_END;
-        consolePane.add(buildOptionsButton, gbc);
-
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.anchor = GridBagConstraints.FIRST_LINE_END;
-        gbc.gridx = 2;
-        consolePane.add(runButton, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.gridheight = 1;
-        consolePane.add(consoleOutputArea, gbc);
-
-
         //Listener sur la fermeture de la fenetre
         mainWindowUI.addWindowListener(new WindowAdapter() {
             @Override
@@ -243,6 +220,10 @@ public class MainWindowUI extends JFrame{
             if(e.getSource() == newFile){
                 System.out.println(e.getSource().toString());
                 System.out.println("New File");
+            } 
+            if (e.getSource() == saveFileAS)
+            {
+                System.out.print("SAVE AS");
             }
 
             if(e.getSource() == about){
