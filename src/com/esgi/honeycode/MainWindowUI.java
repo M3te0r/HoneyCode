@@ -30,6 +30,12 @@ public class MainWindowUI extends JFrame{
     private JPanel mainPanel = new JPanel();
     private JPanel consolePane = new JPanel();
 
+    private JLabel lastBuildLabel = new JLabel("Last build : test");
+
+    private JButton runButton = new JButton("Run");
+    private JButton buildOptionsButton = new JButton("Build options");
+
+    private JTextArea consoleOutputArea = new JTextArea();
     private JEditorPane editorPaneMain = new JEditorPane();
 
     private JMenuBar menuBarMain = new JMenuBar();
@@ -89,7 +95,9 @@ public class MainWindowUI extends JFrame{
         //Set location and size according to the screen size and taskbar size
         setLocation(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight());
         mainWindowUI.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight()));
+        consolePane.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), 250));
 
+        GridBagLayout consoleLayout = new GridBagLayout();
         BorderLayout mainBorderLayout = new BorderLayout();
         mainPanel.setLayout(mainBorderLayout);
 
@@ -141,7 +149,8 @@ public class MainWindowUI extends JFrame{
         });
 
         editorPaneMain.setEditable(true);
-        mainPanel.add(editorPaneMain,BorderLayout.CENTER);
+        mainPanel.add(editorPaneMain, BorderLayout.CENTER);
+        mainPanel.add(consolePane, BorderLayout.SOUTH);
         mainWindowUI.pack();
         mainWindowUI.setVisible(true);
     }
