@@ -27,11 +27,6 @@ public class MainWindowUI extends JFrame{
     private JPanel mainPanel = new JPanel();
     private JPanel consolePane = new JPanel();
 
-    private JLabel lastBuildLabel = new JLabel("Last build : test");
-
-    private JButton buildOptionsButton = new JButton("Build Options");
-    private JButton runButton = new JButton("Run");
-
     private JEditorPane editorPaneMain = new JEditorPane();
 
     private JMenuBar menuBarMain = new JMenuBar();
@@ -67,7 +62,6 @@ public class MainWindowUI extends JFrame{
 
     public MainWindowUI(){
 
-        //Action Listener declaration + adding listeners to the elements
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newFile.addActionListener(test);
         about.addActionListener(test);
@@ -92,13 +86,9 @@ public class MainWindowUI extends JFrame{
         setLocation(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight());
         mainWindowUI.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight()));
 
-        //Setting of layout managers for editor pane and console pane
         BorderLayout mainBorderLayout = new BorderLayout();
-        GridBagLayout mainConsoleLayout = new GridBagLayout();
-        mainPanel.setLayout(mainBorderLayout);
-        consolePane.setLayout(mainConsoleLayout);
-            consolePane.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), 250));
 
+        mainPanel.setLayout(mainBorderLayout);
 
         //Adding menus into menubar
         menuBarMain.add(file);
@@ -127,10 +117,10 @@ public class MainWindowUI extends JFrame{
         help.add(docHC);
         help.add(forum);
 
-        //Joining mainPanel and window
         mainWindowUI.setJMenuBar(menuBarMain);
-        mainWindowUI.setContentPane(mainPanel);
 
+
+        mainWindowUI.setContentPane(mainPanel);
 
         mainWindowUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         //Listener sur la fermeture de la fenetre
@@ -152,9 +142,8 @@ public class MainWindowUI extends JFrame{
 
         editorPaneMain.setEditable(true);
 
-        //Arranging main elements of the window
+
         mainPanel.add(editorPaneMain,BorderLayout.CENTER);
-        mainPanel.add(consolePane, BorderLayout.SOUTH);
 
         mainWindowUI.pack();
         mainWindowUI.setVisible(true);
