@@ -154,6 +154,7 @@ public class MainWindowUI extends JFrame{
 
     private void setUILanguage()
     {
+
         String userLanguage = getUserLanguage();
         /*
         Lit le fichier qui correspond à la langue de l'utilisateur
@@ -162,6 +163,7 @@ public class MainWindowUI extends JFrame{
 
         if (userLanguage.equals("en") || userLanguage.equals("fr"))
         {
+            //Ouverture de la ressource .properties
             bundle = ResourceBundle.getBundle("HoneyCode_"+userLanguage); // remplacer userLanguage par "en" pour test
         }
         //Si ni fr ni en par défaut en anglais
