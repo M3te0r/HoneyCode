@@ -1,7 +1,6 @@
 package com.esgi.honeycode;
 
 import javax.swing.*;
-import javax.tools.Tool;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -13,14 +12,18 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ResourceBundle;
 
 /**
  * Created by Mathieu on 11/02/14.
  * Modified by Kevin on 13/02/14.
+ * Crée la fenêtre pricipale d'HoneyCode avec ses composants
+ * Les éléments de la fenêtre sont adaptés à la langue par défaut de l'utilisateur
  */
 
 public class MainWindowUI extends JFrame{
 
+    private ResourceBundle bundle;
 
     private JFrame mainWindowUI = new JFrame("HoneyCode");
 
@@ -31,36 +34,38 @@ public class MainWindowUI extends JFrame{
 
     private JMenuBar menuBarMain = new JMenuBar();
 
-    private JMenu file = new JMenu("Fichier");
-    private JMenu edit = new JMenu("Edition");
-    private JMenu view = new JMenu("Affichage");
+    private JMenu file = new JMenu();
+    private JMenu edit = new JMenu();
+    private JMenu view = new JMenu();
     private JMenu plugin = new JMenu("Plugins");
-    private JMenu help = new JMenu("Help");
+    private JMenu help = new JMenu();
 
-    private JMenuItem  newFile = new JMenuItem("Nouveau fichier");
-    private JMenuItem  open = new JMenuItem("Ouvrir...");
-    private JMenuItem  rencentFiles = new JMenuItem("Récents");  //Collections d'objets (nom du fichier, chemin) ??
-    private JMenuItem saveFile = new JMenuItem("Enregister");
-    private JMenuItem saveFileAS = new JMenuItem("Enregister sous");
-    private JMenuItem settings = new JMenuItem("Préférences");
-    private JMenuItem exitApp = new JMenuItem("Quitter HoneyCode");
-    private JMenuItem copy = new JMenuItem("Copier");
-    private JMenuItem cut = new JMenuItem("Couper");
-    private JMenuItem past = new JMenuItem("Coller");
-    private JMenuItem encoding = new JMenuItem("Encodage");
-    private JMenuItem consoleView = new JMenuItem("Afficher la console");
-    private JMenuItem previewShow = new JMenuItem("Afficher la prévisualisation (HTML)");
-    private JMenuItem highLight = new JMenuItem("Colorisation");
-    private JMenuItem plugLoad = new JMenuItem("Charger un plugin");
-    private JMenuItem plugDown = new JMenuItem("Télécharger des plugins");
-    private JMenuItem plugSubmit = new JMenuItem("Soummettre vos plugins");
-    private JMenuItem about = new JMenuItem("A propos");
-    private JMenuItem docHC = new JMenuItem("Documentation");
-    private JMenuItem forum = new JMenuItem("Forum");
+    private JMenuItem newFile = new JMenuItem();
+    private JMenuItem open = new JMenuItem("Ouvrir...");
+    private JMenuItem rencentFiles = new JMenuItem();  //Collections d'objets (nom du fichier, chemin) ??
+    private JMenuItem saveFile = new JMenuItem();
+    private JMenuItem saveFileAS = new JMenuItem();
+    private JMenuItem settings = new JMenuItem();
+    private JMenuItem exitApp = new JMenuItem();
+    private JMenuItem copy = new JMenuItem();
+    private JMenuItem cut = new JMenuItem();
+    private JMenuItem past = new JMenuItem();
+    private JMenuItem encoding = new JMenuItem();
+    private JMenuItem consoleView = new JMenuItem();
+    private JMenuItem previewShow = new JMenuItem();
+    private JMenuItem highLight = new JMenuItem();
+    private JMenuItem plugLoad = new JMenuItem();
+    private JMenuItem plugDown = new JMenuItem();
+    private JMenuItem plugSubmit = new JMenuItem();
+    private JMenuItem about = new JMenuItem();
+    private JMenuItem docHC = new JMenuItem();
+    private JMenuItem forum = new JMenuItem();
 
     final JFileChooser fileChooserMain = new JFileChooser();
 
     public MainWindowUI(){
+
+        setUILanguage();
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newFile.addActionListener(test);
@@ -81,13 +86,11 @@ public class MainWindowUI extends JFrame{
         Insets scnMax = tkMain.getScreenInsets(mainWindowUI.getGraphicsConfiguration());
         int taskBarSize = scnMax.bottom;
 
-
         //Set location and size according to the screen size and taskbar size
         setLocation(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight());
         mainWindowUI.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight()));
 
         BorderLayout mainBorderLayout = new BorderLayout();
-
         mainPanel.setLayout(mainBorderLayout);
 
         //Adding menus into menubar
@@ -118,10 +121,7 @@ public class MainWindowUI extends JFrame{
         help.add(forum);
 
         mainWindowUI.setJMenuBar(menuBarMain);
-
-
         mainWindowUI.setContentPane(mainPanel);
-
         mainWindowUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         //Listener sur la fermeture de la fenetre
         mainWindowUI.addWindowListener(new WindowAdapter() {
@@ -141,14 +141,66 @@ public class MainWindowUI extends JFrame{
         });
 
         editorPaneMain.setEditable(true);
-
-
         mainPanel.add(editorPaneMain,BorderLayout.CENTER);
-
         mainWindowUI.pack();
         mainWindowUI.setVisible(true);
+    }
+
+    //Return the user default language
+    private String getUserLanguage()
+    {
+        return System.getProperty("user.language");
+    }
+
+    private void setUILanguage()
+    {
+
+        String userLanguage = getUserLanguage();
+        /*
+        Lit le fichier qui correspond à la langue de l'utilisateur
+        Si un composant est traduit ici, les fichiers .properties doivent tous contenir le couple nomComposant=traduction
+        */
+
+        if (userLanguage.equals("en") || userLanguage.equals("fr"))
+        {
+            //Ouverture de la ressource .properties
+            bundle = ResourceBundle.getBundle("HoneyCode_"+userLanguage); // remplacer userLanguage par "en" pour test
+        }
+        //Si ni fr ni en par défaut en anglais
+        else {
+            bundle = ResourceBundle.getBundle("HoneyCode_en");
+        }
+
+        file.setText(bundle.getString("file"));
+        view.setText(bundle.getString("view"));
+        edit.setText(bundle.getString("edit"));
+        help.setText(bundle.getString("help"));
+
+        newFile.setText(bundle.getString("newFile"));
+        open.setText(bundle.getString("open"));
+        rencentFiles.setText(bundle.getString("recentFiles"));
+        saveFile.setText(bundle.getString("saveFile"));
+        saveFileAS.setText(bundle.getString("saveFileAS"));
+        settings.setText(bundle.getString("settings"));
+        exitApp.setText(bundle.getString("exitApp"));
+        copy.setText(bundle.getString("copy"));
+        cut.setText(bundle.getString("cut"));
+        past.setText(bundle.getString("past"));
+        encoding.setText(bundle.getString("encoding"));
+        consoleView.setText(bundle.getString("consoleView"));
+        previewShow.setText(bundle.getString("previewShow"));
+        highLight.setText(bundle.getString("highlight"));
+        plugLoad.setText(bundle.getString("plugLoad"));
+        plugDown.setText(bundle.getString("plugDown"));
+        plugSubmit.setText(bundle.getString("plugSubmit"));
+        about.setText(bundle.getString("about"));
+        docHC.setText(bundle.getString("docHC"));
+        forum.setText(bundle.getString("forum"));
+
+        //...Suite des traductions...
 
     }
+
     public class ActionListenerMenuBar implements ActionListener {
         public void actionPerformed (ActionEvent e){
             if(e.getSource() == newFile){
