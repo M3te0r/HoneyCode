@@ -97,7 +97,6 @@ public class MainWindowUI extends JFrame{
         mainWindowUI.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight()));
         consolePane.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), 250));
 
-        GridBagLayout consoleLayout = new GridBagLayout();
         BorderLayout mainBorderLayout = new BorderLayout();
         mainPanel.setLayout(mainBorderLayout);
 
@@ -131,6 +130,35 @@ public class MainWindowUI extends JFrame{
         mainWindowUI.setJMenuBar(menuBarMain);
         mainWindowUI.setContentPane(mainPanel);
         mainWindowUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        //Console elements placing -BEGIN
+
+        consolePane.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gbc.gridheight = 1;
+        gbc.gridwidth = 1;
+        consolePane.add(lastBuildLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_END;
+        consolePane.add(buildOptionsButton, gbc);
+
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_END;
+        gbc.gridx = 2;
+        consolePane.add(runButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridheight = 1;
+        consolePane.add(consoleOutputArea, gbc);
+
+
         //Listener sur la fermeture de la fenetre
         mainWindowUI.addWindowListener(new WindowAdapter() {
             @Override
