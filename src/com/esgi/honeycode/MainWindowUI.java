@@ -44,7 +44,7 @@ public class MainWindowUI extends JFrame{
     private JMenu help = new JMenu();
 
     private JMenuItem newFile = new JMenuItem();
-    private JMenuItem open = new JMenuItem("Ouvrir...");
+    private JMenuItem open = new JMenuItem();
     private JMenuItem rencentFiles = new JMenuItem();  //Collections d'objets (nom du fichier, chemin) ??
     private JMenuItem saveFile = new JMenuItem();
     private JMenuItem saveFileAS = new JMenuItem();
@@ -70,13 +70,6 @@ public class MainWindowUI extends JFrame{
 
         setUILanguage();
 
-        open.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_MASK));
-        exitApp.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_MASK));
-        saveFile.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_MASK));
-        saveFileAS.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_MASK & InputEvent.SHIFT_MASK));
-        //Reste des raccourcis
-
-
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newFile.addActionListener(test);
         about.addActionListener(test);
@@ -87,6 +80,8 @@ public class MainWindowUI extends JFrame{
         forum.addActionListener(test);
         copy.addActionListener(test);
         cut.addActionListener(test);
+        saveFileAS.addActionListener(test);
+        settings.addActionListener(test);
 
         Toolkit tkMain=Toolkit.getDefaultToolkit();
         //get the screen size
@@ -105,6 +100,26 @@ public class MainWindowUI extends JFrame{
         GridBagLayout consoleLayout = new GridBagLayout();
         BorderLayout mainBorderLayout = new BorderLayout();
         mainPanel.setLayout(mainBorderLayout);
+
+
+        //Récupération de la touche utilisée pour les raccourcis clavier du système
+        int shortcutKey = tkMain.getMenuShortcutKeyMask();
+        //Raccourcis des JMenuItem
+        open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, shortcutKey));
+        exitApp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, shortcutKey));
+        saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, shortcutKey));
+        saveFileAS.setAccelerator(KeyStroke.getKeyStroke(shortcutKey+"shift S")); // Syntaxe pour les raccourcis à 3 touches
+        /*
+        Syntaxe pour les events à une touche de fonction
+        Pour events à touche+touche fonction : KeyEvent.VK_F1, InputEvent.CTRL_DOWN_MASK par exemple
+        */
+        about.setAccelerator(KeyStroke.getKeyStroke("F1"));
+        settings.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, shortcutKey+InputEvent.ALT_DOWN_MASK)); // en fait ça marche aussi comme ça
+        newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, shortcutKey));
+        cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,shortcutKey));
+        copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, shortcutKey));
+        past.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, shortcutKey));
+        //Reste des raccourcis
 
         //Adding menus into menubar
         menuBarMain.add(file);
@@ -220,10 +235,10 @@ public class MainWindowUI extends JFrame{
             if(e.getSource() == newFile){
                 System.out.println(e.getSource().toString());
                 System.out.println("New File");
-            } 
+            }
             if (e.getSource() == saveFileAS)
             {
-                System.out.print("SAVE AS");
+                System.out.print("Save File As");
             }
 
             if(e.getSource() == about){
@@ -297,6 +312,10 @@ public class MainWindowUI extends JFrame{
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selectedText,null);
                 editorPaneMain.replaceSelection("");
+            }
+
+            if (e.getSource() == settings){
+                System.out.println("Settings");
             }
     }
 }
