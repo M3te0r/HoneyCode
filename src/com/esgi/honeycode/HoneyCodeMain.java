@@ -1,7 +1,6 @@
 package com.esgi.honeycode;
 
 import javax.swing.*;
-import java.util.prefs.BackingStoreException;
 
 /**
  * Created by Mathieu on 11/02/14.

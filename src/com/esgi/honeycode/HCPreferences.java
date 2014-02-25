@@ -1,7 +1,5 @@
 package com.esgi.honeycode;
 
-import javax.swing.*;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
@@ -12,6 +10,8 @@ import java.util.prefs.Preferences;
  * Sous les systèmes Win 7/8/8.1 la JVM n'a pas les droits pour créer de nouveau noeuds dans le registre
  * Les clés sont cependant bien crées, mais déclenche une exception sur le Secutity Manager
  * Il faut donc lancer IntelliJ IDEA en mode administrateur pour que la JVM ait les droits d'écriture
+ *
+ * /!\ Les valeurs de registre sont encodés en BASE64, utiliser seulement des noms en minuscules des underscores /!\
  */
 public class HCPreferences {
 
@@ -23,8 +23,9 @@ public class HCPreferences {
 
         //Préférences de registre par utilisateur
         prefs = Preferences.userNodeForPackage(this.getClass());
-
+        //Lowercase name only
         String langDef = System.getProperty("user.language");
-        prefs.put("Language", langDef);
+        //Lowercase name only
+        prefs.put("language", langDef);
     }
 }
