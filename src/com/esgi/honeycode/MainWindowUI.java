@@ -9,7 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Calendar;
 import java.util.ResourceBundle;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Mathieu on 11/02/14.
@@ -83,6 +87,7 @@ public class MainWindowUI extends JFrame{
         cut.addActionListener(test);
         saveFileAS.addActionListener(test);
         settings.addActionListener(test);
+        runButton.addActionListener(test);
 
         Toolkit tkMain=Toolkit.getDefaultToolkit();
         //get the screen size
@@ -329,6 +334,13 @@ public class MainWindowUI extends JFrame{
 
             if (e.getSource() == settings){
                 System.out.println("Settings");
+            }
+
+            if(e.getSource() == runButton){
+                Date date = new Date();
+                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+                String dateString = dateFormat.format(date);
+                lastBuildLabel.setText("Last build : "+dateString);
             }
     }
 }
