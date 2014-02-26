@@ -26,13 +26,14 @@ public class MainWindowUI extends JFrame{
 
     private JPanel mainPanel = new JPanel();
     private JPanel consolePane = new JPanel();
+    private JPanel subConsolePane = new JPanel();
 
     private JLabel lastBuildLabel = new JLabel("Last build : test");
 
     private JButton runButton = new JButton("Run");
     private JButton buildOptionsButton = new JButton("Build options");
 
-    private JTextArea consoleOutputArea = new JTextArea();
+    private JTextArea consoleOutputArea = new JTextArea("Console Ouptut");
     private JEditorPane editorPaneMain = new JEditorPane();
 
     private JMenuBar menuBarMain = new JMenuBar();
@@ -96,8 +97,11 @@ public class MainWindowUI extends JFrame{
         setLocation(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight());
         mainWindowUI.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight()));
         consolePane.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), 250));
+        subConsolePane.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), 30));
+        consoleOutputArea.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), 210));
 
-        GridBagLayout consoleLayout = new GridBagLayout();
+        consolePane.setLayout(new BorderLayout());
+        subConsolePane.setLayout(new BorderLayout());
         BorderLayout mainBorderLayout = new BorderLayout();
         mainPanel.setLayout(mainBorderLayout);
 
@@ -151,6 +155,21 @@ public class MainWindowUI extends JFrame{
         mainWindowUI.setJMenuBar(menuBarMain);
         mainWindowUI.setContentPane(mainPanel);
         mainWindowUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        consolePane.add(subConsolePane, BorderLayout.NORTH);
+        consolePane.add(consoleOutputArea, BorderLayout.SOUTH);
+
+        subConsolePane.add(lastBuildLabel, BorderLayout.WEST);
+        subConsolePane.add(buildOptionsButton, BorderLayout.CENTER);
+        subConsolePane.add(runButton, BorderLayout.EAST);
+        consoleOutputArea.setBackground(Color.BLACK);
+
+        editorPaneMain.setEditable(true);
+        mainPanel.add(editorPaneMain, BorderLayout.CENTER);
+        mainPanel.add(consolePane, BorderLayout.SOUTH);
+        mainWindowUI.pack();
+        mainWindowUI.setVisible(true);
+
         //Listener sur la fermeture de la fenetre
         mainWindowUI.addWindowListener(new WindowAdapter() {
             @Override
@@ -167,12 +186,6 @@ public class MainWindowUI extends JFrame{
                 }
             }
         });
-
-        editorPaneMain.setEditable(true);
-        mainPanel.add(editorPaneMain, BorderLayout.CENTER);
-        mainPanel.add(consolePane, BorderLayout.SOUTH);
-        mainWindowUI.pack();
-        mainWindowUI.setVisible(true);
     }
 
     //Return the user default language
