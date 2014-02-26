@@ -50,7 +50,7 @@ public class MainWindowUI extends JFrame{
 
     private JMenuItem newFile = new JMenuItem();
     private JMenuItem open = new JMenuItem();
-    private JMenuItem rencentFiles = new JMenuItem();  //Collections d'objets (nom du fichier, chemin) ??
+    private JMenuItem recentFiles = new JMenuItem();  //Collections d'objets (nom du fichier, chemin) ??
     private JMenuItem saveFile = new JMenuItem();
     private JMenuItem saveFileAS = new JMenuItem();
     private JMenuItem settings = new JMenuItem();
@@ -91,7 +91,7 @@ public class MainWindowUI extends JFrame{
 
         Toolkit tkMain=Toolkit.getDefaultToolkit();
         //get the screen size
-        Dimension dimSrceenSize = tkMain.getScreenSize();
+        Dimension dimScreenSize = tkMain.getScreenSize();
 
         //height of the task bar
         Insets scnMax = tkMain.getScreenInsets(mainWindowUI.getGraphicsConfiguration());
@@ -99,11 +99,11 @@ public class MainWindowUI extends JFrame{
 
 
         //Set location and size according to the screen size and taskbar size
-        setLocation(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight());
-        mainWindowUI.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), dimSrceenSize.height - taskBarSize - getHeight()));
-        consolePane.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), 250));
-        subConsolePane.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), 30));
-        consoleOutputArea.setPreferredSize(new Dimension(dimSrceenSize.width - getWidth(), 210));
+        setLocation(dimScreenSize.width - getWidth(), dimScreenSize.height - taskBarSize - getHeight());
+        mainWindowUI.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), dimScreenSize.height - taskBarSize - getHeight()));
+        consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
+        subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
+        consoleOutputArea.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 210));
 
         consolePane.setLayout(new BorderLayout());
         subConsolePane.setLayout(new BorderLayout());
@@ -134,7 +134,7 @@ public class MainWindowUI extends JFrame{
         menuBarMain.add(file);
         file.add(newFile);
         file.add(open);
-        file.add(rencentFiles);
+        file.add(recentFiles);
         file.add(saveFile);
         file.add(saveFileAS);
         file.add(settings);
@@ -225,7 +225,7 @@ public class MainWindowUI extends JFrame{
 
         newFile.setText(bundle.getString("newFile"));
         open.setText(bundle.getString("open"));
-        rencentFiles.setText(bundle.getString("recentFiles"));
+        recentFiles.setText(bundle.getString("recentFiles"));
         saveFile.setText(bundle.getString("saveFile"));
         saveFileAS.setText(bundle.getString("saveFileAS"));
         settings.setText(bundle.getString("settings"));
