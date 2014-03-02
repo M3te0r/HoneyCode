@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Calendar;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -42,10 +42,10 @@ public class MainWindowUI extends JFrame{
 
     private JLabel lastBuildLabel = new JLabel("Last build : test");
 
-    private JButton runButton = new JButton("Run");
-    private JButton buildOptionsButton = new JButton("Build options");
+    private JButton runButton;
+    private JButton buildOptionsButton;
 
-    private JTextArea consoleOutputArea = new JTextArea("Console Ouptut");
+    private JTextArea consoleOutputArea;
     private JEditorPane editorPaneMain;
 
     private JMenuBar menuBarMain;
@@ -76,6 +76,9 @@ public class MainWindowUI extends JFrame{
     private JMenuItem about;
     private JMenuItem docHC;
     private JMenuItem forum;
+    private JMenuItem checkUpdate;
+    private String exitMessage;
+
 
     final JFileChooser fileChooserMain;
 
@@ -113,23 +116,25 @@ public class MainWindowUI extends JFrame{
         about = new JMenuItem();
         docHC = new JMenuItem();
         forum = new JMenuItem();
+        checkUpdate = new JMenuItem();
+
+        runButton = new JButton();
+        buildOptionsButton = new JButton();
+        consoleOutputArea = new JTextArea();
+
 
         fileChooserMain = new JFileChooser();
-
-
-        splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
         setUILanguage();
 
         treeMain = new JTree();
         treePanel = new JPanel();
+
         scrollTree = new JScrollPane(treePanel);
         editorScroll = new JScrollPane(editorPaneMain);
-
-        splited.setTopComponent(scrollTree);
-        splited.setBottomComponent(editorScroll);
-
-
+        //Qu'on me redonne la définition de vertical et horizontal
+        splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,scrollTree,editorScroll);
+        splited.setDividerSize(2);
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newFile.addActionListener(test);
@@ -213,6 +218,7 @@ public class MainWindowUI extends JFrame{
         help.add(about);
         help.add(docHC);
         help.add(forum);
+        help.add(checkUpdate);
 
         mainWindowUI.setJMenuBar(menuBarMain);
         mainWindowUI.setContentPane(mainPanel);
@@ -240,7 +246,7 @@ public class MainWindowUI extends JFrame{
         mainWindowUI.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                int confirm = JOptionPane.showConfirmDialog(mainWindowUI, "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int confirm = JOptionPane.showConfirmDialog(mainWindowUI, exitMessage, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (confirm == JOptionPane.YES_OPTION) {
                     /*
                     TODO :
@@ -263,6 +269,8 @@ public class MainWindowUI extends JFrame{
     private void setUILanguage()
     {
 
+
+
         String userLanguage = getUserLanguage();
         /*
         Lit le fichier qui correspond à la langue de l'utilisateur
@@ -273,10 +281,24 @@ public class MainWindowUI extends JFrame{
         {
             //Ouverture de la ressource .properties
             bundle = ResourceBundle.getBundle("HoneyCode_"+userLanguage); // remplacer userLanguage par "en" pour test
+
+            //Set JOptionPane locale to user language
+            //Trying to find for the others component such as JFileChooser, setDefaultLocale has no effect on it
+            if (userLanguage.equals("en"))
+            {
+                JOptionPane.setDefaultLocale(Locale.ENGLISH);
+
+            }
+            else if (userLanguage.equals("fr"))
+            {
+                JOptionPane.setDefaultLocale(Locale.FRENCH);
+            }
+
         }
         //Si ni fr ni en par défaut en anglais
         else {
             bundle = ResourceBundle.getBundle("HoneyCode_en");
+            JOptionPane.setDefaultLocale(Locale.ENGLISH);
         }
 
         file.setText(bundle.getString("file"));
@@ -304,6 +326,11 @@ public class MainWindowUI extends JFrame{
         about.setText(bundle.getString("about"));
         docHC.setText(bundle.getString("docHC"));
         forum.setText(bundle.getString("forum"));
+        checkUpdate.setText(bundle.getString("checkUpdate"));
+        runButton.setText(bundle.getString("runButton"));
+        buildOptionsButton.setText(bundle.getString("buildOptionsButton"));
+        consoleOutputArea.setText(bundle.getString("consoleOutputArea"));
+        exitMessage = bundle.getString("exitMessage");
 
         //...Suite des traductions...
 
@@ -362,7 +389,7 @@ public class MainWindowUI extends JFrame{
                     //Throws an exception
                    //Not the good catch, just to test
                 try{
-                    Desktop.getDesktop().browse(new URI("http://kevinmaarek.fr/"));
+                    Desktop.getDesktop().browse(new URI("http://honeycode.kevinmaarek.fr/"));
                 } catch (URISyntaxException | IOException ex){
                     JOptionPane.showMessageDialog(mainWindowUI, ex.getMessage(),"Erreur", JOptionPane.ERROR_MESSAGE,null);
                 }
@@ -372,7 +399,7 @@ public class MainWindowUI extends JFrame{
             if(e.getSource() == forum){
                 //Not the good catch, just to test
                 try{
-                    Desktop.getDesktop().browse(new URI("http://kevinmaarek.fr/"));
+                    Desktop.getDesktop().browse(new URI("http://honeycode.kevinmaarek.fr/"));
                 } catch (URISyntaxException | IOException ex){
                     JOptionPane.showMessageDialog(mainWindowUI, "Could not open HoneyCode forum Web Page", "Erreur", JOptionPane.ERROR_MESSAGE, null);
                 }
