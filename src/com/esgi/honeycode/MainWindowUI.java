@@ -24,7 +24,7 @@ import java.util.Date;
 
 public class MainWindowUI extends JFrame{
 
-    //Déclarations des différents composants
+    //Déclarations des différents composants et ressources
 
     private ResourceBundle bundle;
 
@@ -33,13 +33,10 @@ public class MainWindowUI extends JFrame{
     private JScrollPane scrollTree;
     private JSplitPane splited;
     private JScrollPane editorScroll;
-
     private JFrame mainWindowUI;
-
     private JPanel mainPanel;
     private JPanel consolePane;
     private JPanel subConsolePane;
-
     private JLabel lastBuildLabel = new JLabel("Last build : test");
 
     private JButton runButton;
@@ -47,15 +44,12 @@ public class MainWindowUI extends JFrame{
 
     private JTextArea consoleOutputArea;
     private JEditorPane editorPaneMain;
-
     private JMenuBar menuBarMain;
-
     private JMenu file;
     private JMenu edit;
     private JMenu view;
     private JMenu plugin;
     private JMenu help;
-
     private JMenuItem newFile;
     private JMenuItem open;
     private JMenuItem recentFiles;
@@ -78,8 +72,6 @@ public class MainWindowUI extends JFrame{
     private JMenuItem forum;
     private JMenuItem checkUpdate;
     private String exitMessage;
-
-
     final JFileChooser fileChooserMain;
 
     public MainWindowUI(){
@@ -117,19 +109,15 @@ public class MainWindowUI extends JFrame{
         docHC = new JMenuItem();
         forum = new JMenuItem();
         checkUpdate = new JMenuItem();
-
         runButton = new JButton();
         buildOptionsButton = new JButton();
         consoleOutputArea = new JTextArea();
-
-
         fileChooserMain = new JFileChooser();
 
         setUILanguage();
 
         treeMain = new JTree();
         treePanel = new JPanel();
-
         scrollTree = new JScrollPane(treePanel);
         editorScroll = new JScrollPane(editorPaneMain);
         //Qu'on me redonne la définition de vertical et horizontal
@@ -260,18 +248,13 @@ public class MainWindowUI extends JFrame{
         });
     }
 
-    //Return the user default language
-    private String getUserLanguage()
-    {
-        return System.getProperty("user.language");
-    }
-
     private void setUILanguage()
     {
+        //Maybe moving it to class field if using other reg key ?
+        HCPreferences globalPreferences = new HCPreferences();
+        globalPreferences.setPreferences();
 
-
-
-        String userLanguage = getUserLanguage();
+        String userLanguage = globalPreferences.getUserLanguageReg();
         /*
         Lit le fichier qui correspond à la langue de l'utilisateur
         Si un composant est traduit ici, les fichiers .properties doivent tous contenir le couple nomComposant=traduction
@@ -286,19 +269,37 @@ public class MainWindowUI extends JFrame{
             //Trying to find for the others component such as JFileChooser, setDefaultLocale has no effect on it
             if (userLanguage.equals("en"))
             {
-                JOptionPane.setDefaultLocale(Locale.ENGLISH);
+                // Change the default JVM Locale
+                Locale.setDefault(Locale.ENGLISH);
+                // Change the default LookAndFeel Locale
+                UIManager.getDefaults().setDefaultLocale(Locale.ENGLISH);
+                // Change default Locale for new components
+                JComponent.setDefaultLocale(Locale.ENGLISH);
+                fileChooserMain.setLocale(Locale.ENGLISH);
+                //Forcing LookAndFeel update
+                fileChooserMain.updateUI();
 
             }
             else if (userLanguage.equals("fr"))
             {
-                JOptionPane.setDefaultLocale(Locale.FRENCH);
+                //Same as "en" userLanguage condition
+                Locale.setDefault(Locale.FRENCH);
+                UIManager.getDefaults().setDefaultLocale(Locale.FRENCH);
+                JComponent.setDefaultLocale(Locale.FRENCH);
+                fileChooserMain.setLocale(Locale.FRENCH);
+                fileChooserMain.updateUI();
+
             }
 
         }
         //Si ni fr ni en par défaut en anglais
         else {
             bundle = ResourceBundle.getBundle("HoneyCode_en");
-            JOptionPane.setDefaultLocale(Locale.ENGLISH);
+            Locale.setDefault(Locale.ENGLISH);
+            UIManager.getDefaults().setDefaultLocale(Locale.ENGLISH);
+            JComponent.setDefaultLocale(Locale.ENGLISH);
+            fileChooserMain.setLocale(Locale.ENGLISH);
+            fileChooserMain.updateUI();
         }
 
         file.setText(bundle.getString("file"));

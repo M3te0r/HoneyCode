@@ -9,8 +9,8 @@ public class HoneyCodeMain {
 
     public static void main(String[] args){
 
-        HCPreferences globablPreferences = new HCPreferences();
-        globablPreferences.setPreferences();
+        HCPreferences globalPreferences = new HCPreferences();
+        globalPreferences.setPreferences();
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
