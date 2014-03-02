@@ -24,13 +24,21 @@ import java.util.Date;
 
 public class MainWindowUI extends JFrame{
 
+    //Déclarations des différents composants
+
     private ResourceBundle bundle;
 
-    private JFrame mainWindowUI = new JFrame("HoneyCode");
+    private  JPanel treePanel;
+    private JTree treeMain;
+    private JScrollPane scrollTree;
+    private JSplitPane splited;
+    private JScrollPane editorScroll;
 
-    private JPanel mainPanel = new JPanel();
-    private JPanel consolePane = new JPanel();
-    private JPanel subConsolePane = new JPanel();
+    private JFrame mainWindowUI;
+
+    private JPanel mainPanel;
+    private JPanel consolePane;
+    private JPanel subConsolePane;
 
     private JLabel lastBuildLabel = new JLabel("Last build : test");
 
@@ -38,42 +46,90 @@ public class MainWindowUI extends JFrame{
     private JButton buildOptionsButton = new JButton("Build options");
 
     private JTextArea consoleOutputArea = new JTextArea("Console Ouptut");
-    private JEditorPane editorPaneMain = new JEditorPane();
+    private JEditorPane editorPaneMain;
 
-    private JMenuBar menuBarMain = new JMenuBar();
+    private JMenuBar menuBarMain;
 
-    private JMenu file = new JMenu();
-    private JMenu edit = new JMenu();
-    private JMenu view = new JMenu();
-    private JMenu plugin = new JMenu("Plugins");
-    private JMenu help = new JMenu();
+    private JMenu file;
+    private JMenu edit;
+    private JMenu view;
+    private JMenu plugin;
+    private JMenu help;
 
-    private JMenuItem newFile = new JMenuItem();
-    private JMenuItem open = new JMenuItem();
-    private JMenuItem recentFiles = new JMenuItem();  //Collections d'objets (nom du fichier, chemin) ??
-    private JMenuItem saveFile = new JMenuItem();
-    private JMenuItem saveFileAS = new JMenuItem();
-    private JMenuItem settings = new JMenuItem();
-    private JMenuItem exitApp = new JMenuItem();
-    private JMenuItem copy = new JMenuItem();
-    private JMenuItem cut = new JMenuItem();
-    private JMenuItem past = new JMenuItem();
-    private JMenuItem encoding = new JMenuItem();
-    private JMenuItem consoleView = new JMenuItem();
-    private JMenuItem previewShow = new JMenuItem();
-    private JMenuItem highLight = new JMenuItem();
-    private JMenuItem plugLoad = new JMenuItem();
-    private JMenuItem plugDown = new JMenuItem();
-    private JMenuItem plugSubmit = new JMenuItem();
-    private JMenuItem about = new JMenuItem();
-    private JMenuItem docHC = new JMenuItem();
-    private JMenuItem forum = new JMenuItem();
+    private JMenuItem newFile;
+    private JMenuItem open;
+    private JMenuItem recentFiles;
+    private JMenuItem saveFile;
+    private JMenuItem saveFileAS;
+    private JMenuItem settings;
+    private JMenuItem exitApp;
+    private JMenuItem copy;
+    private JMenuItem cut;
+    private JMenuItem past;
+    private JMenuItem encoding;
+    private JMenuItem consoleView;
+    private JMenuItem previewShow;
+    private JMenuItem highLight;
+    private JMenuItem plugLoad;
+    private JMenuItem plugDown;
+    private JMenuItem plugSubmit;
+    private JMenuItem about;
+    private JMenuItem docHC;
+    private JMenuItem forum;
 
-    final JFileChooser fileChooserMain = new JFileChooser();
+    final JFileChooser fileChooserMain;
 
     public MainWindowUI(){
 
+        //Instanciation des composants
+        mainWindowUI = new JFrame("HoneyCode");
+        mainPanel = new JPanel();
+        consolePane = new JPanel();
+        subConsolePane = new JPanel();
+        editorPaneMain = new JEditorPane();
+        menuBarMain = new JMenuBar();
+        file = new JMenu();
+        edit = new JMenu();
+        view = new JMenu();
+        plugin = new JMenu("Plugins");
+        help = new JMenu();
+        newFile = new JMenuItem();
+        open = new JMenuItem();
+        recentFiles = new JMenuItem();  //Collections d'objets (nom du fichier, chemin) ??
+        saveFile = new JMenuItem();
+        saveFileAS = new JMenuItem();
+        settings = new JMenuItem();
+        exitApp = new JMenuItem();
+        copy = new JMenuItem();
+        cut = new JMenuItem();
+        past = new JMenuItem();
+        encoding = new JMenuItem();
+        consoleView = new JMenuItem();
+        previewShow = new JMenuItem();
+        highLight = new JMenuItem();
+        plugLoad = new JMenuItem();
+        plugDown = new JMenuItem();
+        plugSubmit = new JMenuItem();
+        about = new JMenuItem();
+        docHC = new JMenuItem();
+        forum = new JMenuItem();
+
+        fileChooserMain = new JFileChooser();
+
+
+        splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+
         setUILanguage();
+
+        treeMain = new JTree();
+        treePanel = new JPanel();
+        scrollTree = new JScrollPane(treePanel);
+        editorScroll = new JScrollPane(editorPaneMain);
+
+        splited.setTopComponent(scrollTree);
+        splited.setBottomComponent(editorScroll);
+
+
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newFile.addActionListener(test);
@@ -105,6 +161,7 @@ public class MainWindowUI extends JFrame{
         subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
         consoleOutputArea.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 210));
 
+        treePanel.setLayout(new BorderLayout());
         consolePane.setLayout(new BorderLayout());
         subConsolePane.setLayout(new BorderLayout());
         BorderLayout mainBorderLayout = new BorderLayout();
@@ -170,8 +227,12 @@ public class MainWindowUI extends JFrame{
         consoleOutputArea.setBackground(Color.BLACK);
 
         editorPaneMain.setEditable(true);
-        mainPanel.add(editorPaneMain, BorderLayout.CENTER);
+
+
+        treePanel.add(treeMain, BorderLayout.CENTER);
+        mainPanel.add(splited, BorderLayout.CENTER);
         mainPanel.add(consolePane, BorderLayout.SOUTH);
+        //mainPanel.add(scrollTree, BorderLayout.WEST);
         mainWindowUI.pack();
         mainWindowUI.setVisible(true);
 
@@ -340,7 +401,7 @@ public class MainWindowUI extends JFrame{
                 Date date = new Date();
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
                 String dateString = dateFormat.format(date);
-                lastBuildLabel.setText("Last build : "+dateString);
+                lastBuildLabel.setText("Last build : " + dateString);
             }
     }
 }
