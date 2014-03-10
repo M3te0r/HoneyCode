@@ -32,6 +32,7 @@ public class MainWindowUI extends JFrame{
     private JTree treeMain;
     private JScrollPane scrollTree;
     private JSplitPane splited;
+    private JSplitPane wholeSplit;
     private JScrollPane editorScroll;
     private JFrame mainWindowUI;
     private JPanel mainPanel;
@@ -77,7 +78,7 @@ public class MainWindowUI extends JFrame{
     public MainWindowUI(){
 
         //Instanciation des composants
-        mainWindowUI = new JFrame("HoneyCode");
+        mainWindowUI = new JFrame("HoneyCode"); // TO replace by inherited methods and replace mainWindowUI by container
         mainPanel = new JPanel();
         consolePane = new JPanel();
         subConsolePane = new JPanel();
@@ -120,9 +121,14 @@ public class MainWindowUI extends JFrame{
         treePanel = new JPanel();
         scrollTree = new JScrollPane(treePanel);
         editorScroll = new JScrollPane(editorPaneMain);
+
+
         //Qu'on me redonne la définition de vertical et horizontal
         splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,scrollTree,editorScroll);
         splited.setDividerSize(2);
+        wholeSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splited,consolePane);
+        wholeSplit.setDividerSize(3);
+
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newFile.addActionListener(test);
@@ -213,20 +219,21 @@ public class MainWindowUI extends JFrame{
         mainWindowUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         consolePane.add(subConsolePane, BorderLayout.NORTH);
-        consolePane.add(consoleOutputArea, BorderLayout.SOUTH);
+        consolePane.add(consoleOutputArea, BorderLayout.CENTER);
 
         subConsolePane.add(lastBuildLabel, BorderLayout.WEST);
         subConsolePane.add(buildOptionsButton, BorderLayout.CENTER);
         subConsolePane.add(runButton, BorderLayout.EAST);
         consoleOutputArea.setBackground(Color.BLACK);
 
+        editorPaneMain.setPreferredSize(new Dimension(dimScreenSize.width - 400, 500)); // In fixed size, need to adapt
         editorPaneMain.setEditable(true);
+        editorPaneMain.setFont(new Font("Courier New", Font.PLAIN,16));
 
 
         treePanel.add(treeMain, BorderLayout.CENTER);
-        mainPanel.add(splited, BorderLayout.CENTER);
-        mainPanel.add(consolePane, BorderLayout.SOUTH);
-        //mainPanel.add(scrollTree, BorderLayout.WEST);
+        mainPanel.add(wholeSplit, BorderLayout.CENTER);
+
         mainWindowUI.pack();
         mainWindowUI.setVisible(true);
 
@@ -387,8 +394,8 @@ public class MainWindowUI extends JFrame{
                 }
             }
             if(e.getSource() == plugDown){
-                    //Throws an exception
-                   //Not the good catch, just to test
+                //Throws an exception
+                //Not the good catch, just to test
                 try{
                     Desktop.getDesktop().browse(new URI("http://honeycode.kevinmaarek.fr/"));
                 } catch (URISyntaxException | IOException ex){
@@ -431,7 +438,7 @@ public class MainWindowUI extends JFrame{
                 String dateString = dateFormat.format(date);
                 lastBuildLabel.setText("Last build : " + dateString);
             }
+        }
     }
-}
 
 }
