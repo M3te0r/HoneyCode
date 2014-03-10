@@ -1,7 +1,5 @@
 package com.esgi.honeycode;
 
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 /**
@@ -25,6 +23,7 @@ public class HCPreferences {
         //Préférences de registre par utilisateur
         this.prefs = Preferences.userNodeForPackage(this.getClass());
         this.langDef = System.getProperty("user.language");
+
 
     }
 

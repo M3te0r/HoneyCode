@@ -355,6 +355,12 @@ public class MainWindowUI extends JFrame{
                 System.out.print("Save File As");
             }
 
+            if (e.getSource() == saveFile)
+            {
+                System.out.print("Save");
+
+            }
+
             if(e.getSource() == about){
                 JOptionPane.showMessageDialog(mainWindowUI, "HoneyCode est un projet étudiant développé au sein de l'ESGI, et est libre de droits.\n Développeurs :" +
                         "\n-Kevin MAAREK \n-Mathieu PEQUIN \n-Alexandre FAYETTE \n Promotion 3iAL ", "A propos", JOptionPane.INFORMATION_MESSAGE);
@@ -368,6 +374,8 @@ public class MainWindowUI extends JFrame{
                     File chosenFile = fileChooserMain.getSelectedFile();
                     //Accept all file extensions ?
                     //Gestion de l'ouverture des fichiers...
+                    FileHandler fileHandler = new FileHandler(chosenFile);
+                    editorPaneMain.setDocument(fileHandler.readFile());
 
                 }
             }
