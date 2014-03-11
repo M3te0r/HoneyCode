@@ -1,6 +1,7 @@
 package com.esgi.honeycode;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -29,11 +30,12 @@ public class MainWindowUI extends JFrame{
     private ResourceBundle bundle;
 
     private  JPanel treePanel;
+    private JTabbedPane tabFile;
     private JTree treeMain;
     private JScrollPane scrollTree;
     private JSplitPane splited;
     private JSplitPane wholeSplit;
-    private JScrollPane editorScroll;
+    private JPanel editorPanel;
     private JPanel mainPanel;
     private JPanel consolePane;
     private JPanel subConsolePane;
@@ -73,6 +75,7 @@ public class MainWindowUI extends JFrame{
     private JMenuItem checkUpdate;
     private String exitMessage;
     final JFileChooser fileChooserMain;
+    private JTextArea homeMessage;
 
     public MainWindowUI(){
 
@@ -80,9 +83,11 @@ public class MainWindowUI extends JFrame{
         setTitle("HoneyCode");
 
         mainPanel = new JPanel();
+        editorPanel = new JPanel(new GridLayout(1,1));
+        tabFile = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
         consolePane = new JPanel();
         subConsolePane = new JPanel();
-        editorPaneMain = new JEditorPane();
+        editorPaneMain = new JEditorPane(); // To delete
         menuBarMain = new JMenuBar();
         file = new JMenu();
         edit = new JMenu();
@@ -114,16 +119,40 @@ public class MainWindowUI extends JFrame{
         buildOptionsButton = new JButton();
         consoleOutputArea = new JTextArea();
         fileChooserMain = new JFileChooser();
+        homeMessage = new JTextArea();
+        homeMessage.setEditable(false);
+        homeMessage.setEnabled(false);
+        homeMessage.setDisabledTextColor(Color.BLACK);
+        homeMessage.setBackground(Color.LIGHT_GRAY);
 
-        setUILanguage();
+        Toolkit tkMain=Toolkit.getDefaultToolkit();
+        //get the screen size
+        Dimension dimScreenSize = tkMain.getScreenSize();
+
+        //height of the task bar
+        Insets scnMax = tkMain.getScreenInsets(getGraphicsConfiguration());
+        int taskBarSize = scnMax.bottom;
+
+        int shortcutKey = tkMain.getMenuShortcutKeyMask();
+
+        setUILanguage(shortcutKey);
+
 
         treeMain = new JTree();
         treePanel = new JPanel();
         scrollTree = new JScrollPane(treePanel);
-        editorScroll = new JScrollPane(editorPaneMain);
+
+
+       // editorScroll = new JScrollPane(editorPaneMain); // A mettre à chaque ouverture de fichier
+
+        homeMessage.setFont(new Font("Courier new", Font.PLAIN, 24));
+        editorPanel.add(homeMessage);
+        editorPanel.setPreferredSize(new Dimension(600,500));
+
+     //   editorPanel.add(tabFile);
 
         //Qu'on me redonne la définition de vertical et horizontal
-        splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,scrollTree,editorScroll);
+        splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,scrollTree,editorPanel);
         splited.setDividerSize(2);
         wholeSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splited,consolePane);
         wholeSplit.setDividerSize(3);
@@ -142,14 +171,6 @@ public class MainWindowUI extends JFrame{
         settings.addActionListener(test);
         runButton.addActionListener(test);
 
-        Toolkit tkMain=Toolkit.getDefaultToolkit();
-        //get the screen size
-        Dimension dimScreenSize = tkMain.getScreenSize();
-
-        //height of the task bar
-        Insets scnMax = tkMain.getScreenInsets(getGraphicsConfiguration());
-        int taskBarSize = scnMax.bottom;
-
         consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
         subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
         consoleOutputArea.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 210));
@@ -157,11 +178,10 @@ public class MainWindowUI extends JFrame{
         treePanel.setLayout(new BorderLayout());
         consolePane.setLayout(new BorderLayout());
         subConsolePane.setLayout(new BorderLayout());
-        BorderLayout mainBorderLayout = new BorderLayout();
-        mainPanel.setLayout(mainBorderLayout);
+        mainPanel.setLayout(new BorderLayout());
 
         //Récupération de la touche utilisée pour les raccourcis clavier du système
-        int shortcutKey = tkMain.getMenuShortcutKeyMask();
+
         //Raccourcis des JMenuItem
         open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, shortcutKey));
         exitApp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, shortcutKey));
@@ -219,9 +239,7 @@ public class MainWindowUI extends JFrame{
         subConsolePane.add(runButton, BorderLayout.EAST);
         consoleOutputArea.setBackground(Color.BLACK);
 
-        editorPaneMain.setPreferredSize(new Dimension(dimScreenSize.width - 400, 500)); // In fixed size, need to adapt
-        editorPaneMain.setEditable(true);
-        editorPaneMain.setFont(new Font("Courier New", Font.PLAIN,14));
+      //  editorPaneMain.setPreferredSize(new Dimension(dimScreenSize.width - 400, 500)); // In fixed size, need to adapt
 
         treePanel.add(treeMain, BorderLayout.CENTER);
         mainPanel.add(wholeSplit, BorderLayout.CENTER);
@@ -251,7 +269,7 @@ public class MainWindowUI extends JFrame{
         });
     }
 
-    private void setUILanguage()
+    private void setUILanguage(int shortcutKey)
     {
         //Maybe moving it to class field if using other reg key ?
         HCPreferences globalPreferences = new HCPreferences();
@@ -335,6 +353,8 @@ public class MainWindowUI extends JFrame{
         buildOptionsButton.setText(bundle.getString("buildOptionsButton"));
         consoleOutputArea.setText(bundle.getString("consoleOutputArea"));
         exitMessage = bundle.getString("exitMessage");
+        homeMessage.setText(bundle.getString("homeMessage"));
+
 
         //...Suite des traductions...
 
@@ -369,10 +389,26 @@ public class MainWindowUI extends JFrame{
                 if (returnVal == JFileChooser.APPROVE_OPTION){
                     File chosenFile = fileChooserMain.getSelectedFile();
                     //Accept all file extensions ?
-                    //Gestion de l'ouverture des fichiers...
                     FileHandler fileHandler = new FileHandler(chosenFile);
-                    editorPaneMain.setDocument(fileHandler.readFile());
+                    if (homeMessage.isShowing())
+                    {
+                        editorPanel.remove(homeMessage);
+                        editorPanel.add(tabFile);
+                        editorPanel.updateUI();
+                    }
+                    try
+                    {
+                        tabFile.add(chosenFile.getName(), new JScrollPane(new JEditorPane("text/plain",fileHandler.readFile().getText(fileHandler.readFile().getStartPosition().getOffset(),fileHandler.readFile().getLength()))));
 
+                        for(Component cp : tabFile.getComponents())
+                        {
+                            cp.setFont(new Font("Courier New", Font.PLAIN, 14));
+                        }
+                    }
+                    catch (BadLocationException ex)
+                    {
+                        JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(open), "Could not find text location");
+                    }
                 }
             }
 
@@ -423,7 +459,6 @@ public class MainWindowUI extends JFrame{
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selectedText,null);
             }
-
             if(e.getSource() == cut){
                 StringSelection selectedText = new StringSelection(editorPaneMain.getSelectedText());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
