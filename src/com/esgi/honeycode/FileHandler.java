@@ -22,6 +22,11 @@ public class FileHandler {
         this.sourceFile = sourceFile;
     }
 
+    /**
+     *
+     * @param document = the StyledDocument from the JEditorPane
+     */
+
     public void writeFile(DefaultStyledDocument document){
 
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.sourceFile))){
@@ -44,7 +49,10 @@ public class FileHandler {
         }
     }
 
-
+    /**
+     *
+     * @return DefaultStyledDoument : the content of the file
+     */
     public DefaultStyledDocument readFile(){
 
         DefaultStyledDocument defaultStyledDocument = new DefaultStyledDocument();

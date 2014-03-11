@@ -34,7 +34,6 @@ public class MainWindowUI extends JFrame{
     private JSplitPane splited;
     private JSplitPane wholeSplit;
     private JScrollPane editorScroll;
-    private JFrame mainWindowUI;
     private JPanel mainPanel;
     private JPanel consolePane;
     private JPanel subConsolePane;
@@ -78,7 +77,8 @@ public class MainWindowUI extends JFrame{
     public MainWindowUI(){
 
         //Instanciation des composants
-        mainWindowUI = new JFrame("HoneyCode"); // TO replace by inherited methods and replace mainWindowUI by container
+        setTitle("HoneyCode");
+
         mainPanel = new JPanel();
         consolePane = new JPanel();
         subConsolePane = new JPanel();
@@ -122,13 +122,11 @@ public class MainWindowUI extends JFrame{
         scrollTree = new JScrollPane(treePanel);
         editorScroll = new JScrollPane(editorPaneMain);
 
-
         //Qu'on me redonne la définition de vertical et horizontal
         splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,scrollTree,editorScroll);
         splited.setDividerSize(2);
         wholeSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splited,consolePane);
         wholeSplit.setDividerSize(3);
-
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newFile.addActionListener(test);
@@ -149,13 +147,9 @@ public class MainWindowUI extends JFrame{
         Dimension dimScreenSize = tkMain.getScreenSize();
 
         //height of the task bar
-        Insets scnMax = tkMain.getScreenInsets(mainWindowUI.getGraphicsConfiguration());
+        Insets scnMax = tkMain.getScreenInsets(getGraphicsConfiguration());
         int taskBarSize = scnMax.bottom;
 
-
-        //Set location and size according to the screen size and taskbar size
-        setLocation(dimScreenSize.width - getWidth(), dimScreenSize.height - taskBarSize - getHeight());
-        mainWindowUI.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), dimScreenSize.height - taskBarSize - getHeight()));
         consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
         subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
         consoleOutputArea.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 210));
@@ -165,7 +159,6 @@ public class MainWindowUI extends JFrame{
         subConsolePane.setLayout(new BorderLayout());
         BorderLayout mainBorderLayout = new BorderLayout();
         mainPanel.setLayout(mainBorderLayout);
-
 
         //Récupération de la touche utilisée pour les raccourcis clavier du système
         int shortcutKey = tkMain.getMenuShortcutKeyMask();
@@ -214,9 +207,9 @@ public class MainWindowUI extends JFrame{
         help.add(forum);
         help.add(checkUpdate);
 
-        mainWindowUI.setJMenuBar(menuBarMain);
-        mainWindowUI.setContentPane(mainPanel);
-        mainWindowUI.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setJMenuBar(menuBarMain);
+        setContentPane(mainPanel);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         consolePane.add(subConsolePane, BorderLayout.NORTH);
         consolePane.add(consoleOutputArea, BorderLayout.CENTER);
@@ -228,20 +221,23 @@ public class MainWindowUI extends JFrame{
 
         editorPaneMain.setPreferredSize(new Dimension(dimScreenSize.width - 400, 500)); // In fixed size, need to adapt
         editorPaneMain.setEditable(true);
-        editorPaneMain.setFont(new Font("Courier New", Font.PLAIN,16));
-
+        editorPaneMain.setFont(new Font("Courier New", Font.PLAIN,14));
 
         treePanel.add(treeMain, BorderLayout.CENTER);
         mainPanel.add(wholeSplit, BorderLayout.CENTER);
 
-        mainWindowUI.pack();
-        mainWindowUI.setVisible(true);
+        //Set prefrered size before pack, then pack will adapt with the prefered size
+        setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), dimScreenSize.height - taskBarSize));
+        pack();
+        //Set location and size according to the screen size and taskbar size
+        setLocation(dimScreenSize.width - getWidth(), dimScreenSize.height - taskBarSize - getHeight());
+        setVisible(true);
 
         //Listener sur la fermeture de la fenetre
-        mainWindowUI.addWindowListener(new WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                int confirm = JOptionPane.showConfirmDialog(mainWindowUI, exitMessage, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int confirm = JOptionPane.showConfirmDialog(JOptionPane.getFrameForComponent(exitApp), exitMessage, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (confirm == JOptionPane.YES_OPTION) {
                     /*
                     TODO :
@@ -362,13 +358,13 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == about){
-                JOptionPane.showMessageDialog(mainWindowUI, "HoneyCode est un projet étudiant développé au sein de l'ESGI, et est libre de droits.\n Développeurs :" +
+                JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), "HoneyCode est un projet étudiant développé au sein de l'ESGI, et est libre de droits.\n Développeurs :" +
                         "\n-Kevin MAAREK \n-Mathieu PEQUIN \n-Alexandre FAYETTE \n Promotion 3iAL ", "A propos", JOptionPane.INFORMATION_MESSAGE);
 
             }
 
             if(e.getSource() == open){
-                int returnVal = fileChooserMain.showOpenDialog(mainWindowUI);
+                int returnVal = fileChooserMain.showOpenDialog(JOptionPane.getFrameForComponent(open));
 
                 if (returnVal == JFileChooser.APPROVE_OPTION){
                     File chosenFile = fileChooserMain.getSelectedFile();
@@ -381,8 +377,7 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == exitApp){
-                //Parent Component = exitApp (JmenuItem component) or mainWindowUI (the frame) ???
-                int confirm = JOptionPane.showConfirmDialog(exitApp, "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+                int confirm = JOptionPane.showConfirmDialog(JOptionPane.getFrameForComponent(exitApp), "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
                 if (confirm == JOptionPane.YES_OPTION){
                     /*
                     TODO :
@@ -394,7 +389,7 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == plugLoad){
-                int returnVal = fileChooserMain.showOpenDialog(mainWindowUI);
+                int returnVal = fileChooserMain.showOpenDialog(JOptionPane.getFrameForComponent(plugLoad));
 
                 if(returnVal == JFileChooser.APPROVE_OPTION){
                     File chosenPlugin = fileChooserMain.getSelectedFile();
@@ -407,7 +402,7 @@ public class MainWindowUI extends JFrame{
                 try{
                     Desktop.getDesktop().browse(new URI("http://honeycode.kevinmaarek.fr/"));
                 } catch (URISyntaxException | IOException ex){
-                    JOptionPane.showMessageDialog(mainWindowUI, ex.getMessage(),"Erreur", JOptionPane.ERROR_MESSAGE,null);
+                    JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(plugDown), ex.getMessage(),"Erreur", JOptionPane.ERROR_MESSAGE,null);
                 }
 
             }
@@ -417,7 +412,7 @@ public class MainWindowUI extends JFrame{
                 try{
                     Desktop.getDesktop().browse(new URI("http://honeycode.kevinmaarek.fr/"));
                 } catch (URISyntaxException | IOException ex){
-                    JOptionPane.showMessageDialog(mainWindowUI, "Could not open HoneyCode forum Web Page", "Erreur", JOptionPane.ERROR_MESSAGE, null);
+                    JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(forum), "Could not open HoneyCode forum Web Page", "Erreur", JOptionPane.ERROR_MESSAGE, null);
                 }
 
 
