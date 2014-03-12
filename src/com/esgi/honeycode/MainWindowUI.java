@@ -3,8 +3,7 @@ package com.esgi.honeycode;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +42,8 @@ public class MainWindowUI extends JFrame{
 
     private JButton runButton;
     private JButton buildOptionsButton;
+
+    private JButton closeTab;
 
     private JTextArea consoleOutputArea;
     private JEditorPane editorPaneMain;
@@ -119,6 +120,12 @@ public class MainWindowUI extends JFrame{
         buildOptionsButton = new JButton();
         consoleOutputArea = new JTextArea();
         fileChooserMain = new JFileChooser();
+        closeTab = new JButton();
+        closeTab.setFocusable(false);
+        closeTab.setOpaque(false);
+        closeTab.setRolloverEnabled(true);
+        closeTab.setBorder(null);
+
         homeMessage = new JTextArea();
         homeMessage.setEditable(false);
         homeMessage.setEnabled(false);
@@ -170,6 +177,7 @@ public class MainWindowUI extends JFrame{
         saveFileAS.addActionListener(test);
         settings.addActionListener(test);
         runButton.addActionListener(test);
+        past.addActionListener(test);
 
         consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
         subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
@@ -393,6 +401,7 @@ public class MainWindowUI extends JFrame{
                     if (homeMessage.isShowing())
                     {
                         editorPanel.remove(homeMessage);
+
                         editorPanel.add(tabFile);
                         editorPanel.updateUI();
                     }
@@ -451,19 +460,42 @@ public class MainWindowUI extends JFrame{
                     JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(forum), "Could not open HoneyCode forum Web Page", "Erreur", JOptionPane.ERROR_MESSAGE, null);
                 }
 
-
             }
 
             if(e.getSource() == copy){
-                StringSelection selectedText = new StringSelection(editorPaneMain.getSelectedText());
+                JScrollPane fl = (JScrollPane)tabFile.getSelectedComponent();
+                JEditorPane ed = (JEditorPane)fl.getViewport().getView();
+                StringSelection selectedText = new StringSelection(ed.getSelectedText());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selectedText,null);
             }
             if(e.getSource() == cut){
-                StringSelection selectedText = new StringSelection(editorPaneMain.getSelectedText());
+                JScrollPane fl = (JScrollPane)tabFile.getSelectedComponent();
+                JEditorPane ed = (JEditorPane)fl.getViewport().getView();
+
+                StringSelection selectedText = new StringSelection(ed.getSelectedText());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selectedText,null);
-                editorPaneMain.replaceSelection("");
+                ed.replaceSelection("");
+            }
+
+            if (e.getSource() == past)
+            {
+                String result = "";
+                JScrollPane fl = (JScrollPane)tabFile.getSelectedComponent();
+                JEditorPane ed = (JEditorPane)fl.getViewport().getView();
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                Transferable contents = clipboard.getContents(null);
+                boolean hasTransferableText = (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
+                if (hasTransferableText) {
+                    try {
+                        result = (String)contents.getTransferData(DataFlavor.stringFlavor);
+                        ed.replaceSelection(result);
+                    }
+                    catch (UnsupportedFlavorException | IOException ex){
+                        JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(past), ex);
+                    }
+                }
             }
 
             if (e.getSource() == settings){
