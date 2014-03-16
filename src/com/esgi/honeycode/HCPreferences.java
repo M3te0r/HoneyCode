@@ -17,25 +17,32 @@ public class HCPreferences {
 
     private Preferences prefs;
     private String langDef;
+    private String defaultPath;
 
 
     public HCPreferences() {
         //Préférences de registre par utilisateur
         this.prefs = Preferences.userNodeForPackage(this.getClass());
         this.langDef = System.getProperty("user.language");
-
-
+        this.defaultPath = System.getProperty("user.home")+System.getProperty("file.separator")+"HoneyCodeProjects";
     }
 
     public void setPreferences()
     {
         //Lowercase name only
-        this.prefs.put("language", langDef);
+        this.prefs.put("language", this.langDef);
+        this.prefs.put("project_path", this.defaultPath);
+
 
     }
 
     public String getUserLanguageReg()
     {
-        return this.prefs.get("language", langDef);
+        return this.prefs.get("language", this.langDef);
+    }
+
+    public String getProjetPath()
+    {
+        return this.prefs.get("project_path", this.defaultPath);
     }
 }

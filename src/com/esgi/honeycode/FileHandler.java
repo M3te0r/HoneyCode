@@ -1,5 +1,7 @@
 package com.esgi.honeycode;
 
+import org.fife.io.UnicodeReader;
+import org.fife.io.UnicodeWriter;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
@@ -31,10 +33,9 @@ public class FileHandler {
 
     public void writeFile(RSyntaxDocument document){
 
-        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.sourceFile))){
+        try(UnicodeWriter unicodeWriter = new UnicodeWriter(new BufferedOutputStream(new FileOutputStream(this.sourceFile)),"UTF-8")){
 
-
-            bufferedWriter.write(document.getText(document.getStartPosition().getOffset(), document.getLength()));
+            unicodeWriter.write(document.getText(document.getStartPosition().getOffset(), document.getLength()));
 
 
         }catch (FileNotFoundException ex)
@@ -53,23 +54,29 @@ public class FileHandler {
 
     /**
      *
-     * @return DefaultStyledDoument : the content of the file
+     * @return RSyntaxDocument : the content of the file with the syntax highlighting
      */
     public RSyntaxDocument readFile(){
 
-        RSyntaxDocument syntaxDocument = new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_JAVA); // Can be none
+        RSyntaxDocument syntaxDocument = new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_NONE);
+
+        if (this.sourceFile.getName().endsWith("java"))
+        {
+            syntaxDocument.setSyntaxStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+        }
+
 
         int buf;
         StringBuffer buffer= new StringBuffer(); // Maybe a StringBuilder if not multi-threaded
 
-        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(sourceFile))){
+        try(UnicodeReader unicodeReader = new UnicodeReader(new BufferedInputStream(new FileInputStream(this.sourceFile)))){
 
-           while((buf = bufferedReader.read())!=-1){
+           while((buf = unicodeReader.read())!=-1){
 
                buffer.append((char)buf);
            }
 
-            syntaxDocument.insertString(syntaxDocument.getStartPosition().getOffset(),buffer.toString(),null);
+            syntaxDocument.insertString(syntaxDocument.getStartPosition().getOffset(), buffer.toString(), null);
         }
         catch (BadLocationException ex){
             JOptionPane.showMessageDialog(null, "Could not find text location");
@@ -82,7 +89,6 @@ public class FileHandler {
         {
             JOptionPane.showMessageDialog(null, "Could not read from "+sourceFile.getName());
         }
-
 
         return syntaxDocument;
     }

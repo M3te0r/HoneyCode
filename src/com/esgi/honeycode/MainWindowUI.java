@@ -1,5 +1,6 @@
 package com.esgi.honeycode;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -79,9 +80,12 @@ public class MainWindowUI extends JFrame{
     final JFileChooser fileChooserMain;
     private JTextArea homeMessage;
     private int newFileNumber;
+    private Files filesArray;
 
+    private HCPreferences globalPreferences;
     public MainWindowUI(){
 
+        globalPreferences = new HCPreferences();
         //Instanciation des composants
         setTitle("HoneyCode");
 
@@ -122,6 +126,7 @@ public class MainWindowUI extends JFrame{
         consoleOutputArea = new JTextArea();
         fileChooserMain = new JFileChooser();
         newFileNumber = 0;
+        filesArray = new Files();
         closeTab = new JButton();
         closeTab.setFocusable(false);
         closeTab.setOpaque(false);
@@ -176,12 +181,11 @@ public class MainWindowUI extends JFrame{
         forum.addActionListener(test);
         copy.addActionListener(test);
         cut.addActionListener(test);
+        saveFile.addActionListener(test);
         saveFileAS.addActionListener(test);
         settings.addActionListener(test);
         runButton.addActionListener(test);
         past.addActionListener(test);
-
-
 
         consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
         subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
@@ -239,6 +243,9 @@ public class MainWindowUI extends JFrame{
         help.add(forum);
         help.add(checkUpdate);
 
+        saveFile.setEnabled(false);
+        saveFileAS.setEnabled(false);
+
 
         setJMenuBar(menuBarMain);
         setContentPane(mainPanel);
@@ -283,8 +290,7 @@ public class MainWindowUI extends JFrame{
     private void setUILanguage()
     {
         //Maybe moving it to class field if using other reg key ?
-        HCPreferences globalPreferences = new HCPreferences();
-        globalPreferences.setPreferences();
+
 
         String userLanguage = globalPreferences.getUserLanguageReg();
         /*
@@ -372,11 +378,16 @@ public class MainWindowUI extends JFrame{
 
     }
 
-    public class ActionListenerMenuBar implements ActionListener {
+    private class ActionListenerMenuBar implements ActionListener {
         public void actionPerformed (ActionEvent e){
             if(e.getSource() == newFile){
                 if (homeMessage.isShowing())
                 {
+                    if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
+                    {
+                        saveFile.setEnabled(true);
+                        saveFileAS.setEnabled(true);
+                    }
 
                     editorPanel.remove(homeMessage);
 
@@ -384,24 +395,57 @@ public class MainWindowUI extends JFrame{
                     editorPanel.updateUI();
                 }
                 newFileNumber += 1;
-                tabFile.add("new "+newFileNumber,new RTextScrollPane(new RSyntaxTextArea()));
-
-                for(Component cp : tabFile.getComponents())
-                {
-                    cp.setFont(new Font("Courier New", Font.PLAIN, 14));
-                }
-
+                tabFile.add("new " + newFileNumber, new RTextScrollPane(new RSyntaxTextArea()));
 
             }
             if (e.getSource() == saveFileAS)
             {
-                System.out.print("Save File As");
+
+                fileChooserMain.setCurrentDirectory(new File(globalPreferences.getProjetPath()));
+                int status = fileChooserMain.showSaveDialog(JOptionPane.getFrameForComponent(saveFileAS));
+                if (status == JFileChooser.APPROVE_OPTION)
+                {
+
+                    FileHandler file = new FileHandler(fileChooserMain.getSelectedFile());
+                    RTextScrollPane rTextScrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
+                    RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
+                    file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
+                    filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
+                    tabFile.setTitleAt(tabFile.getSelectedIndex(), fileChooserMain.getSelectedFile().getName());
+                    tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),fileChooserMain.getSelectedFile().getAbsolutePath());
+                    filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
+                }
+
             }
 
             if (e.getSource() == saveFile)
             {
-                System.out.print("Save");
 
+                System.out.println(tabFile.getToolTipTextAt(tabFile.getSelectedIndex()));
+                RTextScrollPane rTextScrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
+                RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
+                if (tabFile.getToolTipTextAt(tabFile.getSelectedIndex())==null)
+                {
+
+                    fileChooserMain.setCurrentDirectory(new File(globalPreferences.getProjetPath()));
+                    int status = fileChooserMain.showSaveDialog(JOptionPane.getFrameForComponent(saveFileAS));
+                    if (status == JFileChooser.APPROVE_OPTION)
+                    {
+
+                        FileHandler file = new FileHandler(fileChooserMain.getSelectedFile());
+
+                        file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
+                        filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
+                        tabFile.setTitleAt(tabFile.getSelectedIndex(), fileChooserMain.getSelectedFile().getName());
+                        tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),fileChooserMain.getSelectedFile().getAbsolutePath());
+                        filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
+                    }
+                }
+                else {
+                    FileHandler file = new FileHandler(new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex())));
+                    file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
+
+                }
             }
 
             if(e.getSource() == about){
@@ -425,8 +469,13 @@ public class MainWindowUI extends JFrame{
                         editorPanel.updateUI();
                     }
 
-                        tabFile.add(chosenFile.getName(),new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())));
+                    tabFile.add(chosenFile.getName(),new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())));
 
+                    if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
+                    {
+                        saveFile.setEnabled(true);
+                        saveFileAS.setEnabled(true);
+                    }
                        /* for(Component cp : tabFile.getComponents())
                         {
                             cp.setFont(new Font("Courier New", Font.PLAIN, 14));
@@ -435,7 +484,7 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == exitApp){
-                int confirm = JOptionPane.showConfirmDialog(JOptionPane.getFrameForComponent(exitApp), "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+                int confirm = JOptionPane.showConfirmDialog(JOptionPane.getFrameForComponent(exitApp), "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (confirm == JOptionPane.YES_OPTION){
                     /*
                     TODO :
