@@ -1,8 +1,10 @@
 package com.esgi.honeycode;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
 import java.io.*;
 
 /**
@@ -27,7 +29,7 @@ public class FileHandler {
      * @param document = the StyledDocument from the JEditorPane
      */
 
-    public void writeFile(DefaultStyledDocument document){
+    public void writeFile(RSyntaxDocument document){
 
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.sourceFile))){
 
@@ -53,9 +55,10 @@ public class FileHandler {
      *
      * @return DefaultStyledDoument : the content of the file
      */
-    public DefaultStyledDocument readFile(){
+    public RSyntaxDocument readFile(){
 
-        DefaultStyledDocument defaultStyledDocument = new DefaultStyledDocument();
+        RSyntaxDocument syntaxDocument = new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_JAVA); // Can be none
+
         int buf;
         StringBuffer buffer= new StringBuffer(); // Maybe a StringBuilder if not multi-threaded
 
@@ -66,7 +69,7 @@ public class FileHandler {
                buffer.append((char)buf);
            }
 
-            defaultStyledDocument.insertString(defaultStyledDocument.getStartPosition().getOffset(), buffer.toString(), null); 
+            syntaxDocument.insertString(syntaxDocument.getStartPosition().getOffset(),buffer.toString(),null);
         }
         catch (BadLocationException ex){
             JOptionPane.showMessageDialog(null, "Could not find text location");
@@ -81,6 +84,6 @@ public class FileHandler {
         }
 
 
-        return defaultStyledDocument;
+        return syntaxDocument;
     }
 }

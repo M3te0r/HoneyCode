@@ -1,7 +1,9 @@
 package com.esgi.honeycode;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rtextarea.RTextScrollPane;
+
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
@@ -46,7 +48,6 @@ public class MainWindowUI extends JFrame{
     private JButton closeTab;
 
     private JTextArea consoleOutputArea;
-    private JEditorPane editorPaneMain;
     private JMenuBar menuBarMain;
     private JMenu file;
     private JMenu edit;
@@ -77,6 +78,7 @@ public class MainWindowUI extends JFrame{
     private String exitMessage;
     final JFileChooser fileChooserMain;
     private JTextArea homeMessage;
+    private int newFileNumber;
 
     public MainWindowUI(){
 
@@ -88,7 +90,6 @@ public class MainWindowUI extends JFrame{
         tabFile = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
         consolePane = new JPanel();
         subConsolePane = new JPanel();
-        editorPaneMain = new JEditorPane(); // To delete
         menuBarMain = new JMenuBar();
         file = new JMenu();
         edit = new JMenu();
@@ -120,6 +121,7 @@ public class MainWindowUI extends JFrame{
         buildOptionsButton = new JButton();
         consoleOutputArea = new JTextArea();
         fileChooserMain = new JFileChooser();
+        newFileNumber = 0;
         closeTab = new JButton();
         closeTab.setFocusable(false);
         closeTab.setOpaque(false);
@@ -142,7 +144,7 @@ public class MainWindowUI extends JFrame{
 
         int shortcutKey = tkMain.getMenuShortcutKeyMask();
 
-        setUILanguage(shortcutKey);
+        setUILanguage();
 
 
         treeMain = new JTree();
@@ -178,6 +180,8 @@ public class MainWindowUI extends JFrame{
         settings.addActionListener(test);
         runButton.addActionListener(test);
         past.addActionListener(test);
+
+
 
         consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
         subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
@@ -235,6 +239,7 @@ public class MainWindowUI extends JFrame{
         help.add(forum);
         help.add(checkUpdate);
 
+
         setJMenuBar(menuBarMain);
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -246,8 +251,6 @@ public class MainWindowUI extends JFrame{
         subConsolePane.add(buildOptionsButton, BorderLayout.CENTER);
         subConsolePane.add(runButton, BorderLayout.EAST);
         consoleOutputArea.setBackground(Color.BLACK);
-
-      //  editorPaneMain.setPreferredSize(new Dimension(dimScreenSize.width - 400, 500)); // In fixed size, need to adapt
 
         treePanel.add(treeMain, BorderLayout.CENTER);
         mainPanel.add(wholeSplit, BorderLayout.CENTER);
@@ -277,7 +280,7 @@ public class MainWindowUI extends JFrame{
         });
     }
 
-    private void setUILanguage(int shortcutKey)
+    private void setUILanguage()
     {
         //Maybe moving it to class field if using other reg key ?
         HCPreferences globalPreferences = new HCPreferences();
@@ -364,6 +367,7 @@ public class MainWindowUI extends JFrame{
         homeMessage.setText(bundle.getString("homeMessage"));
 
 
+
         //...Suite des traductions...
 
     }
@@ -371,8 +375,23 @@ public class MainWindowUI extends JFrame{
     public class ActionListenerMenuBar implements ActionListener {
         public void actionPerformed (ActionEvent e){
             if(e.getSource() == newFile){
-                System.out.println(e.getSource().toString());
-                System.out.println("New File");
+                if (homeMessage.isShowing())
+                {
+
+                    editorPanel.remove(homeMessage);
+
+                    editorPanel.add(tabFile);
+                    editorPanel.updateUI();
+                }
+                newFileNumber += 1;
+                tabFile.add("new "+newFileNumber,new RTextScrollPane(new RSyntaxTextArea()));
+
+                for(Component cp : tabFile.getComponents())
+                {
+                    cp.setFont(new Font("Courier New", Font.PLAIN, 14));
+                }
+
+
             }
             if (e.getSource() == saveFileAS)
             {
@@ -405,19 +424,13 @@ public class MainWindowUI extends JFrame{
                         editorPanel.add(tabFile);
                         editorPanel.updateUI();
                     }
-                    try
-                    {
-                        tabFile.add(chosenFile.getName(), new JScrollPane(new JEditorPane("text/plain",fileHandler.readFile().getText(fileHandler.readFile().getStartPosition().getOffset(),fileHandler.readFile().getLength()))));
 
-                        for(Component cp : tabFile.getComponents())
+                        tabFile.add(chosenFile.getName(),new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())));
+
+                       /* for(Component cp : tabFile.getComponents())
                         {
                             cp.setFont(new Font("Courier New", Font.PLAIN, 14));
-                        }
-                    }
-                    catch (BadLocationException ex)
-                    {
-                        JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(open), "Could not find text location");
-                    }
+                        }*/
                 }
             }
 
@@ -463,15 +476,15 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == copy){
-                JScrollPane fl = (JScrollPane)tabFile.getSelectedComponent();
-                JEditorPane ed = (JEditorPane)fl.getViewport().getView();
+                RTextScrollPane RSrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
+                RSyntaxTextArea ed = (RSyntaxTextArea)RSrollPane.getViewport().getView();
                 StringSelection selectedText = new StringSelection(ed.getSelectedText());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selectedText,null);
             }
             if(e.getSource() == cut){
-                JScrollPane fl = (JScrollPane)tabFile.getSelectedComponent();
-                JEditorPane ed = (JEditorPane)fl.getViewport().getView();
+                RTextScrollPane RSrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
+                RSyntaxTextArea ed = (RSyntaxTextArea)RSrollPane.getViewport().getView();
 
                 StringSelection selectedText = new StringSelection(ed.getSelectedText());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -481,9 +494,9 @@ public class MainWindowUI extends JFrame{
 
             if (e.getSource() == past)
             {
-                String result = "";
-                JScrollPane fl = (JScrollPane)tabFile.getSelectedComponent();
-                JEditorPane ed = (JEditorPane)fl.getViewport().getView();
+                String result;
+                RTextScrollPane RSrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
+                RSyntaxTextArea ed = (RSyntaxTextArea)RSrollPane.getViewport().getView();
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 Transferable contents = clipboard.getContents(null);
                 boolean hasTransferableText = (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
