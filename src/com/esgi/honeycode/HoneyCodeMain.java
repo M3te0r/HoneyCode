@@ -11,6 +11,8 @@ public class HoneyCodeMain {
 
     public static void main(String[] args){
 
+        System.out.println(System.getProperty("java.class.path"));
+
         HCPreferences globalPreferences = new HCPreferences();
         globalPreferences.setPreferences();
         File projectPath = new File(globalPreferences.getProjetPath());
