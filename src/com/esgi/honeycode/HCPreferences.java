@@ -1,5 +1,7 @@
 package com.esgi.honeycode;
 
+import javax.swing.*;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
@@ -34,6 +36,18 @@ public class HCPreferences {
         this.prefs.put("project_path", this.defaultPath);
 
 
+
+    }
+
+    public void clear()
+    {
+        try {
+            this.prefs.clear();
+        }
+        catch (BackingStoreException ex)
+        {
+            JOptionPane.showMessageDialog(null, ex.getStackTrace());
+        }
     }
 
     public String getUserLanguageReg()

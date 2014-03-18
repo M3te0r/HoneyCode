@@ -3,16 +3,13 @@ package com.esgi.honeycode;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-
-import java.util.prefs.Preferences;
-
 /**
  * Created by Mathieu on 17/03/14.
  * Test class for HCPreferences class methods
  */
 public class HCPreferencesTest {
 
-    private static Preferences prefs;
+    private static HCPreferences preferencesTest;
     private static String langDef;
     private static String defaultPath;
 
@@ -20,33 +17,33 @@ public class HCPreferencesTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
 
-        prefs = Preferences.userNodeForPackage(Class.forName("com.esgi.honeycode.HCPreferencesTest"));
+        preferencesTest = new HCPreferences();
         langDef = System.getProperty("user.language");
         defaultPath = System.getProperty("user.home")+System.getProperty("file.separator")+"HoneyCodeProjects";
+
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
-        prefs.clear();
+        preferencesTest.clear();
     }
 
     @Test
     public void testSetPreferences() throws Exception {
 
-        prefs.put("languagetest", langDef);
-        assertEquals(langDef, prefs.get("languagetest", langDef));
-        prefs.put("projectpathtest", defaultPath);
-        assertEquals(defaultPath,  prefs.get("projectpathtest", defaultPath));
+        preferencesTest.setPreferences();
+        assertEquals(langDef, preferencesTest.getUserLanguageReg());
+        assertEquals(defaultPath, preferencesTest.getProjetPath());
     }
 
     @Test
     public void testGetUserLanguageReg() throws Exception {
 
-        assertNotNull(prefs.get("languagetest", langDef));
+        assertNotNull(preferencesTest.getUserLanguageReg());
     }
 
     @Test
     public void testGetProjetPath() throws Exception {
-        assertNotNull(prefs.get("projectpaththest",defaultPath));
+        assertNotNull(preferencesTest.getProjetPath());
     }
 }
