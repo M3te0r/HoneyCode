@@ -11,6 +11,15 @@ public class HoneyCodeMain {
 
     public static void main(String[] args){
 
+        try {
+            // Set System L&F
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            // handle exception
+        }
+
         HCPreferences globalPreferences = new HCPreferences();
         globalPreferences.setPreferences();
         File projectPath = new File(globalPreferences.getProjetPath());
