@@ -4,12 +4,14 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import java.io.File;
 
+
 /**
- * Created by Mathieu on 18/03/14.
+ * Test class for FileHandler class
  */
 public class FileHandlerTest {
 

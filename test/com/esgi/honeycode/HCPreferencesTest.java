@@ -4,7 +4,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 /**
- * Created by Mathieu on 17/03/14.
+ *
  * Test class for HCPreferences class methods
  */
 public class HCPreferencesTest {
