@@ -5,6 +5,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
@@ -37,6 +38,7 @@ public class MainWindowUI extends JFrame{
     private static final Icon CLOSE_TAB_ICON_DISABLED = new ImageIcon(MainWindowUI.class.getResource(".."+fileSeparator+".."+fileSeparator+".."+fileSeparator+"ressources"+fileSeparator+"Cross_close_tab_button_disabled.png"));
     private static final Icon TAB_ICON = new ImageIcon(MainWindowUI.class.getResource(".."+fileSeparator+".."+fileSeparator+".."+fileSeparator+"ressources"+fileSeparator+"Icon_page_code.gif"));
 
+    private static final Image MAIN_IMAGE = new ImageIcon(MainWindowUI.class.getResource(".."+fileSeparator+".."+fileSeparator+".."+fileSeparator+"ressources"+fileSeparator+"main.png")).getImage();
     private JPanel treePanel;
     private JTabbedPane tabFile;
     private JTree treeMain;
@@ -48,7 +50,7 @@ public class MainWindowUI extends JFrame{
     private JPanel consolePane;
     private JPanel subConsolePane;
     private JLabel lastBuildLabel = new JLabel("Last build : test");
-
+    private JButton buildButton;
     private JButton runButton;
     private JButton buildOptionsButton;
 
@@ -82,13 +84,17 @@ public class MainWindowUI extends JFrame{
     private JMenuItem checkUpdate;
     private String exitMessage;
     final JFileChooser fileChooserMain;
+    final JFileChooser pluginChooser;
     private JTextArea homeMessage;
     private int newFileNumber;
+    private int tabCount;
     private Files filesArray;
     private static int shortcutKey;
 
     private HCPreferences globalPreferences;
     public MainWindowUI(){
+
+        setIconImage(MAIN_IMAGE);
 
         globalPreferences = new HCPreferences();
         //Instanciation des composants
@@ -127,9 +133,18 @@ public class MainWindowUI extends JFrame{
         forum = new JMenuItem();
         checkUpdate = new JMenuItem();
         runButton = new JButton();
+        buildButton = new JButton();
         buildOptionsButton = new JButton();
         consoleOutputArea = new JTextArea();
         fileChooserMain = new JFileChooser();
+        pluginChooser = new JFileChooser();
+
+        fileChooserMain.setAcceptAllFileFilterUsed(false);
+        fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Java sources", "java"));
+        fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Text files", "txt"));
+        pluginChooser.setAcceptAllFileFilterUsed(false);
+        pluginChooser.addChoosableFileFilter(new FileNameExtensionFilter("Jar files", "jar"));
+
         newFileNumber = 0;
         filesArray = new Files();
 
@@ -180,6 +195,7 @@ public class MainWindowUI extends JFrame{
         saveFileAS.addActionListener(test);
         settings.addActionListener(test);
         runButton.addActionListener(test);
+        buildButton.addActionListener(test);
         past.addActionListener(test);
 
         consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
@@ -188,7 +204,7 @@ public class MainWindowUI extends JFrame{
 
         treePanel.setLayout(new BorderLayout());
         consolePane.setLayout(new BorderLayout());
-        subConsolePane.setLayout(new BorderLayout());
+        subConsolePane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         mainPanel.setLayout(new BorderLayout());
 
 
@@ -248,9 +264,10 @@ public class MainWindowUI extends JFrame{
         consolePane.add(subConsolePane, BorderLayout.NORTH);
         consolePane.add(consoleOutputArea, BorderLayout.CENTER);
 
-        subConsolePane.add(lastBuildLabel, BorderLayout.WEST);
-        subConsolePane.add(buildOptionsButton, BorderLayout.CENTER);
-        subConsolePane.add(runButton, BorderLayout.EAST);
+        subConsolePane.add(lastBuildLabel);
+        subConsolePane.add(buildOptionsButton);
+        subConsolePane.add(buildButton);
+        subConsolePane.add(runButton);
         consoleOutputArea.setBackground(Color.BLACK);
 
         treePanel.add(treeMain, BorderLayout.CENTER);
@@ -361,6 +378,7 @@ public class MainWindowUI extends JFrame{
         forum.setText(bundle.getString("forum"));
         checkUpdate.setText(bundle.getString("checkUpdate"));
         runButton.setText(bundle.getString("runButton"));
+        buildButton.setText(bundle.getString("buidButton"));
         buildOptionsButton.setText(bundle.getString("buildOptionsButton"));
         consoleOutputArea.setText(bundle.getString("consoleOutputArea"));
         exitMessage = bundle.getString("exitMessage");
@@ -490,8 +508,6 @@ public class MainWindowUI extends JFrame{
 
             if (e.getSource() == saveFile)
             {
-
-                System.out.println(tabFile.getToolTipTextAt(tabFile.getSelectedIndex()));
                 RTextScrollPane rTextScrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
                 RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
                 if (tabFile.getToolTipTextAt(tabFile.getSelectedIndex())==null)
@@ -529,7 +545,6 @@ public class MainWindowUI extends JFrame{
 
                 if (returnVal == JFileChooser.APPROVE_OPTION){
                     File chosenFile = fileChooserMain.getSelectedFile();
-                    //Accept all file extensions ?
                     FileHandler fileHandler = new FileHandler(chosenFile);
                     if (homeMessage.isShowing())
                     {
@@ -540,6 +555,7 @@ public class MainWindowUI extends JFrame{
                     }
 
                     addCloseableTab(tabFile,new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())), chosenFile.getName(),TAB_ICON);
+                    tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),chosenFile.getAbsolutePath());
 
                     if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
                     {
@@ -560,14 +576,17 @@ public class MainWindowUI extends JFrame{
                     System.exit(0);
                 }
 
+
             }
 
             if(e.getSource() == plugLoad){
-                int returnVal = fileChooserMain.showOpenDialog(JOptionPane.getFrameForComponent(plugLoad));
+
+
+                int returnVal = pluginChooser.showOpenDialog(JOptionPane.getFrameForComponent(plugLoad));
 
                 if(returnVal == JFileChooser.APPROVE_OPTION){
-                    File chosenPlugin = fileChooserMain.getSelectedFile();
-                    // Only accept *.jar files
+
+                    File chosenPlugin = pluginChooser.getSelectedFile();
                 }
             }
             if(e.getSource() == plugDown){
@@ -631,11 +650,16 @@ public class MainWindowUI extends JFrame{
                 System.out.println("Settings");
             }
 
-            if(e.getSource() == runButton){
-                Date date = new Date();
-                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-                String dateString = dateFormat.format(date);
-                lastBuildLabel.setText("Last build : " + dateString);
+            if(e.getSource() == buildButton){
+                if (tabFile.isShowing() && tabFile.getToolTipTextAt(tabFile.getSelectedIndex()).endsWith(".java"))
+                {
+                    Date date = new Date();
+                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+                    String dateString = dateFormat.format(date);
+                    lastBuildLabel.setText("Last build : " + dateString);
+                    String[] cc = {tabFile.getToolTipTextAt(tabFile.getSelectedIndex())};
+                    CompileJavaFiles.CompileJava(cc);
+                }
             }
         }
     }

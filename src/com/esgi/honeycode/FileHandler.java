@@ -24,7 +24,6 @@ public class FileHandler {
 
     public FileHandler(File sourceFile) {
         this.sourceFile = sourceFile;
-
     }
 
     /**
@@ -34,13 +33,9 @@ public class FileHandler {
 
     public void writeFile(RSyntaxDocument document){
 
-
-
         try(UnicodeWriter unicodeWriter = new UnicodeWriter(new BufferedOutputStream(new FileOutputStream(this.sourceFile)),"UTF-8")){
 
             unicodeWriter.write(document.getText(document.getStartPosition().getOffset(), document.getLength()));
-
-
         }catch (FileNotFoundException ex)
         {
             JOptionPane.showMessageDialog(null, "Could not open such file : "+sourceFile.getName());
@@ -70,7 +65,6 @@ public class FileHandler {
             syntaxDocument.setSyntaxStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         }
 
-
         int buf;
         StringBuffer buffer= new StringBuffer(); // Maybe a StringBuilder if not multi-threaded
 
@@ -95,7 +89,6 @@ public class FileHandler {
         {
             JOptionPane.showMessageDialog(null, "Could not read from "+sourceFile.getName());
         }
-
         return syntaxDocument;
     }
 }

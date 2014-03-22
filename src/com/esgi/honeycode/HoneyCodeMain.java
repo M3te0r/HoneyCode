@@ -1,5 +1,7 @@
 package com.esgi.honeycode;
 
+import org.fife.io.UnicodeWriter;
+
 import javax.swing.*;
 import java.io.File;
 
@@ -28,6 +30,8 @@ public class HoneyCodeMain {
         {
             JOptionPane.showMessageDialog(null, "Impossible de créer le répertoire de projet : "+projectPath);
         }
+
+        System.setProperty(UnicodeWriter.PROPERTY_WRITE_UTF8_BOM, "false");
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
