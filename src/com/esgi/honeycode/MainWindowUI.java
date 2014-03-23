@@ -32,13 +32,11 @@ public class MainWindowUI extends JFrame{
 
     private ResourceBundle bundle;
 
-    private static final String fileSeparator = System.getProperty("file.separator");
+    private static final Icon CLOSE_TAB_ICON = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"Cross_close_tab_button.png"));
+    private static final Icon CLOSE_TAB_ICON_DISABLED = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"Cross_close_tab_button_disabled.png"));
+    private static final Icon TAB_ICON = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"Icon_page_code.gif"));
 
-    private static final Icon CLOSE_TAB_ICON = new ImageIcon(MainWindowUI.class.getResource(".."+fileSeparator+".."+fileSeparator+".."+fileSeparator+"ressources"+fileSeparator+"Cross_close_tab_button.png"));
-    private static final Icon CLOSE_TAB_ICON_DISABLED = new ImageIcon(MainWindowUI.class.getResource(".."+fileSeparator+".."+fileSeparator+".."+fileSeparator+"ressources"+fileSeparator+"Cross_close_tab_button_disabled.png"));
-    private static final Icon TAB_ICON = new ImageIcon(MainWindowUI.class.getResource(".."+fileSeparator+".."+fileSeparator+".."+fileSeparator+"ressources"+fileSeparator+"Icon_page_code.gif"));
-
-    private static final Image MAIN_IMAGE = new ImageIcon(MainWindowUI.class.getResource(".."+fileSeparator+".."+fileSeparator+".."+fileSeparator+"ressources"+fileSeparator+"main.png")).getImage();
+    private static final Image MAIN_IMAGE = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"main.png")).getImage();
     private JPanel treePanel;
     private JTabbedPane tabFile;
     private JTree treeMain;
@@ -499,9 +497,11 @@ public class MainWindowUI extends JFrame{
                     RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
                     file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
                     filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
-                    tabFile.setTitleAt(tabFile.getSelectedIndex(), fileChooserMain.getSelectedFile().getName());
+                    //Can't figure why the fuck it only sets the text at the second attempt with save file as
+                    ((JLabel) ((JPanel) tabFile.getTabComponentAt(tabFile.getSelectedIndex())).getComponent(0)).setText(fileChooserMain.getSelectedFile().getName());
                     tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),fileChooserMain.getSelectedFile().getAbsolutePath());
                     filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
+
                 }
 
             }
@@ -653,12 +653,14 @@ public class MainWindowUI extends JFrame{
             if(e.getSource() == buildButton){
                 if (tabFile.isShowing() && tabFile.getToolTipTextAt(tabFile.getSelectedIndex()).endsWith(".java"))
                 {
+                    CompileJavaFiles.createClassDir(new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex())).getParent());
                     Date date = new Date();
                     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
                     String dateString = dateFormat.format(date);
                     lastBuildLabel.setText("Last build : " + dateString);
-                    String[] cc = {tabFile.getToolTipTextAt(tabFile.getSelectedIndex())};
-                    CompileJavaFiles.CompileJava(cc);
+                    File[] cc = {new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex()))};
+                    CompileJavaFiles.doCompilation(cc,null);
+
                 }
             }
         }

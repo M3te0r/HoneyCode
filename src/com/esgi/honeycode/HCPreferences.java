@@ -26,7 +26,7 @@ public class HCPreferences {
         //Préférences de registre par utilisateur
         this.prefs = Preferences.userNodeForPackage(this.getClass());
         this.langDef = System.getProperty("user.language");
-        this.defaultPath = System.getProperty("user.home")+System.getProperty("file.separator")+"HoneyCodeProjects";
+        this.defaultPath = System.getProperty("user.home")+PropertiesShared.SEPARATOR+"HoneyCodeProjects";
     }
 
     public void setPreferences()
