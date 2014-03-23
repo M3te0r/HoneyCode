@@ -11,6 +11,7 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
@@ -41,6 +42,7 @@ public class MainWindowUI extends JFrame{
     private JTabbedPane tabFile;
     private JTree treeMain;
     private JScrollPane scrollTree;
+    private JScrollPane consoleSroll;
     private JSplitPane splited;
     private JSplitPane wholeSplit;
     private JPanel editorPanel;
@@ -90,6 +92,9 @@ public class MainWindowUI extends JFrame{
     private static int shortcutKey;
 
     private HCPreferences globalPreferences;
+
+    private CustomConsoleOutputStream out;
+
     public MainWindowUI(){
 
         setIconImage(MAIN_IMAGE);
@@ -134,6 +139,8 @@ public class MainWindowUI extends JFrame{
         buildButton = new JButton();
         buildOptionsButton = new JButton();
         consoleOutputArea = new JTextArea();
+        out = new CustomConsoleOutputStream(consoleOutputArea);
+        System.setOut(new PrintStream(out));
         fileChooserMain = new JFileChooser();
         pluginChooser = new JFileChooser();
 
@@ -198,7 +205,6 @@ public class MainWindowUI extends JFrame{
 
         consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
         subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
-        consoleOutputArea.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 210));
 
         treePanel.setLayout(new BorderLayout());
         consolePane.setLayout(new BorderLayout());
@@ -259,14 +265,17 @@ public class MainWindowUI extends JFrame{
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
+        consoleSroll = new JScrollPane(consoleOutputArea);
         consolePane.add(subConsolePane, BorderLayout.NORTH);
-        consolePane.add(consoleOutputArea, BorderLayout.CENTER);
+        consolePane.add(consoleSroll, BorderLayout.CENTER);
 
         subConsolePane.add(lastBuildLabel);
         subConsolePane.add(buildOptionsButton);
         subConsolePane.add(buildButton);
         subConsolePane.add(runButton);
-        consoleOutputArea.setBackground(Color.BLACK);
+        consoleOutputArea.setBackground(Color.DARK_GRAY);
+        consoleOutputArea.setForeground(Color.WHITE);
+
 
         treePanel.add(treeMain, BorderLayout.CENTER);
         mainPanel.add(wholeSplit, BorderLayout.CENTER);
@@ -575,8 +584,6 @@ public class MainWindowUI extends JFrame{
                      */
                     System.exit(0);
                 }
-
-
             }
 
             if(e.getSource() == plugLoad){
@@ -659,8 +666,8 @@ public class MainWindowUI extends JFrame{
                     String dateString = dateFormat.format(date);
                     lastBuildLabel.setText("Last build : " + dateString);
                     File[] cc = {new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex()))};
+                    System.out.flush();
                     CompileJavaFiles.doCompilation(cc,null);
-
                 }
             }
         }

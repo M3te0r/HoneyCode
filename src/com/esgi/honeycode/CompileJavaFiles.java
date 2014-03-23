@@ -37,7 +37,6 @@ public class CompileJavaFiles {
 
         boolean compilationStatus = compilerTask.call();
 
-
         if (!compilationStatus)
         {//If compilation error occurs
             System.out.println("Compilation failed\n");
@@ -48,7 +47,7 @@ public class CompileJavaFiles {
             }
         }
         else{
-            System.out.println("\nCompilation completed");
+            System.out.println("Compilation completed");
         }
     }
 
