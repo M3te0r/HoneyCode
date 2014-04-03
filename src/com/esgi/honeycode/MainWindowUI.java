@@ -49,7 +49,7 @@ public class MainWindowUI extends JFrame{
     private JPanel mainPanel;
     private JPanel consolePane;
     private JPanel subConsolePane;
-    private JLabel lastBuildLabel = new JLabel("Last build : test");
+    private JLabel lastBuildLabel;
     private JButton buildButton;
     private JButton runButton;
     private JButton buildOptionsButton;
@@ -61,6 +61,7 @@ public class MainWindowUI extends JFrame{
     private JMenu view;
     private JMenu plugin;
     private JMenu help;
+    private JMenuItem newProject;
     private JMenuItem newFile;
     private JMenuItem open;
     private JMenuItem recentFiles;
@@ -90,6 +91,7 @@ public class MainWindowUI extends JFrame{
     private int tabCount;
     private Files filesArray;
     private static int shortcutKey;
+    private static Files projectFiles;
 
     private HCPreferences globalPreferences;
 
@@ -114,6 +116,7 @@ public class MainWindowUI extends JFrame{
         view = new JMenu();
         plugin = new JMenu("Plugins");
         help = new JMenu();
+        newProject = new JMenuItem();
         newFile = new JMenuItem();
         open = new JMenuItem();
         recentFiles = new JMenuItem();  //Collections d'objets (nom du fichier, chemin) ??
@@ -143,6 +146,8 @@ public class MainWindowUI extends JFrame{
         System.setOut(new PrintStream(out));
         fileChooserMain = new JFileChooser();
         pluginChooser = new JFileChooser();
+        lastBuildLabel = new JLabel("Last build : none");
+        projectFiles = new Files();
 
         fileChooserMain.setAcceptAllFileFilterUsed(false);
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Java sources", "java"));
@@ -231,6 +236,7 @@ public class MainWindowUI extends JFrame{
 
         //Adding menus into menubar
         menuBarMain.add(file);
+        file.add(newProject);
         file.add(newFile);
         file.add(open);
         file.add(recentFiles);
@@ -363,6 +369,7 @@ public class MainWindowUI extends JFrame{
         edit.setText(bundle.getString("edit"));
         help.setText(bundle.getString("help"));
 
+        newProject.setText(bundle.getString("newProject"));
         newFile.setText(bundle.getString("newFile"));
         open.setText(bundle.getString("open"));
         recentFiles.setText(bundle.getString("recentFiles"));
@@ -473,6 +480,13 @@ public class MainWindowUI extends JFrame{
 
     private class ActionListenerMenuBar implements ActionListener {
         public void actionPerformed (ActionEvent e){
+
+
+            if (e.getSource() == newProject)
+            {
+
+
+            }
             if(e.getSource() == newFile){
                 if (homeMessage.isShowing())
                 {
@@ -491,6 +505,7 @@ public class MainWindowUI extends JFrame{
 
                 Icon icon = TAB_ICON;
                 addCloseableTab(tabFile, new RTextScrollPane(new RSyntaxTextArea()),"new "+newFileNumber, icon);
+                projectFiles.addFile(new File("new "+newFileNumber));
 
             }
             if (e.getSource() == saveFileAS)
@@ -505,11 +520,12 @@ public class MainWindowUI extends JFrame{
                     RTextScrollPane rTextScrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
                     RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
                     file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
-                    filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
+                    projectFiles.addFile(fileChooserMain.getSelectedFile());
                     //Can't figure why the fuck it only sets the text at the second attempt with save file as
                     ((JLabel) ((JPanel) tabFile.getTabComponentAt(tabFile.getSelectedIndex())).getComponent(0)).setText(fileChooserMain.getSelectedFile().getName());
-                    tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),fileChooserMain.getSelectedFile().getAbsolutePath());
+                    tabFile.setToolTipTextAt(tabFile.getSelectedIndex(), fileChooserMain.getSelectedFile().getAbsolutePath());
                     filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
+
 
                 }
 
@@ -660,6 +676,8 @@ public class MainWindowUI extends JFrame{
             if(e.getSource() == buildButton){
                 if (tabFile.isShowing() && tabFile.getToolTipTextAt(tabFile.getSelectedIndex()).endsWith(".java"))
                 {
+
+
                     CompileJavaFiles.createClassDir(new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex())).getParent());
                     Date date = new Date();
                     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
@@ -667,10 +685,10 @@ public class MainWindowUI extends JFrame{
                     lastBuildLabel.setText("Last build : " + dateString);
                     File[] cc = {new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex()))};
                     System.out.flush();
-                    CompileJavaFiles.doCompilation(cc,null);
+                    System.out.println(cc[0].getParent());
+                    CompileJavaFiles.doCompilation(cc);
                 }
             }
         }
     }
-
 }

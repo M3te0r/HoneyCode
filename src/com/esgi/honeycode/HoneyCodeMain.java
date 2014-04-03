@@ -6,12 +6,13 @@ import javax.swing.*;
 import java.io.File;
 
 /**
- * Created by Mathieu on 11/02/14.
+ *
  * Main class
  */
 public class HoneyCodeMain {
 
     public static void main(String[] args){
+
 
         try {
             // Set System L&F

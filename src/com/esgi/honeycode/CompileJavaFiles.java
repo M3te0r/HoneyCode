@@ -22,15 +22,17 @@ public class CompileJavaFiles {
     private static DiagnosticCollector<JavaFileObject> diagnosticCollector;
     private static String className;
 
-    public static void doCompilation(File[] files, String[] compilOptions )
+    public static void doCompilation(File[] files)
     {
+
         diagnosticCollector = new DiagnosticCollector<>();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, Locale.getDefault(), Charset.defaultCharset());
         //Build a list of all compilations units
         Iterable<? extends JavaFileObject> compilationsUnits1 = fileManager.getJavaFileObjectsFromFiles(Arrays.asList(files));
 
         //Prepare any compilation options to be used during compilation
-        compilOptions = new String[]{"-d", files[0].getParent()+PropertiesShared.SEPARATOR+"Classes"};
+
+        String[] compilOptions = new String[]{"-d", files[0].getParent()+PropertiesShared.SEPARATOR+"Classes", "-classpath",System.getProperty("java.class.path")+System.getProperty("path.separator")+files[0].getParent()};
         Iterable<String> compilationOptions = Arrays.asList(compilOptions);
 
         JavaCompiler.CompilationTask compilerTask = compiler.getTask(null, fileManager, diagnosticCollector, compilationOptions, null, compilationsUnits1);

@@ -1,27 +1,44 @@
 package com.esgi.honeycode;
 
+import com.sun.istack.internal.NotNull;
+
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Mathieu on 16/03/14.
- * This Class create an ArrayList of files object
+ * This Class create an HashSet of files object
  * Useful to project, can be used for a Hashmap of project
  *
  */
 public class Files {
 
-    private ArrayList<File> filesArray;
+    private HashSet<File> filesSet;
 
     public Files() {
-        this.filesArray = new ArrayList<>();
+        this.filesSet = new HashSet<>();
     }
 
-    public ArrayList<File> getFilesArray() {
-        return filesArray;
+    public HashSet<File> getFilesArray() {
+        return filesSet;
     }
 
-    public void setFilesArray(ArrayList<File> filesArray) {
-        this.filesArray = filesArray;
+    public void setFilesArray(HashSet<File> filesArray) {
+        this.filesSet = filesArray;
+    }
+
+    public void addFile(@NotNull File file)
+    {
+        this.filesSet.add(file);
+    }
+
+    public void removeFile(@NotNull File file)
+    {
+        this.filesSet.remove(file);
+    }
+
+    public void clearSet()
+    {
+        this.filesSet.clear();
     }
 }
