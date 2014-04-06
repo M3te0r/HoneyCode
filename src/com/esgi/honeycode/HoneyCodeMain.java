@@ -13,7 +13,6 @@ public class HoneyCodeMain {
 
     public static void main(String[] args){
 
-
         try {
             // Set System L&F
             UIManager.setLookAndFeel(
@@ -22,6 +21,8 @@ public class HoneyCodeMain {
         catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // handle exception
         }
+
+
 
         HCPreferences globalPreferences = new HCPreferences();
         globalPreferences.setPreferences();

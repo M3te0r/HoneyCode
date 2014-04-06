@@ -192,6 +192,7 @@ public class MainWindowUI extends JFrame{
         wholeSplit.setDividerSize(3);
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
+        newProject.addActionListener(test);
         newFile.addActionListener(test);
         about.addActionListener(test);
         open.addActionListener(test);
@@ -484,7 +485,19 @@ public class MainWindowUI extends JFrame{
 
             if (e.getSource() == newProject)
             {
+                ProjectTypeCustomDialog projectFrame = new ProjectTypeCustomDialog();
+                projectFrame.setModal(true);
+                projectFrame.setLocationRelativeTo(JOptionPane.getFrameForComponent(newProject));
+                projectFrame.setVisible(true);
 
+                if (projectFrame.isFinished())
+                {
+                    System.out.flush();
+                    System.out.println(projectFrame.getLanguage());
+                    System.out.println(projectFrame.getProjectName());
+
+                    new ProjectMaker(projectFrame.getProjectName(), projectFrame.getLanguage());
+                }
 
             }
             if(e.getSource() == newFile){
