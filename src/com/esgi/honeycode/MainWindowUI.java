@@ -88,7 +88,6 @@ public class MainWindowUI extends JFrame{
     final JFileChooser pluginChooser;
     private JTextArea homeMessage;
     private int newFileNumber;
-    private int tabCount;
     private Files filesArray;
     private static int shortcutKey;
     private static Files projectFiles;
@@ -147,7 +146,6 @@ public class MainWindowUI extends JFrame{
         fileChooserMain = new JFileChooser();
         pluginChooser = new JFileChooser();
         lastBuildLabel = new JLabel("Last build : none");
-        projectFiles = new Files();
 
         fileChooserMain.setAcceptAllFileFilterUsed(false);
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Java sources", "java"));
@@ -156,7 +154,6 @@ public class MainWindowUI extends JFrame{
         pluginChooser.addChoosableFileFilter(new FileNameExtensionFilter("Jar files", "jar"));
 
         newFileNumber = 0;
-        filesArray = new Files();
 
         homeMessage = new JTextArea();
         homeMessage.setEditable(false);
@@ -492,9 +489,6 @@ public class MainWindowUI extends JFrame{
 
                 if (projectFrame.isFinished())
                 {
-                    System.out.flush();
-                    System.out.println(projectFrame.getLanguage());
-                    System.out.println(projectFrame.getProjectName());
 
                     new ProjectMaker(projectFrame.getProjectName(), projectFrame.getLanguage());
                 }
@@ -537,7 +531,6 @@ public class MainWindowUI extends JFrame{
                     //Can't figure why the fuck it only sets the text at the second attempt with save file as
                     ((JLabel) ((JPanel) tabFile.getTabComponentAt(tabFile.getSelectedIndex())).getComponent(0)).setText(fileChooserMain.getSelectedFile().getName());
                     tabFile.setToolTipTextAt(tabFile.getSelectedIndex(), fileChooserMain.getSelectedFile().getAbsolutePath());
-                    filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
 
 
                 }

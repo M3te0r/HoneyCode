@@ -9,6 +9,7 @@ public enum PropertiesShared {
     //Objet directement construit
     SEPARATOR(System.getProperty("file.separator"));
 
+
     private String name = "";
 
     //Constructeur

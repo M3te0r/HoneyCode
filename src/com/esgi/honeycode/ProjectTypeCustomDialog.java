@@ -4,10 +4,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.util.Vector;
 
 /**
@@ -29,7 +26,8 @@ public class ProjectTypeCustomDialog extends JDialog{
 
     public ProjectTypeCustomDialog()
     {
-
+        //will do internationalization later
+        setResizable(false);
         setIconImage(MAIN_IMAGE);
         setTitle("Nouveau projet");
         JPanel projectPanel = new JPanel(new GridLayout(3,2,15,15));
@@ -78,6 +76,18 @@ public class ProjectTypeCustomDialog extends JDialog{
 
             }
         });
+
+        projectName.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(flagOption && flagProjectName && e.getKeyCode()==KeyEvent.VK_ENTER)
+                {
+                    finishButton.doClick();
+                }
+            }
+        });
+
+
 
         languagesComboBox.addItemListener(new ItemListener() {
             @Override

@@ -2,6 +2,7 @@ package com.esgi.honeycode;
 
 import com.sun.istack.internal.NotNull;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.HashSet;
 
@@ -13,10 +14,31 @@ import java.util.HashSet;
  */
 public class Files {
 
+    private File projectPath;
     private HashSet<File> filesSet;
 
-    public Files() {
+    public Files(@NotNull File projectPath) {
+        this.projectPath = projectPath;
         this.filesSet = new HashSet<>();
+        createProjectStructure();
+    }
+
+    public void createProjectStructure()
+    {
+        boolean created = projectPath.mkdir();
+        if (!created && !projectPath.exists())
+        {
+            JOptionPane.showMessageDialog(null, "Impossible de créer le répertoire de projet : " + projectPath);
+        }
+        created = (new File(this.projectPath.getAbsolutePath()+PropertiesShared.SEPARATOR+"src").mkdir());
+        if (!created && !projectPath.exists())
+        {
+            JOptionPane.showMessageDialog(null, "Impossible de créer le répertoire de src du projet : " + projectPath);
+        }
+    }
+
+    public File getProjectPath() {
+        return projectPath;
     }
 
     public HashSet<File> getFilesArray() {
