@@ -41,6 +41,7 @@ public class MainWindowUI extends JFrame{
     private JPanel treePanel;
     private JTabbedPane tabFile;
     private JTree treeMain;
+    private TreeFileExplorer projectTree;
     private JScrollPane scrollTree;
     private JScrollPane consoleSroll;
     private JSplitPane splited;
@@ -50,6 +51,7 @@ public class MainWindowUI extends JFrame{
     private JPanel consolePane;
     private JPanel subConsolePane;
     private JLabel lastBuildLabel;
+    private JLabel explorerLabel;
     private JButton buildButton;
     private JButton runButton;
     private JButton buildOptionsButton;
@@ -146,6 +148,7 @@ public class MainWindowUI extends JFrame{
         fileChooserMain = new JFileChooser();
         pluginChooser = new JFileChooser();
         lastBuildLabel = new JLabel("Last build : none");
+        explorerLabel = new JLabel();
 
         fileChooserMain.setAcceptAllFileFilterUsed(false);
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Java sources", "java"));
@@ -173,12 +176,14 @@ public class MainWindowUI extends JFrame{
         shortcutKey = tkMain.getMenuShortcutKeyMask();
 
         setUILanguage();
-
-        treeMain = new JTree();
+        treeMain = new JTree(new String[] {"Nothing"});
         treePanel = new JPanel();
-        scrollTree = new JScrollPane(treePanel);
 
-        homeMessage.setFont(new Font("Courier new", Font.PLAIN, 24));
+        scrollTree = new JScrollPane(treePanel);
+        explorerLabel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        scrollTree.setColumnHeaderView(explorerLabel);
+
+                homeMessage.setFont(new Font("Courier new", Font.PLAIN, 24));
         editorPanel.add(homeMessage);
         editorPanel.setPreferredSize(new Dimension(600,500));
 
@@ -395,8 +400,7 @@ public class MainWindowUI extends JFrame{
         consoleOutputArea.setText(bundle.getString("consoleOutputArea"));
         exitMessage = bundle.getString("exitMessage");
         homeMessage.setText(bundle.getString("homeMessage"));
-
-
+        explorerLabel.setText(bundle.getString("explorerLabel"));
 
         //...Suite des traductions...
 
@@ -489,8 +493,11 @@ public class MainWindowUI extends JFrame{
 
                 if (projectFrame.isFinished())
                 {
-
                     new ProjectMaker(projectFrame.getProjectName(), projectFrame.getLanguage());
+                    projectTree = new TreeFileExplorer(new File(globalPreferences.getProjetPath()+PropertiesShared.SEPARATOR+projectFrame.getProjectName()));
+                    treeMain.setModel(projectTree.getProjectTree().getModel());
+
+
                 }
 
             }
