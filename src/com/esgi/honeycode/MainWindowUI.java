@@ -493,7 +493,10 @@ public class MainWindowUI extends JFrame{
 
                 if (projectFrame.isFinished())
                 {
-                    new ProjectMaker(projectFrame.getProjectName(), projectFrame.getLanguage());
+                    ProjectMaker newProject = new ProjectMaker(projectFrame.getProjectName(), projectFrame.getLanguage());
+                    newProject.makeProjectStructure();
+                    newProject.serializeProjectSettings();
+                    newProject.serializeProjectFiles();
                     projectTree = new TreeFileExplorer(new File(globalPreferences.getProjetPath()+PropertiesShared.SEPARATOR+projectFrame.getProjectName()));
                     treeMain.setModel(projectTree.getProjectTree().getModel());
 
