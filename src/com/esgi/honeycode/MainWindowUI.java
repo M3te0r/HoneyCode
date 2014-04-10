@@ -40,8 +40,7 @@ public class MainWindowUI extends JFrame{
     private static final Image MAIN_IMAGE = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"main.png")).getImage();
     private JPanel treePanel;
     private JTabbedPane tabFile;
-    private JTree treeMain;
-    private TreeFileExplorer projectTree;
+    private TreeFileExplorer treeMain;
     private JScrollPane scrollTree;
     private JScrollPane consoleSroll;
     private JSplitPane splited;
@@ -50,6 +49,7 @@ public class MainWindowUI extends JFrame{
     private JPanel mainPanel;
     private JPanel consolePane;
     private JPanel subConsolePane;
+    private JLabel nothing;
     private JLabel lastBuildLabel;
     private JLabel explorerLabel;
     private JButton buildButton;
@@ -151,6 +151,7 @@ public class MainWindowUI extends JFrame{
         pluginChooser = new JFileChooser();
         lastBuildLabel = new JLabel("Last build : none");
         explorerLabel = new JLabel();
+        nothing = new JLabel("Rien du tout");
 
         fileChooserMain.setAcceptAllFileFilterUsed(false);
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Project file", "dat"));
@@ -179,19 +180,21 @@ public class MainWindowUI extends JFrame{
         shortcutKey = tkMain.getMenuShortcutKeyMask();
 
         setUILanguage();
-        treeMain = new JTree(new String[] {"Nothing"});
+
         treePanel = new JPanel();
 
-        scrollTree = new JScrollPane(treePanel);
+        treeMain = new TreeFileExplorer();
+
+        scrollTree = new JScrollPane(treeMain);
         explorerLabel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         scrollTree.setColumnHeaderView(explorerLabel);
 
-                homeMessage.setFont(new Font("Courier new", Font.PLAIN, 24));
+        homeMessage.setFont(new Font("Courier new", Font.PLAIN, 24));
         editorPanel.add(homeMessage);
         editorPanel.setPreferredSize(new Dimension(600,500));
 
         //Qu'on me redonne la définition de vertical et horizontal
-        splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,scrollTree,editorPanel);
+        splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,treePanel,editorPanel);
         splited.setDividerSize(2);
         wholeSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splited,consolePane);
         wholeSplit.setDividerSize(3);
@@ -291,7 +294,7 @@ public class MainWindowUI extends JFrame{
         consoleOutputArea.setForeground(Color.WHITE);
 
 
-        treePanel.add(treeMain, BorderLayout.CENTER);
+        treePanel.add(scrollTree, BorderLayout.CENTER);
         mainPanel.add(wholeSplit, BorderLayout.CENTER);
 
         //Set prefrered size before pack, then pack will adapt with the prefered size
@@ -317,6 +320,9 @@ public class MainWindowUI extends JFrame{
                 }
             }
         });
+
+
+
     }
 
     private void setUILanguage()
@@ -503,8 +509,7 @@ public class MainWindowUI extends JFrame{
                     newProject.makeProjectStructure();
                     newProject.serializeProjectSettings();
                     newProject.serializeProjectFiles();
-                    projectTree = new TreeFileExplorer(new File(globalPreferences.getProjetPath()+PropertiesShared.SEPARATOR+projectFrame.getProjectName()));
-                    treeMain.setModel(projectTree.getProjectTree().getModel());
+                    treeMain.init(new File(globalPreferences.getProjetPath()+PropertiesShared.SEPARATOR+projectFrame.getProjectName()));
 
 
                 }
@@ -517,8 +522,7 @@ public class MainWindowUI extends JFrame{
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File chosenFile = fileChooserMain.getSelectedFile();
                     ProjectMaker project = new ProjectMaker(chosenFile);
-                    projectTree = new TreeFileExplorer(project.getProjectFiles().getProjectPath());
-                    treeMain.setModel(projectTree.getProjectTree().getModel());
+                    treeMain.init(project.getProjectFiles().getProjectPath());
                 }
 
             }

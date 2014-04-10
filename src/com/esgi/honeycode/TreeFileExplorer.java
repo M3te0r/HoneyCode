@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import java.io.File;
 import java.util.Arrays;
@@ -14,40 +15,42 @@ import java.util.Comparator;
  * list the files and dirs in the root
  * to add the nodes to the JTree
  */
-public class TreeFileExplorer implements TreeSelectionListener{
+public class TreeFileExplorer extends JTree implements TreeSelectionListener{
 
-    private JTree projectTree;
     private File root;
     private DefaultMutableTreeNode rootNode;
 
-    public TreeFileExplorer(File projectPath)
+    public TreeFileExplorer()
     {
+        super(new String[] {"Nothing to show"});
+    }
+
+    public void init(File projectPath)
+    {
+        removeAll();
         this.root = projectPath;
-
         listFiles();
-        projectTree = new JTree(this.rootNode);
-        projectTree.setToggleClickCount(2);
-        projectTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        projectTree.addTreeSelectionListener(this);
-
+        ((DefaultTreeModel) getModel()).setRoot(this.rootNode);
+        setToggleClickCount(2);
+        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        addTreeSelectionListener(this);
     }
 
     @Override
     public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)projectTree.getLastSelectedPathComponent();
 
-        //TODO
+
     }
 
     private void listFiles()
     {
         this.rootNode = new DefaultMutableTreeNode();
-        String f = root.getAbsolutePath();
+        String f = this.root.getAbsolutePath();
 
         DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(f);
 
             try {
-                File files[] = root.listFiles();
+                File files[] = this.root.listFiles();
                 Arrays.sort(files, new Comparator<File>() {
                     @Override
                     public int compare(File o1, File o2) {
@@ -99,13 +102,4 @@ public class TreeFileExplorer implements TreeSelectionListener{
             return node;
         }
     }
-
-
-
-    public JTree getProjectTree() {
-        return projectTree;
-    }
-
-
-
 }
