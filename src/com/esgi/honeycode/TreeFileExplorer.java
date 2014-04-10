@@ -1,12 +1,18 @@
 package com.esgi.honeycode;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rtextarea.RTextScrollPane;
+
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -15,7 +21,7 @@ import java.util.Comparator;
  * list the files and dirs in the root
  * to add the nodes to the JTree
  */
-public class TreeFileExplorer extends JTree implements TreeSelectionListener{
+public class TreeFileExplorer extends JTree implements TreeSelectionListener, ActionListener{
 
     private File root;
     private DefaultMutableTreeNode rootNode;
@@ -31,9 +37,117 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener{
         this.root = projectPath;
         listFiles();
         ((DefaultTreeModel) getModel()).setRoot(this.rootNode);
+        setCellRenderer(new TreeFileRenderer());
         setToggleClickCount(2);
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         addTreeSelectionListener(this);
+
+        final JPopupMenu popupMenuDir = new JPopupMenu();
+        JMenuItem newClass = new JMenuItem("New class");
+        newClass.addActionListener(this);
+        newClass.setActionCommand("Newclass");
+        JMenuItem deleteDir = new JMenuItem("Delete directory");
+        deleteDir.setActionCommand("DeleteDir");
+        popupMenuDir.add(newClass);
+        popupMenuDir.add(deleteDir);
+
+        final JPopupMenu popupMenuFile = new JPopupMenu();
+        JMenuItem deleteFile = new JMenuItem("Delete file");
+        deleteFile.setActionCommand("DeleteFile");
+        popupMenuFile.add(deleteFile);
+
+        addMouseListener(new MouseInputAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                TreePath selPath = getPathForLocation(e.getX(), e.getY());
+                if (selPath == null) {
+                    return;
+                } else {
+                    setSelectionPath(selPath);
+                }
+                if (e.isPopupTrigger()) {
+
+                    File selectedFileOnTree = (File) ((DefaultMutableTreeNode) selPath.getLastPathComponent()).getUserObject();
+
+                    if (selectedFileOnTree.isDirectory()) {
+                        popupMenuDir.show(e.getComponent(), e.getX(), e.getY());
+                    } else if (selectedFileOnTree.isFile()) {
+                        popupMenuFile.show(e.getComponent(), e.getX(), e.getY());
+                    }
+
+                }
+
+                else if (e.getClickCount()==2)
+                {
+
+                    File selectedFileOnTree = (File) ((DefaultMutableTreeNode) selPath.getLastPathComponent()).getUserObject();
+                    if (selectedFileOnTree.isFile())
+                    {
+                        FileHandler fileHandler = new FileHandler(selectedFileOnTree);
+                        MainWindowUI.addCloseableTab(new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())),selectedFileOnTree.getName(), selectedFileOnTree.getAbsolutePath());
+                    }
+
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                TreePath selPath = getPathForLocation(e.getX(), e.getY());
+                if (selPath == null) {
+                    return;
+                } else {
+                    setSelectionPath(selPath);
+                }
+                if (e.isPopupTrigger()) {
+
+                    File selectedFileOnTree = (File) ((DefaultMutableTreeNode) selPath.getLastPathComponent()).getUserObject();
+
+                    if (selectedFileOnTree.isDirectory()) {
+                        popupMenuDir.show(e.getComponent(), e.getX(), e.getY());
+                    } else if (selectedFileOnTree.isFile()) {
+                        popupMenuFile.show(e.getComponent(), e.getX(), e.getY());
+                    }
+
+                }
+            }
+        });
+
+    }
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        DefaultMutableTreeNode dmtn,node;
+        TreePath path = getSelectionPath();
+        dmtn = (DefaultMutableTreeNode)path.getLastPathComponent();
+        File fileSelected = (File)dmtn.getUserObject();
+
+        if (e.getActionCommand().equals("Newclass"))
+        {
+            String newClassInput = JOptionPane.showInputDialog(null,"Nom de la classe :", "Nouvelle classe", JOptionPane.QUESTION_MESSAGE);
+            if (newClassInput!=null)
+            {
+                File newFile = new File(fileSelected.getAbsolutePath()+PropertiesShared.SEPARATOR+newClassInput+".java");
+                try
+                {
+                    boolean created = newFile.createNewFile();
+                    if (!created && !newFile.exists())
+                    {
+                        JOptionPane.showMessageDialog(null, "Impossible de créer la classe : "+newClassInput);
+                    }
+                    else {
+                        node = new DefaultMutableTreeNode(newFile);
+                        dmtn.add(node);
+                        ((DefaultTreeModel)getModel()).nodeStructureChanged(dmtn);
+                    }
+                }catch (IOException ex)
+                {
+                    JOptionPane.showMessageDialog(null, "Impossible de créer la classe : "+newClassInput);
+                }
+
+
+            }
+        }
     }
 
     @Override
@@ -45,9 +159,9 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener{
     private void listFiles()
     {
         this.rootNode = new DefaultMutableTreeNode();
-        String f = this.root.getAbsolutePath();
+        //String f = this.root.getAbsolutePath();
 
-        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(f);
+        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(this.root);
 
             try {
                 File files[] = this.root.listFiles();
@@ -69,7 +183,7 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener{
                 });
                 for (File nom : files)
                 {
-                    DefaultMutableTreeNode node = new DefaultMutableTreeNode(nom.getName());
+                    DefaultMutableTreeNode node = new DefaultMutableTreeNode(nom);
                     newNode.add(this.listFile(nom,node));
                 }
             }catch (NullPointerException e){}
@@ -81,7 +195,7 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener{
     {
         if (file.isFile())
         {
-            return new DefaultMutableTreeNode(file.getName());
+            return new DefaultMutableTreeNode(file);//-getName
         }
         else {
             for (File name : file.listFiles())
@@ -89,12 +203,12 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener{
                 DefaultMutableTreeNode subNode;
                 if (name.isDirectory())
                 {
-                    subNode = new DefaultMutableTreeNode(name.getName());
+                    subNode = new DefaultMutableTreeNode(name);
                     node.add(this.listFile(name, subNode));
                 }
                 else
                 {
-                    subNode = new DefaultMutableTreeNode(name.getName());
+                    subNode = new DefaultMutableTreeNode(name);
                 }
 
                 node.add(subNode);

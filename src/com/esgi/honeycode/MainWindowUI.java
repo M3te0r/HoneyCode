@@ -39,7 +39,7 @@ public class MainWindowUI extends JFrame{
 
     private static final Image MAIN_IMAGE = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"main.png")).getImage();
     private JPanel treePanel;
-    private JTabbedPane tabFile;
+    private static JTabbedPane tabFile;
     private TreeFileExplorer treeMain;
     private JScrollPane scrollTree;
     private JScrollPane consoleSroll;
@@ -49,7 +49,6 @@ public class MainWindowUI extends JFrame{
     private JPanel mainPanel;
     private JPanel consolePane;
     private JPanel subConsolePane;
-    private JLabel nothing;
     private JLabel lastBuildLabel;
     private JLabel explorerLabel;
     private JButton buildButton;
@@ -91,7 +90,6 @@ public class MainWindowUI extends JFrame{
     final JFileChooser pluginChooser;
     private JTextArea homeMessage;
     private int newFileNumber;
-    private Files filesArray;
     private static int shortcutKey;
     private static Files projectFiles;
 
@@ -151,7 +149,6 @@ public class MainWindowUI extends JFrame{
         pluginChooser = new JFileChooser();
         lastBuildLabel = new JLabel("Last build : none");
         explorerLabel = new JLabel();
-        nothing = new JLabel("Rien du tout");
 
         fileChooserMain.setAcceptAllFileFilterUsed(false);
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Project file", "dat"));
@@ -191,7 +188,7 @@ public class MainWindowUI extends JFrame{
 
         homeMessage.setFont(new Font("Courier new", Font.PLAIN, 24));
         editorPanel.add(homeMessage);
-        editorPanel.setPreferredSize(new Dimension(600,500));
+        editorPanel.setPreferredSize(new Dimension(600, 500));
 
         //Qu'on me redonne la définition de vertical et horizontal
         splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,treePanel,editorPanel);
@@ -414,82 +411,96 @@ public class MainWindowUI extends JFrame{
         homeMessage.setText(bundle.getString("homeMessage"));
         explorerLabel.setText(bundle.getString("explorerLabel"));
 
+
         //...Suite des traductions...
 
     }
 
-    private static void addCloseableTab(final JTabbedPane tabbedPane, final RTextScrollPane c, final String title, final Icon icon)
+    protected static void addCloseableTab(final RTextScrollPane c, final String title, String tooltip)
     {
 
-        tabbedPane.addTab(null, c);
-
-
-        int pos = tabbedPane.indexOfComponent(c);
-
-        //Create a FlowLayout taht will space things 5px apart
-        FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5,0);
-
-        //Make a small Jpanel with the layout and make it non-opaque
-        JPanel panelTab = new JPanel(f);
-        panelTab.setOpaque(false);
-
-        //Add a Jlabel with title and the left side tab icon
-        JLabel labelTitle = new JLabel(title);
-        labelTitle.setIcon(icon);
-
-        //Create a Jbutton for the close tab button
-        JButton buttonClose = new JButton();
-        buttonClose.setOpaque(false);
-
-        //Configure icon and rollover icon for button
-        buttonClose.setRolloverIcon(CLOSE_TAB_ICON);
-        buttonClose.setRolloverEnabled(true);
-        buttonClose.setIcon(CLOSE_TAB_ICON_DISABLED);
-
-        //Set border  nulls so the button doesn't make the tab too big
-        buttonClose.setBorder(null);
-
-        //Make sure the button can't get focus, otherwise it looks funny
-        buttonClose.setFocusable(false);
-
-        //Put the panel together
-        panelTab.add(labelTitle);
-        panelTab.add(buttonClose);
-
-        //Add a thin border to keep the image below the top edge of the tab when the tab is selected
-        panelTab.setBorder(BorderFactory.createEmptyBorder(2,0,0,0));
-
-        //Now assign the component for the tab
-        tabbedPane.setTabComponentAt(pos, panelTab);
-
-        //Add the listener that removes the tab
-        buttonClose.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tabbedPane.remove(c);
+        int tabCount = tabFile.getTabCount();
+        boolean showingTab = false;
+        for (int x = 0; x<tabCount;x++)
+        {
+            if (tabFile.getTabComponentAt(x).isDisplayable() && tabFile.getToolTipTextAt(x).equals(tooltip))
+            {
+                showingTab = true;
             }
-        });
+        }
 
-        tabbedPane.setSelectedComponent(c);
+        if (!showingTab)
+        {
+            tabFile.addTab(null, c);
+            int pos = tabFile.indexOfComponent(c);
 
-        AbstractAction closeTabAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tabbedPane.remove(c);
-            }
-        };
+            //Create a FlowLayout taht will space things 5px apart
+            FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5,0);
 
-        //Create a KeyStroke
-        KeyStroke controlW = KeyStroke.getKeyStroke(KeyEvent.VK_W,shortcutKey);
+            //Make a small Jpanel with the layout and make it non-opaque
+            JPanel panelTab = new JPanel(f);
+            panelTab.setOpaque(false);
 
-        //Get the appropriate input map using the Jcomponent constants
-        InputMap inputMap = c.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            //Add a Jlabel with title and the left side tab icon
+            JLabel labelTitle = new JLabel(title);
+            labelTitle.setIcon(TAB_ICON);
 
-        //Add the key binding for the keyStroke to the action name
-        inputMap.put(controlW, "closeTab");
+            //Create a Jbutton for the close tab button
+            JButton buttonClose = new JButton();
+            buttonClose.setOpaque(false);
 
-        //Now add a single binding for the action name to the anon action
-        c.getActionMap().put("closeTab", closeTabAction);
+            //Configure icon and rollover icon for button
+            buttonClose.setRolloverIcon(CLOSE_TAB_ICON);
+            buttonClose.setRolloverEnabled(true);
+            buttonClose.setIcon(CLOSE_TAB_ICON_DISABLED);
+
+            //Set border  nulls so the button doesn't make the tab too big
+            buttonClose.setBorder(null);
+
+            //Make sure the button can't get focus, otherwise it looks funny
+            buttonClose.setFocusable(false);
+
+            //Put the panel together
+            panelTab.add(labelTitle);
+            panelTab.add(buttonClose);
+
+            //Add a thin border to keep the image below the top edge of the tab when the tab is selected
+            panelTab.setBorder(BorderFactory.createEmptyBorder(2,0,0,0));
+
+            //Now assign the component for the tab
+            tabFile.setTabComponentAt(pos, panelTab);
+            tabFile.setToolTipTextAt(pos,tooltip);
+
+            //Add the listener that removes the tab
+            buttonClose.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    tabFile.remove(c);
+                }
+            });
+
+            tabFile.setSelectedComponent(c);
+
+            AbstractAction closeTabAction = new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    tabFile.remove(c);
+                }
+            };
+
+            //Create a KeyStroke
+            KeyStroke controlW = KeyStroke.getKeyStroke(KeyEvent.VK_W,shortcutKey);
+
+            //Get the appropriate input map using the Jcomponent constants
+            InputMap inputMap = c.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+            //Add the key binding for the keyStroke to the action name
+            inputMap.put(controlW, "closeTab");
+
+            //Now add a single binding for the action name to the anon action
+            c.getActionMap().put("closeTab", closeTabAction);
+        }
+
     }
 
     private class ActionListenerMenuBar implements ActionListener {
@@ -511,6 +522,21 @@ public class MainWindowUI extends JFrame{
                     newProject.serializeProjectFiles();
                     treeMain.init(new File(globalPreferences.getProjetPath()+PropertiesShared.SEPARATOR+projectFrame.getProjectName()));
 
+                    if (homeMessage.isShowing())
+                    {
+
+                        if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
+                        {
+                            saveFile.setEnabled(true);
+                            saveFileAS.setEnabled(true);
+                        }
+                        editorPanel.remove(homeMessage);
+
+                        editorPanel.add(tabFile);
+                        editorPanel.updateUI();
+
+
+                    }
 
                 }
 
@@ -523,6 +549,21 @@ public class MainWindowUI extends JFrame{
                     File chosenFile = fileChooserMain.getSelectedFile();
                     ProjectMaker project = new ProjectMaker(chosenFile);
                     treeMain.init(project.getProjectFiles().getProjectPath());
+
+                    if (homeMessage.isShowing())
+                    {
+
+                        if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
+                        {
+                            saveFile.setEnabled(true);
+                            saveFileAS.setEnabled(true);
+                        }
+                        editorPanel.remove(homeMessage);
+
+                        editorPanel.add(tabFile);
+                        editorPanel.updateUI();
+
+                    }
                 }
 
             }
@@ -544,8 +585,10 @@ public class MainWindowUI extends JFrame{
                 }
                 newFileNumber += 1;
 
-                Icon icon = TAB_ICON;
-                addCloseableTab(tabFile, new RTextScrollPane(new RSyntaxTextArea()),"new "+newFileNumber, icon);
+
+
+
+              //  addCloseableTab(new RTextScrollPane(new RSyntaxTextArea()),"new "+newFileNumber);
                 projectFiles.addFile(new File("new "+newFileNumber));
 
             }
@@ -586,10 +629,8 @@ public class MainWindowUI extends JFrame{
                         FileHandler file = new FileHandler(fileChooserMain.getSelectedFile());
 
                         file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
-                        filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
                         tabFile.setTitleAt(tabFile.getSelectedIndex(), fileChooserMain.getSelectedFile().getName());
                         tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),fileChooserMain.getSelectedFile().getAbsolutePath());
-                        filesArray.getFilesArray().add(fileChooserMain.getSelectedFile());
                     }
                 }
                 else {
@@ -619,7 +660,8 @@ public class MainWindowUI extends JFrame{
                         editorPanel.updateUI();
                     }
 
-                    addCloseableTab(tabFile,new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())), chosenFile.getName(),TAB_ICON);
+
+                   addCloseableTab(new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())), chosenFile.getName(), chosenFile.getAbsolutePath());
                     tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),chosenFile.getAbsolutePath());
 
                     if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
