@@ -7,7 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/ressources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="rsyntaxtextarea" level="project" />
     <orderEntry type="module-library">

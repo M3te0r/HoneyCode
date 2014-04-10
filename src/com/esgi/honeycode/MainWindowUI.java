@@ -64,6 +64,7 @@ public class MainWindowUI extends JFrame{
     private JMenu plugin;
     private JMenu help;
     private JMenuItem newProject;
+    private JMenuItem openProject;
     private JMenuItem newFile;
     private JMenuItem open;
     private JMenuItem recentFiles;
@@ -118,6 +119,7 @@ public class MainWindowUI extends JFrame{
         plugin = new JMenu("Plugins");
         help = new JMenu();
         newProject = new JMenuItem();
+        openProject = new JMenuItem();
         newFile = new JMenuItem();
         open = new JMenuItem();
         recentFiles = new JMenuItem();  //Collections d'objets (nom du fichier, chemin) ??
@@ -151,6 +153,7 @@ public class MainWindowUI extends JFrame{
         explorerLabel = new JLabel();
 
         fileChooserMain.setAcceptAllFileFilterUsed(false);
+        fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Project file", "dat"));
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Java sources", "java"));
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Text files", "txt"));
         pluginChooser.setAcceptAllFileFilterUsed(false);
@@ -195,6 +198,7 @@ public class MainWindowUI extends JFrame{
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newProject.addActionListener(test);
+        openProject.addActionListener(test);
         newFile.addActionListener(test);
         about.addActionListener(test);
         open.addActionListener(test);
@@ -240,6 +244,7 @@ public class MainWindowUI extends JFrame{
         //Adding menus into menubar
         menuBarMain.add(file);
         file.add(newProject);
+        file.add(openProject);
         file.add(newFile);
         file.add(open);
         file.add(recentFiles);
@@ -373,6 +378,7 @@ public class MainWindowUI extends JFrame{
         help.setText(bundle.getString("help"));
 
         newProject.setText(bundle.getString("newProject"));
+        openProject.setText(bundle.getString("openProject"));
         newFile.setText(bundle.getString("newFile"));
         open.setText(bundle.getString("open"));
         recentFiles.setText(bundle.getString("recentFiles"));
@@ -504,6 +510,20 @@ public class MainWindowUI extends JFrame{
                 }
 
             }
+
+            if (e.getSource() == openProject) {
+                int returnVal = fileChooserMain.showOpenDialog(JOptionPane.getFrameForComponent(openProject));
+
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File chosenFile = fileChooserMain.getSelectedFile();
+                    ProjectMaker project = new ProjectMaker(chosenFile);
+                    projectTree = new TreeFileExplorer(project.getProjectFiles().getProjectPath());
+                    treeMain.setModel(projectTree.getProjectTree().getModel());
+                }
+
+            }
+
+
             if(e.getSource() == newFile){
                 if (homeMessage.isShowing())
                 {

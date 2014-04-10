@@ -41,7 +41,7 @@ public class ProjectMaker implements Serializable{
 
     public void serializeProjectFiles()
     {
-        try(ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(this.projectPath.getAbsolutePath()+PropertiesShared.SEPARATOR+".honeycode"+PropertiesShared.SEPARATOR+"project.dat")))))
+        try(ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(this.projectPath.getAbsolutePath()+PropertiesShared.SEPARATOR+".honeycode"+PropertiesShared.SEPARATOR+"projectfiles")))))
         {
             for (File file : projectFiles.getFilesArray())
             {
@@ -56,7 +56,7 @@ public class ProjectMaker implements Serializable{
 
     public void serializeProjectSettings()
     {
-        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(this.projectPath.getAbsolutePath()+PropertiesShared.SEPARATOR+".honeycode"+PropertiesShared.SEPARATOR+"settings.dat"))))){
+        try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(this.projectPath.getAbsolutePath()+PropertiesShared.SEPARATOR+".honeycode"+PropertiesShared.SEPARATOR+"project.dat"))))){
             out.writeObject(this.projectName);
             out.writeObject(this.projectType);
             out.writeObject(this.projectPath);
@@ -67,7 +67,7 @@ public class ProjectMaker implements Serializable{
         }
     }
 
-    public void doDeserialize(File projectPath)
+    private void doDeserialize(File projectPath)
     {
         try(ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(projectPath))))
         {
@@ -89,7 +89,7 @@ public class ProjectMaker implements Serializable{
 
         this.projectFiles = new Files(this.projectPath);
         boolean eof = false;
-        try (ObjectInputStream inFiles = new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File(this.projectPath.getAbsolutePath()+PropertiesShared.SEPARATOR+".honeycode"+PropertiesShared.SEPARATOR+"project.dat"))))){
+        try (ObjectInputStream inFiles = new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File(this.projectPath.getAbsolutePath()+PropertiesShared.SEPARATOR+".honeycode"+PropertiesShared.SEPARATOR+"projectfiles"))))){
 
             while (!eof)
             {
