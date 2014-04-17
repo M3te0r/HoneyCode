@@ -9,9 +9,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
@@ -92,6 +90,7 @@ public class MainWindowUI extends JFrame{
     private int newFileNumber;
     private static int shortcutKey;
     private static Files projectFiles;
+    private ProjectMaker project;
 
     private HCPreferences globalPreferences;
 
@@ -145,6 +144,8 @@ public class MainWindowUI extends JFrame{
         consoleOutputArea = new JTextArea();
         out = new CustomConsoleOutputStream(consoleOutputArea);
         System.setOut(new PrintStream(out));
+        System.setErr(new PrintStream(out));
+
         fileChooserMain = new JFileChooser();
         pluginChooser = new JFileChooser();
         lastBuildLabel = new JLabel("Last build : none");
@@ -516,10 +517,10 @@ public class MainWindowUI extends JFrame{
 
                 if (projectFrame.isFinished())
                 {
-                    ProjectMaker newProject = new ProjectMaker(projectFrame.getProjectName(), projectFrame.getLanguage());
-                    newProject.makeProjectStructure();
-                    newProject.serializeProjectSettings();
-                    newProject.serializeProjectFiles();
+                    project = new ProjectMaker(projectFrame.getProjectName(), projectFrame.getLanguage());
+                    project.makeProjectStructure();
+                    project.serializeProjectSettings();
+                    project.serializeProjectFiles();
                     treeMain.init(new File(globalPreferences.getProjetPath()+PropertiesShared.SEPARATOR+projectFrame.getProjectName()));
 
                     if (homeMessage.isShowing())
@@ -547,7 +548,7 @@ public class MainWindowUI extends JFrame{
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File chosenFile = fileChooserMain.getSelectedFile();
-                    ProjectMaker project = new ProjectMaker(chosenFile);
+                    project = new ProjectMaker(chosenFile);
                     treeMain.init(project.getProjectFiles().getProjectPath());
 
                     if (homeMessage.isShowing())
@@ -755,20 +756,34 @@ public class MainWindowUI extends JFrame{
                 System.out.println("Settings");
             }
 
-            if(e.getSource() == buildButton){
-                if (tabFile.isShowing() && tabFile.getToolTipTextAt(tabFile.getSelectedIndex()).endsWith(".java"))
+            if (e.getSource() == runButton)
+            {
+                if (tabFile.isVisible() && tabFile.isShowing() && tabFile.isFocusable())
                 {
+                    //Need to find another way to take the class that define main method !!!
+                    //But it runs the class if a main method is declared
+                    File fileToRun = new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex()));
+                    String fileTo = fileToRun.getName().substring(0, fileToRun.getName().indexOf("."));
+
+                    try{
+                        CustomRun.run(fileTo, project.getProjectPath().getAbsolutePath());
+                    }catch (IOException ex)
+                    {
+                        System.out.println("error running file");
+                    }
+                }
 
 
-                    CompileJavaFiles.createClassDir(new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex())).getParent());
+            }
+
+            if(e.getSource() == buildButton){
+                if (tabFile.isShowing() && project.getProjectType().equals("Java project"))
+                {
                     Date date = new Date();
                     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
                     String dateString = dateFormat.format(date);
                     lastBuildLabel.setText("Last build : " + dateString);
-                    File[] cc = {new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex()))};
-                    System.out.flush();
-                    System.out.println(cc[0].getParent());
-                    CompileJavaFiles.doCompilation(cc);
+                    CompileJavaFiles.doCompilation(project.getProjectPath().getAbsolutePath()+PropertiesShared.SEPARATOR+"src", project.getProjectPath().getAbsolutePath());
                 }
             }
         }

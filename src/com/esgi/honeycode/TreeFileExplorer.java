@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -159,12 +160,20 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
     private void listFiles()
     {
         this.rootNode = new DefaultMutableTreeNode();
-        //String f = this.root.getAbsolutePath();
 
         DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(this.root);
 
             try {
-                File files[] = this.root.listFiles();
+                //File filter not to list 'out' folder with classes
+                FileFilter ff = new FileFilter() {
+                    @Override
+                    public boolean accept(File pathname) {
+                        return !pathname.getName().equals("out");
+                    }
+                };
+
+
+                File files[] = this.root.listFiles(ff);
                 Arrays.sort(files, new Comparator<File>() {
                     @Override
                     public int compare(File o1, File o2) {
@@ -195,7 +204,7 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
     {
         if (file.isFile())
         {
-            return new DefaultMutableTreeNode(file);//-getName
+            return new DefaultMutableTreeNode(file);
         }
         else {
             for (File name : file.listFiles())

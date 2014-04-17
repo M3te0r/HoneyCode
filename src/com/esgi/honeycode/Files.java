@@ -15,6 +15,7 @@ import java.util.HashSet;
  */
 public class Files implements Serializable{
 
+    private static final long serialVersionUID = 1L;
     private transient File projectPath;
     private HashSet<File> filesSet;
 
@@ -39,6 +40,11 @@ public class Files implements Serializable{
         if (!created && !projectPath.exists())
         {
             JOptionPane.showMessageDialog(null, "Impossible de créer le répertoire de .honeycode du projet : " + projectPath);
+        }
+        created = (new File(this.projectPath.getAbsolutePath()+PropertiesShared.SEPARATOR+"out").mkdir());
+        if (!created && !projectPath.exists())
+        {
+            JOptionPane.showMessageDialog(null, "Impossible de créer le répertoire out du projet : " + projectPath);
         }
     }
 

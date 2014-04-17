@@ -22,8 +22,6 @@ public class HoneyCodeMain {
             // handle exception
         }
 
-
-
         HCPreferences globalPreferences = new HCPreferences();
         globalPreferences.setPreferences();
         File projectPath = new File(globalPreferences.getProjetPath());

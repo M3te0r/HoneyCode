@@ -10,6 +10,7 @@ import java.io.*;
  */
 public class ProjectMaker implements Serializable{
 
+    private static final long serialVersionUID = 1L;
     private String projectName;
     private String projectType;
     private File projectPath;
@@ -39,6 +40,10 @@ public class ProjectMaker implements Serializable{
         return projectType;
     }
 
+    public File getProjectPath() {
+        return projectPath;
+    }
+
     public void serializeProjectFiles()
     {
         try(ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(this.projectPath.getAbsolutePath()+PropertiesShared.SEPARATOR+".honeycode"+PropertiesShared.SEPARATOR+"projectfiles")))))
@@ -66,6 +71,8 @@ public class ProjectMaker implements Serializable{
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Error while saving your project", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+
 
     private void doDeserialize(File projectPath)
     {
