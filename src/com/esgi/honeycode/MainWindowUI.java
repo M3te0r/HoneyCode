@@ -89,7 +89,6 @@ public class MainWindowUI extends JFrame{
     private JTextArea homeMessage;
     private int newFileNumber;
     private static int shortcutKey;
-    private static Files projectFiles;
     private ProjectMaker project;
 
     private HCPreferences globalPreferences;
@@ -417,8 +416,15 @@ public class MainWindowUI extends JFrame{
 
     }
 
+    protected static void setNewTabText(String title, String tooltip)
+    {
+        ((JLabel)((JPanel)tabFile.getTabComponentAt(tabFile.getSelectedIndex())).getComponent(0)).setText(title);
+        tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),tooltip);
+    }
+
     protected static void addCloseableTab(final RTextScrollPane c, final String title, String tooltip)
     {
+
 
         int tabCount = tabFile.getTabCount();
         boolean showingTab = false;
@@ -544,29 +550,36 @@ public class MainWindowUI extends JFrame{
             }
 
             if (e.getSource() == openProject) {
+
+
                 int returnVal = fileChooserMain.showOpenDialog(JOptionPane.getFrameForComponent(openProject));
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File chosenFile = fileChooserMain.getSelectedFile();
+                    //If there is already a project running then the Jtree will be reloaded and tabs will be closed
+                    if (ProjectMaker.class.isInstance(project))
+                    {
+                        if (tabFile.getTabCount()>0)
+                        {
+                            tabFile.removeAll();
+                        }
+
+                    }
                     project = new ProjectMaker(chosenFile);
                     treeMain.init(project.getProjectFiles().getProjectPath());
 
                     if (homeMessage.isShowing())
                     {
-
                         if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
                         {
                             saveFile.setEnabled(true);
                             saveFileAS.setEnabled(true);
                         }
                         editorPanel.remove(homeMessage);
-
                         editorPanel.add(tabFile);
                         editorPanel.updateUI();
-
                     }
                 }
-
             }
 
 
@@ -586,33 +599,22 @@ public class MainWindowUI extends JFrame{
                 }
                 newFileNumber += 1;
 
-
-
-
-              //  addCloseableTab(new RTextScrollPane(new RSyntaxTextArea()),"new "+newFileNumber);
-                projectFiles.addFile(new File("new "+newFileNumber));
+                addCloseableTab(new RTextScrollPane(new RSyntaxTextArea()),"new "+newFileNumber,null);
 
             }
             if (e.getSource() == saveFileAS)
             {
-
                 fileChooserMain.setCurrentDirectory(new File(globalPreferences.getProjetPath()));
                 int status = fileChooserMain.showSaveDialog(JOptionPane.getFrameForComponent(saveFileAS));
                 if (status == JFileChooser.APPROVE_OPTION)
                 {
-
                     FileHandler file = new FileHandler(fileChooserMain.getSelectedFile());
                     RTextScrollPane rTextScrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
                     RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
                     file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
-                    projectFiles.addFile(fileChooserMain.getSelectedFile());
                     //Can't figure why the fuck it only sets the text at the second attempt with save file as
-                    ((JLabel) ((JPanel) tabFile.getTabComponentAt(tabFile.getSelectedIndex())).getComponent(0)).setText(fileChooserMain.getSelectedFile().getName());
-                    tabFile.setToolTipTextAt(tabFile.getSelectedIndex(), fileChooserMain.getSelectedFile().getAbsolutePath());
-
-
+                    setNewTabText(fileChooserMain.getSelectedFile().getName(), fileChooserMain.getSelectedFile().getAbsolutePath());
                 }
-
             }
 
             if (e.getSource() == saveFile)
@@ -621,30 +623,24 @@ public class MainWindowUI extends JFrame{
                 RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
                 if (tabFile.getToolTipTextAt(tabFile.getSelectedIndex())==null)
                 {
-
                     fileChooserMain.setCurrentDirectory(new File(globalPreferences.getProjetPath()));
                     int status = fileChooserMain.showSaveDialog(JOptionPane.getFrameForComponent(saveFileAS));
                     if (status == JFileChooser.APPROVE_OPTION)
                     {
-
                         FileHandler file = new FileHandler(fileChooserMain.getSelectedFile());
-
                         file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
-                        tabFile.setTitleAt(tabFile.getSelectedIndex(), fileChooserMain.getSelectedFile().getName());
-                        tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),fileChooserMain.getSelectedFile().getAbsolutePath());
+                        setNewTabText(fileChooserMain.getSelectedFile().getName(),fileChooserMain.getSelectedFile().getAbsolutePath());
                     }
                 }
                 else {
                     FileHandler file = new FileHandler(new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex())));
                     file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
-
                 }
             }
 
             if(e.getSource() == about){
                 JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), "HoneyCode est un projet étudiant développé au sein de l'ESGI, et est libre de droits.\n Développeurs :" +
                         "\n-Kevin MAAREK \n-Mathieu PEQUIN \n-Alexandre FAYETTE \n Promotion 3iAL ", "A propos", JOptionPane.INFORMATION_MESSAGE);
-
             }
 
             if(e.getSource() == open){
@@ -772,18 +768,20 @@ public class MainWindowUI extends JFrame{
                         System.out.println("error running file");
                     }
                 }
-
-
             }
 
             if(e.getSource() == buildButton){
                 if (tabFile.isShowing() && project.getProjectType().equals("Java project"))
                 {
-                    Date date = new Date();
-                    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-                    String dateString = dateFormat.format(date);
-                    lastBuildLabel.setText("Last build : " + dateString);
-                    CompileJavaFiles.doCompilation(project.getProjectPath().getAbsolutePath()+PropertiesShared.SEPARATOR+"src", project.getProjectPath().getAbsolutePath());
+                    boolean compiled = CompileJavaFiles.doCompilation(project.getProjectPath().getAbsolutePath()+PropertiesShared.SEPARATOR+"src", project.getProjectPath().getAbsolutePath());
+                    if (compiled)
+                    {
+                        Date date = new Date();
+                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+                        String dateString = dateFormat.format(date);
+                        lastBuildLabel.setText("Last build : " + dateString);
+                    }
+
                 }
             }
         }

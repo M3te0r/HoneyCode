@@ -4,7 +4,6 @@ import javax.tools.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -23,7 +22,7 @@ public class CompileJavaFiles {
 
     private static DiagnosticCollector<JavaFileObject> diagnosticCollector;
 
-    public static void doCompilation(String projectSourcePath, String projectPath)
+    public static boolean doCompilation(String projectSourcePath, String projectPath)
     {
         /*
         Listing java sources from src directory
@@ -37,7 +36,7 @@ public class CompileJavaFiles {
                 return name.endsWith("java");
             }
         };
-        
+
         List<File> files = Arrays.asList(ff.listFiles(javaFileNameFilter));
 
         System.out.flush();
@@ -61,23 +60,17 @@ public class CompileJavaFiles {
         {//If compilation error occurs
             System.out.println("Compilation failed\n");
 
+
             for (Diagnostic diagnostic : diagnosticCollector.getDiagnostics())
             {
                 System.out.format("Error on line %d in %s", diagnostic.getLineNumber(), diagnostic);
             }
+
+            return false;
         }
         else{
             System.out.println("Compilation completed");
+            return true;
         }
     }
-
- /*  public static void createClassDir()
-    {
-        File classDirM = new File(classDir+PropertiesShared.SEPARATOR+"Classes");
-        boolean created = classDirM.mkdir();
-        if (!created && !classDirM.exists())
-        {
-            JOptionPane.showMessageDialog(null, "Impossible de créer le répertoire de projet : " + classDir);
-        }
-    }*/
 }
