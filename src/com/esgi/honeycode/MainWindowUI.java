@@ -1,9 +1,11 @@
 package com.esgi.honeycode;
 
+import org.fife.ui.autocomplete.AutoCompletion;
+import org.fife.ui.autocomplete.CompletionProvider;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -157,6 +159,7 @@ public class MainWindowUI extends JFrame{
         pluginChooser.setAcceptAllFileFilterUsed(false);
         pluginChooser.addChoosableFileFilter(new FileNameExtensionFilter("Jar files", "jar"));
 
+
         newFileNumber = 0;
 
         homeMessage = new JTextArea();
@@ -206,14 +209,14 @@ public class MainWindowUI extends JFrame{
         plugLoad.addActionListener(test);
         plugDown.addActionListener(test);
         forum.addActionListener(test);
-        copy.addActionListener(test);
-        cut.addActionListener(test);
+      //  copy.addActionListener(test);
+      //  cut.addActionListener(test);
         saveFile.addActionListener(test);
         saveFileAS.addActionListener(test);
         settings.addActionListener(test);
         runButton.addActionListener(test);
         buildButton.addActionListener(test);
-        past.addActionListener(test);
+        //past.addActionListener(test);
 
         consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
         subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
@@ -424,7 +427,22 @@ public class MainWindowUI extends JFrame{
 
     protected static void addCloseableTab(final RTextScrollPane c, final String title, String tooltip)
     {
+        try {
+            //Themes will be modifiable in settings
+            Theme theme = Theme.load(MainWindowUI.class.getResourceAsStream(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"themes"+PropertiesShared.SEPARATOR+"dark.xml"));
+            theme.apply((RSyntaxTextArea)c.getTextArea());
+        }
 
+        catch (IOException ex){
+            JOptionPane.showMessageDialog(null, "error while loading theme");
+        }
+
+        CustomCompletionProvider p = new CustomCompletionProvider("java"); //Will be replaced
+        CompletionProvider provider = p.getProvider(); //An unique CompletionProvider can be used for all RSyntaxArea but not AutoCompletion
+        AutoCompletion ac = new AutoCompletion(provider);
+        ac.setAutoCompleteEnabled(true);
+        ac.setAutoActivationEnabled(true);
+        ac.install((RSyntaxTextArea)c.getTextArea());
 
         int tabCount = tabFile.getTabCount();
         boolean showingTab = false;
@@ -512,7 +530,6 @@ public class MainWindowUI extends JFrame{
 
     private class ActionListenerMenuBar implements ActionListener {
         public void actionPerformed (ActionEvent e){
-
 
             if (e.getSource() == newProject)
             {
