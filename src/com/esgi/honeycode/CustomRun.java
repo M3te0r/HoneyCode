@@ -1,9 +1,8 @@
 package com.esgi.honeycode;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.Scanner;
 
 /**
  * Class CustomRun :
@@ -11,19 +10,29 @@ import java.io.InputStreamReader;
  */
 public class CustomRun {
 
-    public static void run(String args, String projectOut) throws IOException
+
+
+
+    public static void run(String args, final String projectOut) throws IOException
     {
 
         System.out.flush();
 
+
         if (args!=null && projectOut != null)
         {
-            Runtime runtime = Runtime.getRuntime();
-            final Process process = runtime.exec("java -classpath \""+System.getProperty("java.class.path")+System.getProperty("path.separator")+projectOut+PropertiesShared.SEPARATOR+"out\" "+args);
+
+            //With ProcessBuilder the err output can be redirected to te standard output
+            //Only 2 threads instead of 3 for the err
+            ProcessBuilder builder = new ProcessBuilder("java", "-classpath", "\""+System.getProperty("java.class.path")+System.getProperty("path.separator")+projectOut+PropertiesShared.SEPARATOR+"out\"",args);
+            builder.redirectErrorStream(true);
+
+            final Process process = builder.start();
 
 
 
-            // Consommation de la sortie standard de l'application externe dans un Thread separe
+
+            // Consommation de la sortie standard de de la console
             new Thread() {
                 public void run() {
                     try {
@@ -40,21 +49,24 @@ public class CustomRun {
                 }
             }.start();
 
+            //Conso de l'entrée standard de la console
+            new Thread()
+            {
+                public void run()
+                {
+                    Scanner s = new Scanner(System.in);
+                    //Need to control in before !!
 
-            // Consommation de la sortie d'erreur de l'application externe dans un Thread separe
-            new Thread() {
-                public void run() {
-                    try {
-                        String line;
-                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))){
-                            while((line = reader.readLine()) != null) {
-                                // Traitement du flux d'erreur de l'application si besoin est
-                                System.err.println(line);
-                            }
+                    while (true)
+                    {
+                        String input = s.nextLine();
+
+                        try(PrintWriter pw = new PrintWriter(new OutputStreamWriter(process.getOutputStream()))){
+                            pw.write(input);
+                            pw.flush();
                         }
-                    } catch(IOException ioe) {
-                        ioe.printStackTrace();
                     }
+
                 }
             }.start();
         }

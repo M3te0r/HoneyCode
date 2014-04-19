@@ -20,6 +20,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
 /**
  * Created by Mathieu on 11/02/14.
  * Modified by Kevin on 13/02/14.
@@ -55,7 +56,6 @@ public class MainWindowUI extends JFrame{
     private JButton runButton;
     private JButton buildOptionsButton;
 
-    private JTextArea consoleOutputArea;
     private JMenuBar menuBarMain;
     private JMenu file;
     private JMenu edit;
@@ -92,6 +92,7 @@ public class MainWindowUI extends JFrame{
     private int newFileNumber;
     private static int shortcutKey;
     private ProjectMaker project;
+    private JTextArea consoleOutputArea;
 
     private HCPreferences globalPreferences;
 
@@ -277,12 +278,22 @@ public class MainWindowUI extends JFrame{
         saveFile.setEnabled(false);
         saveFileAS.setEnabled(false);
 
-
         setJMenuBar(menuBarMain);
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
+
+
+        consoleOutputArea.setEditable(false);
         consoleSroll = new JScrollPane(consoleOutputArea);
+        JTextField textField = new JTextField();
+
+        TextFieldStreamer fieldStreamer = new TextFieldStreamer(textField);
+        textField.addActionListener(fieldStreamer);
+        textField.setToolTipText("Console input");
+
+        System.setIn(fieldStreamer);
+        consolePane.add(textField, BorderLayout.SOUTH);
         consolePane.add(subConsolePane, BorderLayout.NORTH);
         consolePane.add(consoleSroll, BorderLayout.CENTER);
 
@@ -291,7 +302,7 @@ public class MainWindowUI extends JFrame{
         subConsolePane.add(buildButton);
         subConsolePane.add(runButton);
         consoleOutputArea.setBackground(Color.DARK_GRAY);
-        consoleOutputArea.setForeground(Color.WHITE);
+       consoleOutputArea.setForeground(Color.WHITE);
 
 
         treePanel.add(scrollTree, BorderLayout.CENTER);
@@ -701,6 +712,7 @@ public class MainWindowUI extends JFrame{
             if(e.getSource() == plugLoad){
 
 
+
                 int returnVal = pluginChooser.showOpenDialog(JOptionPane.getFrameForComponent(plugLoad));
 
                 if(returnVal == JFileChooser.APPROVE_OPTION){
@@ -782,7 +794,7 @@ public class MainWindowUI extends JFrame{
                         CustomRun.run(fileTo, project.getProjectPath().getAbsolutePath());
                     }catch (IOException ex)
                     {
-                        System.out.println("error running file");
+                        System.out.println("error running file\n");
                     }
                 }
             }
