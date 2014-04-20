@@ -718,6 +718,7 @@ public class MainWindowUI extends JFrame{
                 if(returnVal == JFileChooser.APPROVE_OPTION){
 
                     File chosenPlugin = pluginChooser.getSelectedFile();
+
                 }
             }
             if(e.getSource() == plugDown){

@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -49,12 +50,14 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         newClass.setActionCommand("Newclass");
         JMenuItem deleteDir = new JMenuItem("Delete directory");
         deleteDir.setActionCommand("DeleteDir");
+        deleteDir.addActionListener(this);
         popupMenuDir.add(newClass);
         popupMenuDir.add(deleteDir);
 
         final JPopupMenu popupMenuFile = new JPopupMenu();
         JMenuItem deleteFile = new JMenuItem("Delete file");
         deleteFile.setActionCommand("DeleteFile");
+        deleteFile.addActionListener(this);
         popupMenuFile.add(deleteFile);
 
         addMouseListener(new MouseInputAdapter() {
@@ -139,6 +142,8 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
                     else {
                         node = new DefaultMutableTreeNode(newFile);
                         dmtn.add(node);
+
+
                         ((DefaultTreeModel)getModel()).nodeStructureChanged(dmtn);
                     }
                 }catch (IOException ex)
@@ -148,6 +153,58 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
 
 
             }
+        }
+        if (e.getActionCommand().equals("DeleteDir"))
+        {
+            int res = JOptionPane.showConfirmDialog(null, "Delete this directory with all his sub directories and files ?", "Delete confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+            if (res == JOptionPane.YES_OPTION)
+            {
+                try {
+                    deleteAll(fileSelected);
+
+                    //I know, there is no check if the dir and all sub-dir and files were really deleted
+                    dmtn.removeFromParent();
+                    ((DefaultTreeModel)getModel()).nodeStructureChanged(dmtn);
+
+                }catch (IOException ex)
+                {
+                    JOptionPane.showMessageDialog(null,ex.getMessage());
+
+                }
+
+            }
+        }
+
+        if (e.getActionCommand().equals("DeleteFile"))
+        {
+            if (fileSelected.isFile())
+            {
+                int res = JOptionPane.showConfirmDialog(null, "Delete this file ?", "Delete confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (res == JOptionPane.YES_OPTION)
+                {
+
+                    if (fileSelected.delete())
+                    {
+                        dmtn.removeFromParent();
+                        ((DefaultTreeModel)getModel()).nodeStructureChanged(dmtn);
+                    }
+                }
+            }
+        }
+    }
+
+    private void  deleteAll(File f) throws IOException
+    {
+        if (f.isDirectory())
+        {
+            for (File c : f.listFiles())
+            {
+                deleteAll(c);
+            }
+        }
+        if (!f.delete()){
+            throw new FileNotFoundException("Failed to delete file : "+f);
         }
     }
 
