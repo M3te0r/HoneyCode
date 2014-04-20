@@ -34,11 +34,12 @@ public class MainWindowUI extends JFrame{
 
     private ResourceBundle bundle;
 
-    private static final Icon CLOSE_TAB_ICON = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"Cross_close_tab_button.png"));
-    private static final Icon CLOSE_TAB_ICON_DISABLED = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"Cross_close_tab_button_disabled.png"));
-    private static final Icon TAB_ICON = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"Icon_page_code.gif"));
+    //getResource uses "/", it's not using specific-platform separators
+    private static final Icon CLOSE_TAB_ICON = new ImageIcon(MainWindowUI.class.getResource("/icons/Cross_close_tab_button.png"));
+    private static final Icon CLOSE_TAB_ICON_DISABLED = new ImageIcon(MainWindowUI.class.getResource("/icons/Cross_close_tab_button_disabled.png"));
+    private static final Icon TAB_ICON = new ImageIcon(MainWindowUI.class.getResource("/icons/Icon_page_code.gif"));
 
-    private static final Image MAIN_IMAGE = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"main.png")).getImage();
+    private static final Image MAIN_IMAGE = new ImageIcon(MainWindowUI.class.getResource("/icons/main.png")).getImage();
     private JPanel treePanel;
     private static JTabbedPane tabFile;
     private TreeFileExplorer treeMain;
@@ -101,7 +102,6 @@ public class MainWindowUI extends JFrame{
     public MainWindowUI(){
 
         setIconImage(MAIN_IMAGE);
-
         globalPreferences = new HCPreferences();
         //Instanciation des composants
         setTitle("HoneyCode");
@@ -440,7 +440,7 @@ public class MainWindowUI extends JFrame{
     {
         try {
             //Themes will be modifiable in settings
-            Theme theme = Theme.load(MainWindowUI.class.getResourceAsStream(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"themes"+PropertiesShared.SEPARATOR+"dark.xml"));
+            Theme theme = Theme.load(MainWindowUI.class.getResourceAsStream("/themes/dark.xml"));
             theme.apply((RSyntaxTextArea)c.getTextArea());
         }
 
@@ -792,6 +792,7 @@ public class MainWindowUI extends JFrame{
 
                     try{
                         CustomRun.run(fileTo, project.getProjectPath().getAbsolutePath());
+
                     }catch (IOException ex)
                     {
                         System.out.println("error running file\n");

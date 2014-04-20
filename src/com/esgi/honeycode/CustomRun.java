@@ -11,65 +11,66 @@ import java.util.Scanner;
 public class CustomRun {
 
 
-
-
-    public static void run(String args, final String projectOut) throws IOException
-    {
+    public static void run(String args, final String projectOut) throws IOException {
 
         System.out.flush();
 
 
-        if (args!=null && projectOut != null)
-        {
+        if (args != null && projectOut != null) {
 
             //With ProcessBuilder the err output can be redirected to te standard output
             //Only 2 threads instead of 3 for the err
-            ProcessBuilder builder = new ProcessBuilder("java", "-classpath", "\""+System.getProperty("java.class.path")+System.getProperty("path.separator")+projectOut+PropertiesShared.SEPARATOR+"out\"",args);
+            ProcessBuilder builder = new ProcessBuilder("java", "-classpath", "\"" + System.getProperty("java.class.path") + System.getProperty("path.separator") + projectOut + PropertiesShared.SEPARATOR + "out\"", args);
             builder.redirectErrorStream(true);
-
             final Process process = builder.start();
-
-
-
-
             // Consommation de la sortie standard de de la console
-            new Thread() {
+            Thread outThread = new Thread()
+            {
+                @Override
                 public void run() {
                     try {
 
                         String line;
-                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))){
-                            while((line = reader.readLine()) != null) {
+                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                            while ((line = reader.readLine()) != null) {
                                 System.out.println(line);
                             }
                         }
-                    } catch(IOException ioe) {
+                    } catch (IOException ioe) {
                         ioe.printStackTrace();
                     }
                 }
-            }.start();
+            };
 
             //Conso de l'entrée standard de la console
-            new Thread()
-            {
-                public void run()
-                {
+            Thread inThread = new Thread() {
+                @Override
+                public void run() {
+
                     Scanner s = new Scanner(System.in);
                     //Need to control in before !!
 
-                    while (true)
-                    {
+                    while (true) {
                         String input = s.nextLine();
 
-                        try(PrintWriter pw = new PrintWriter(new OutputStreamWriter(process.getOutputStream()))){
+                        try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(process.getOutputStream()))) {
                             pw.write(input);
                             pw.flush();
                         }
-                    }
 
+                    }
                 }
-            }.start();
+
+            };
+
+            outThread.start();
+            inThread.start();
+
+
+
+
         }
-        }
+
+    }
 
 }

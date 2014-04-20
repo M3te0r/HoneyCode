@@ -38,9 +38,5 @@ public class HoneyCodeMain {
                 new MainWindowUI();
             }
         });
-
-
     }
-
-
 }
