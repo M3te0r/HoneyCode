@@ -14,7 +14,7 @@ import java.util.Vector;
  */
 public class ProjectTypeCustomDialog extends JDialog{
 
-    private static final Image MAIN_IMAGE = new ImageIcon(MainWindowUI.class.getResource(".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+".."+PropertiesShared.SEPARATOR+"ressources"+PropertiesShared.SEPARATOR+"main.png")).getImage();
+    private static final Image MAIN_IMAGE = new ImageIcon(MainWindowUI.class.getResource("/icons/main.png")).getImage();
     private boolean finished = false;
     protected Vector<String> languages;
     private JComboBox<String> languagesComboBox;
