@@ -336,6 +336,7 @@ public class MainWindowUI extends JFrame{
 
     }
 
+
     private void setUILanguage()
     {
         //Maybe moving it to class field if using other reg key ?
@@ -436,7 +437,7 @@ public class MainWindowUI extends JFrame{
         tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),tooltip);
     }
 
-    protected static void addCloseableTab(final RTextScrollPane c, final String title, String tooltip)
+    protected static void addCloseableTab(final RTextScrollPane c, final String title, final String tooltip)
     {
         try {
             //Themes will be modifiable in settings
@@ -455,7 +456,7 @@ public class MainWindowUI extends JFrame{
         ac.setAutoActivationEnabled(true);
         ac.install((RSyntaxTextArea)c.getTextArea());
 
-        int tabCount = tabFile.getTabCount();
+        final int tabCount = tabFile.getTabCount();
         boolean showingTab = false;
         for (int x = 0; x<tabCount;x++)
         {
@@ -474,7 +475,7 @@ public class MainWindowUI extends JFrame{
             FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5,0);
 
             //Make a small Jpanel with the layout and make it non-opaque
-            JPanel panelTab = new JPanel(f);
+            final JPanel panelTab = new JPanel(f);
             panelTab.setOpaque(false);
 
             //Add a Jlabel with title and the left side tab icon
@@ -507,6 +508,27 @@ public class MainWindowUI extends JFrame{
             tabFile.setTabComponentAt(pos, panelTab);
             tabFile.setToolTipTextAt(pos,tooltip);
 
+          /*  tabFile.getTabComponentAt(pos).addMouseListener(new MouseInputAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (tabFile.getToolTipTextAt(tabFile.getSelectedIndex())!=null)
+                    {
+
+                        StringBuffer title = new StringBuffer(JOptionPane.getFrameForComponent(tabFile).getTitle());
+                        try {
+                            title.insert(title.indexOf("HoneyCode"), new String(new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex())).getCanonicalPath()));
+                        }catch (IOException ex)
+                        {
+
+                        }
+
+                        System.out.println(title);
+                    }
+
+
+
+                }
+            });*/
             //Add the listener that removes the tab
             buttonClose.addActionListener(new ActionListener() {
                 @Override
@@ -556,6 +578,7 @@ public class MainWindowUI extends JFrame{
                     project.serializeProjectSettings();
                     project.serializeProjectFiles();
                     treeMain.init(new File(globalPreferences.getProjetPath()+PropertiesShared.SEPARATOR+projectFrame.getProjectName()));
+                    setTitle(project.getProjectName()+" - ["+project.getProjectPath()+"] - "+ "HoneyCode");
 
                     if (homeMessage.isShowing())
                     {
@@ -595,6 +618,7 @@ public class MainWindowUI extends JFrame{
                     }
                     project = new ProjectMaker(chosenFile);
                     treeMain.init(project.getProjectFiles().getProjectPath());
+                    setTitle(project.getProjectName()+" - ["+project.getProjectPath()+"] - "+ "HoneyCode");
 
                     if (homeMessage.isShowing())
                     {
@@ -627,7 +651,7 @@ public class MainWindowUI extends JFrame{
                 }
                 newFileNumber += 1;
 
-                addCloseableTab(new RTextScrollPane(new RSyntaxTextArea()),"new "+newFileNumber,null);
+                addCloseableTab(new RTextScrollPane(new RSyntaxTextArea()),"new "+newFileNumber,"new "+newFileNumber);
 
             }
             if (e.getSource() == saveFileAS)
@@ -779,7 +803,12 @@ public class MainWindowUI extends JFrame{
             }
 
             if (e.getSource() == settings){
-                System.out.println("Settings");
+                ParamDialog paramDialog = new ParamDialog(JOptionPane.getFrameForComponent(settings));
+                paramDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                paramDialog.setModal(true);
+                paramDialog.setLocationRelativeTo(getFocusOwner());
+                paramDialog.pack();
+                paramDialog.setVisible(true);
             }
 
             if (e.getSource() == runButton)
@@ -802,18 +831,23 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == buildButton){
+            if (project instanceof ProjectMaker)
+            {
                 if (tabFile.isShowing() && project.getProjectType().equals("Java project"))
                 {
-                    boolean compiled = CompileJavaFiles.doCompilation(project.getProjectPath().getAbsolutePath()+PropertiesShared.SEPARATOR+"src", project.getProjectPath().getAbsolutePath());
-                    if (compiled)
-                    {
-                        Date date = new Date();
-                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-                        String dateString = dateFormat.format(date);
-                        lastBuildLabel.setText("Last build : " + dateString);
+
+                        boolean compiled = CompileJavaFiles.doCompilation(project.getProjectPath().getAbsolutePath()+PropertiesShared.SEPARATOR+"src", project.getProjectPath().getAbsolutePath());
+                        if (compiled)
+                        {
+                            Date date = new Date();
+                            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+                            String dateString = dateFormat.format(date);
+                            lastBuildLabel.setText("Last build : " + dateString);
+                        }
                     }
 
-                }
+
+            }
             }
         }
     }
