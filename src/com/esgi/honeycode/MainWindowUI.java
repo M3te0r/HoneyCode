@@ -95,7 +95,7 @@ public class MainWindowUI extends JFrame{
     private ProjectMaker project;
     private JTextArea consoleOutputArea;
 
-    private HCPreferences globalPreferences;
+    protected static HCPreferences globalPreferences;
 
     private CustomConsoleOutputStream out;
 
@@ -437,17 +437,45 @@ public class MainWindowUI extends JFrame{
         tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),tooltip);
     }
 
-    protected static void addCloseableTab(final RTextScrollPane c, final String title, final String tooltip)
+    private void changeFontCurrentTab()
+    {
+        for(int i = 0;i<tabFile.getTabCount();i++)
+        {
+            ((RTextScrollPane)tabFile.getComponentAt(i)).getTextArea().setFont(new Font(globalPreferences.getFont(),Font.PLAIN,13));
+        }
+    }
+
+    private void changeThemeCurrentTab()
     {
         try {
             //Themes will be modifiable in settings
-            Theme theme = Theme.load(MainWindowUI.class.getResourceAsStream("/themes/dark.xml"));
-            theme.apply((RSyntaxTextArea)c.getTextArea());
+            Theme theme = Theme.load(MainWindowUI.class.getResourceAsStream("/themes/"+globalPreferences.getTheme()+".xml"));
+            for(int i = 0;i<tabFile.getTabCount();i++)
+            {
+                theme.apply((RSyntaxTextArea) ((RTextScrollPane) tabFile.getComponentAt(i)).getTextArea());
+            }
         }
-
         catch (IOException ex){
             JOptionPane.showMessageDialog(null, "error while loading theme");
         }
+
+    }
+
+    protected static void addCloseableTab(final RTextScrollPane c, final String title, final String tooltip)
+    {
+
+
+        try {
+            //Themes will be modifiable in settings
+            Theme theme = Theme.load(MainWindowUI.class.getResourceAsStream("/themes/"+globalPreferences.getTheme()+".xml"));
+            theme.apply((RSyntaxTextArea)c.getTextArea());
+
+        }
+        catch (IOException ex){
+            JOptionPane.showMessageDialog(null, "error while loading theme");
+        }
+
+        c.getTextArea().setFont(new Font(globalPreferences.getFont(),Font.PLAIN, 13));
 
         CustomCompletionProvider p = new CustomCompletionProvider("java"); //Will be replaced
         CompletionProvider provider = p.getProvider(); //An unique CompletionProvider can be used for all RSyntaxArea but not AutoCompletion
@@ -560,6 +588,8 @@ public class MainWindowUI extends JFrame{
         }
 
     }
+
+
 
     private class ActionListenerMenuBar implements ActionListener {
         public void actionPerformed (ActionEvent e){
@@ -807,26 +837,58 @@ public class MainWindowUI extends JFrame{
                 paramDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
                 paramDialog.setModal(true);
                 paramDialog.setLocationRelativeTo(getFocusOwner());
+                paramDialog.setResizable(false);
                 paramDialog.pack();
                 paramDialog.setVisible(true);
+
+                if (globalPreferences.getThemeChanged() == 1)
+                {
+                    if (tabFile.getTabCount()>0)
+                    {
+                        changeThemeCurrentTab();
+                    }
+                    globalPreferences.setThemeChanged(0);
+                }
+
+                if (globalPreferences.getFontChanged() == 1)
+                {
+                    if (tabFile.getTabCount()>0)
+                    {
+                        changeFontCurrentTab();
+                    }
+                    globalPreferences.setFontChanged(0);
+                }
+
+                /*Explication du comportement, dispose() --> la Window et tous ses composants seront marqués comme non displayable
+                * la mémoire sera rendu à l'OS, mais l'on peut recréer cette Window avec le même état qu'avant via l'appel de pack() et setVisible()
+                * */
+                if (globalPreferences.getStateChange() == 1){
+                    globalPreferences.setStateChange(0);
+                    dispose();
+                    pack();
+                    setUILanguage();
+                    setVisible(true);
+
+                }
+
             }
 
             if (e.getSource() == runButton)
             {
                 if (tabFile.isVisible() && tabFile.isShowing() && tabFile.isFocusable())
                 {
-                    //Need to find another way to take the class that define main method !!!
-                    //But it runs the class if a main method is declared
-                    File fileToRun = new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex()));
-                    String fileTo = fileToRun.getName().substring(0, fileToRun.getName().indexOf("."));
-
-                    try{
-                        CustomRun.run(fileTo, project.getProjectPath().getAbsolutePath());
-
-                    }catch (IOException ex)
+                    String askedClassToRun = JOptionPane.showInputDialog(JOptionPane.getFrameForComponent(runButton),"Nom de la classe à exécuter\nUsage :\nMyNewClass \nor\n com.program.test\n","Classe à executer",JOptionPane.QUESTION_MESSAGE);
+                    if (askedClassToRun!=null)
                     {
-                        System.out.println("error running file\n");
+                        try{
+                            CustomRun.run(askedClassToRun, project.getProjectPath().getAbsolutePath());
+
+                        }catch (IOException ex)
+                        {
+                            System.out.println("error running file\n");
+                        }
                     }
+
                 }
             }
 
@@ -851,4 +913,5 @@ public class MainWindowUI extends JFrame{
             }
         }
     }
+
 }

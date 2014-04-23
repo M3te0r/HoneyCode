@@ -4,6 +4,8 @@ import org.fife.io.UnicodeWriter;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 /**
  *
@@ -21,10 +23,21 @@ public class HoneyCodeMain {
         catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // handle exception
         }
-
         HCPreferences globalPreferences = new HCPreferences();
-        globalPreferences.setPreferences();
-        File projectPath = new File(globalPreferences.getProjetPath());
+        try {
+
+
+            if (Preferences.userNodeForPackage(HoneyCodeMain.class).keys().length<4)
+            {
+                globalPreferences.setPreferences();
+            }
+
+        }catch (BackingStoreException ex)
+        {
+            JOptionPane.showMessageDialog(null, "Could not create node in registry\n"+ex.getStackTrace());
+        }
+
+       File projectPath = new File(globalPreferences.getProjetPath());
         boolean created = projectPath.mkdir();
         if (!created && !projectPath.exists())
         {
