@@ -155,6 +155,7 @@ public class MainWindowUI extends JFrame{
 
         fileChooserMain.setFileHidingEnabled(false);
         fileChooserMain.setAcceptAllFileFilterUsed(false);
+        fileChooserMain.setFileHidingEnabled(false);
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Project file", "dat"));
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Java sources", "java"));
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Text files", "txt"));
@@ -707,6 +708,7 @@ public class MainWindowUI extends JFrame{
                 if (tabFile.getToolTipTextAt(tabFile.getSelectedIndex())==null)
                 {
                     fileChooserMain.setCurrentDirectory(new File(globalPreferences.getProjetPath()));
+
                     int status = fileChooserMain.showSaveDialog(JOptionPane.getFrameForComponent(saveFileAS));
                     if (status == JFileChooser.APPROVE_OPTION)
                     {

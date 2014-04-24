@@ -21,8 +21,11 @@ public class CustomRun {
             //With ProcessBuilder the err output can be redirected to te standard output
             //Only 2 threads instead of 3 for the err
             ProcessBuilder builder = new ProcessBuilder("java", "-classpath", "\"" + System.getProperty("java.class.path") + System.getProperty("path.separator") + projectOut + PropertiesShared.SEPARATOR + "out\"", args);
+            System.out.println(builder.command());
+
             builder.redirectErrorStream(true);
             final Process process = builder.start();
+
             // Consommation de la sortie standard de de la console
             Thread outThread = new Thread()
             {

@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -156,7 +155,7 @@ public class ParamDialog extends ModalDialog{
         }*/
 
         themesListComboBox = new JComboBox<>(themes);
-        int j = 0;
+        int j;
         for (j = 0;j<themes.size();j++)
         {
             if (themes.elementAt(j).equals(MainWindowUI.globalPreferences.getTheme()))
@@ -171,8 +170,8 @@ public class ParamDialog extends ModalDialog{
         fonts.add(RSyntaxTextArea.getDefaultFont().getName());
         fonts.add(new Font("Courier New", Font.PLAIN, RSyntaxTextArea.getDefaultFont().getSize()).getName());
         userFont = new JComboBox<>(fonts);
-        int i = 0;
-        for (i = 0;i<fonts.size();i++)
+        int i;
+        for (i = 0;i<fonts.size()-1;++i)
         {
             if (fonts.elementAt(i).equals(MainWindowUI.globalPreferences.getFont()))
             {
