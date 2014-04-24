@@ -27,7 +27,7 @@ public class HoneyCodeMain {
         try {
 
 
-            if (Preferences.userNodeForPackage(HoneyCodeMain.class).keys().length<4)
+            if (Preferences.userNodeForPackage(HoneyCodeMain.class).keys().length<5)
             {
                 globalPreferences.setPreferences();
             }
@@ -43,7 +43,7 @@ public class HoneyCodeMain {
         {
             JOptionPane.showMessageDialog(null, "Impossible de créer le répertoire de projet : "+projectPath);
         }
-
+        System.out.println(System.getProperty("java.library.path").split(";")[0]);
         System.setProperty(UnicodeWriter.PROPERTY_WRITE_UTF8_BOM, "false");
 
         SwingUtilities.invokeLater(new Runnable() {

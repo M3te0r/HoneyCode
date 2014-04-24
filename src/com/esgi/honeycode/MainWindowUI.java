@@ -153,6 +153,7 @@ public class MainWindowUI extends JFrame{
         lastBuildLabel = new JLabel("Last build : none");
         explorerLabel = new JLabel();
 
+        fileChooserMain.setFileHidingEnabled(false);
         fileChooserMain.setAcceptAllFileFilterUsed(false);
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Project file", "dat"));
         fileChooserMain.addChoosableFileFilter(new FileNameExtensionFilter("Java sources", "java"));

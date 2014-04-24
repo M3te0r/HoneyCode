@@ -4,9 +4,6 @@ import javax.swing.*;
 import javax.tools.*;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
@@ -19,19 +16,22 @@ import java.util.logging.Logger;
 public class CompileJavaFiles {
 
 
+    
     private static final Logger logger = Logger.getLogger(CompileJavaFiles.class.getName());
 
     //Instanciating the java compiler
-    private static final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    private static JavaCompiler compiler;
+
+
 
     private static DiagnosticCollector<JavaFileObject> diagnosticCollector;
 
     public static boolean doCompilation(String projectSourcePath, String projectPath)
     {
+        compiler = ToolProvider.getSystemJavaCompiler();
 
         if (compiler==null)
         {
-
                 JOptionPane.showMessageDialog(null, "Compilateur java introuvable, veuillez vérifier que celui-ci est bien installé\nVous pouvez retrouver le dernier JDK à l'adresse\n<html><a href=\"http://www.oracle.com/technetwork/java/javase/downloads/index.html\">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a></html>","JDK ou javac introuvable",JOptionPane.ERROR_MESSAGE);
                 return false;
         }

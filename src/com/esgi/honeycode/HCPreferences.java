@@ -23,6 +23,7 @@ public class HCPreferences {
     private String defaultPath;
     private String font;
     private String theme;
+    private String javaDev;
     private int stateChange = 0;
     private int themeChanged = 0;
     private int fontChanged = 0;
@@ -39,7 +40,7 @@ public class HCPreferences {
         this.defaultPath = System.getProperty("user.home")+PropertiesShared.SEPARATOR+"HoneyCodeProjects";
         this.font = RSyntaxTextArea.getDefaultFont().getFontName();
         this.theme = "dark";
-
+        this.javaDev = System.getProperty("java.home");
     }
 
     public void setPreferences()
@@ -49,6 +50,18 @@ public class HCPreferences {
         this.prefs.put("project_path", this.defaultPath);
         this.prefs.put("font", this.font);
         this.prefs.put("theme", this.theme);
+        this.prefs.put("javadev", this.javaDev);
+    }
+
+    public void setJavaDev(String jdk)
+    {
+        this.javaDev = jdk;
+        this.prefs.put("javadev", this.javaDev);
+    }
+
+    public String getJavaDev()
+    {
+        return this.prefs.get("javadev", this.javaDev);
     }
 
     public int getStateChange()
