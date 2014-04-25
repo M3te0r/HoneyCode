@@ -265,20 +265,27 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         }
         if (e.getActionCommand().equals("showFileExplorer"))
         {
-            try
+            if (Desktop.isDesktopSupported())
             {
-                if (fileSelected.isDirectory())
+                try
                 {
-                    Desktop.getDesktop().open(fileSelected);
-                }
-                else if (fileSelected.isFile())
+                    if (fileSelected.isDirectory())
+                    {
+                        Desktop.getDesktop().open(fileSelected);
+                    }
+                    else if (fileSelected.isFile())
+                    {
+                        Desktop.getDesktop().open(fileSelected.getParentFile());
+                    }
+
+                }catch (IOException ex)
                 {
-                    Desktop.getDesktop().open(fileSelected.getParentFile());
+                    JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(this), "Could not open file with explorer","Error while showing file", JOptionPane.ERROR_MESSAGE);
                 }
 
-            }catch (IOException ex)
-            {
-                JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(this), "Could not open file with explorer","Error while showing file", JOptionPane.ERROR_MESSAGE);
+            }
+            else {
+                JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(this), "Sorry, your system does not support Desktop API,\nplease consider browsing your project manually", "Desktop API not supported",JOptionPane.ERROR_MESSAGE);
             }
 
         }
