@@ -23,8 +23,7 @@ import java.util.Date;
 
 
 /**
- * Created by Mathieu on 11/02/14.
- * Modified by Kevin on 13/02/14.
+ *
  * Crée la fenêtre pricipale d'HoneyCode avec ses composants
  * Les éléments de la fenêtre sont adaptés à la langue par défaut de l'utilisateur
  */
@@ -57,7 +56,8 @@ public class MainWindowUI extends JFrame{
     private JButton buildButton;
     private JButton runButton;
     private JButton buildOptionsButton;
-
+    private InputStream inDef;
+    private PrintStream outDef;
     private JMenuBar menuBarMain;
     private JMenu file;
     private JMenu edit;
@@ -68,7 +68,6 @@ public class MainWindowUI extends JFrame{
     private JMenuItem openProject;
     private JMenuItem newFile;
     private JMenuItem open;
-    private JMenuItem recentFiles;
     private JMenuItem saveFile;
     private JMenuItem saveFileAS;
     private JMenuItem settings;
@@ -77,9 +76,8 @@ public class MainWindowUI extends JFrame{
     private JMenuItem cut;
     private JMenuItem past;
     private JMenuItem encoding;
-    private JMenuItem consoleView;
+    private JCheckBoxMenuItem consoleView;
     private JMenuItem previewShow;
-    private JMenuItem highLight;
     private JMenuItem plugLoad;
     private JMenuItem plugDown;
     private JMenuItem plugSubmit;
@@ -122,7 +120,6 @@ public class MainWindowUI extends JFrame{
         openProject = new JMenuItem();
         newFile = new JMenuItem();
         open = new JMenuItem();
-        recentFiles = new JMenuItem();  //Collections d'objets (nom du fichier, chemin) ??
         saveFile = new JMenuItem();
         saveFileAS = new JMenuItem();
         settings = new JMenuItem();
@@ -131,9 +128,8 @@ public class MainWindowUI extends JFrame{
         cut = new JMenuItem();
         past = new JMenuItem();
         encoding = new JMenuItem();
-        consoleView = new JMenuItem();
+        consoleView = new JCheckBoxMenuItem();
         previewShow = new JMenuItem();
-        highLight = new JMenuItem();
         plugLoad = new JMenuItem();
         plugDown = new JMenuItem();
         plugSubmit = new JMenuItem();
@@ -146,6 +142,8 @@ public class MainWindowUI extends JFrame{
         buildOptionsButton = new JButton();
         consoleOutputArea = new JTextArea();
         out = new CustomConsoleOutputStream(consoleOutputArea);
+        outDef = System.out;
+
         System.setOut(new PrintStream(out));
         System.setErr(new PrintStream(out));
 
@@ -213,14 +211,14 @@ public class MainWindowUI extends JFrame{
         plugLoad.addActionListener(test);
         plugDown.addActionListener(test);
         forum.addActionListener(test);
-      //  copy.addActionListener(test);
-      //  cut.addActionListener(test);
+        copy.addActionListener(test);
+        cut.addActionListener(test);
         saveFile.addActionListener(test);
         saveFileAS.addActionListener(test);
         settings.addActionListener(test);
         runButton.addActionListener(test);
         buildButton.addActionListener(test);
-        //past.addActionListener(test);
+        past.addActionListener(test);
 
         consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
         subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
@@ -254,7 +252,6 @@ public class MainWindowUI extends JFrame{
         file.add(openProject);
         file.add(newFile);
         file.add(open);
-        file.add(recentFiles);
         file.add(saveFile);
         file.add(saveFileAS);
         file.add(settings);
@@ -267,7 +264,6 @@ public class MainWindowUI extends JFrame{
         menuBarMain.add(view);
         view.add(consoleView);
         view.add(previewShow);
-        view.add(highLight);
         menuBarMain.add(plugin);
         plugin.add(plugLoad);
         plugin.add(plugDown);
@@ -285,17 +281,36 @@ public class MainWindowUI extends JFrame{
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-
-
         consoleOutputArea.setEditable(false);
         consoleSroll = new JScrollPane(consoleOutputArea);
         JTextField textField = new JTextField();
 
-        TextFieldStreamer fieldStreamer = new TextFieldStreamer(textField);
+        final TextFieldStreamer fieldStreamer = new TextFieldStreamer(textField);
         textField.addActionListener(fieldStreamer);
         textField.setToolTipText("Console input");
 
+        inDef = System.in;
+
         System.setIn(fieldStreamer);
+
+        consoleView.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+
+                if (e.getStateChange() == ItemEvent.SELECTED)
+                {
+                    System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+                    System.setIn(inDef);
+                }
+                else
+                {
+                    System.setOut(new PrintStream(out));
+                    System.setIn(fieldStreamer);
+                }
+
+
+            }
+        });
         consolePane.add(textField, BorderLayout.SOUTH);
         consolePane.add(subConsolePane, BorderLayout.NORTH);
         consolePane.add(consoleSroll, BorderLayout.CENTER);
@@ -402,7 +417,6 @@ public class MainWindowUI extends JFrame{
         openProject.setText(bundle.getString("openProject"));
         newFile.setText(bundle.getString("newFile"));
         open.setText(bundle.getString("open"));
-        recentFiles.setText(bundle.getString("recentFiles"));
         saveFile.setText(bundle.getString("saveFile"));
         saveFileAS.setText(bundle.getString("saveFileAS"));
         settings.setText(bundle.getString("settings"));
@@ -413,7 +427,6 @@ public class MainWindowUI extends JFrame{
         encoding.setText(bundle.getString("encoding"));
         consoleView.setText(bundle.getString("consoleView"));
         previewShow.setText(bundle.getString("previewShow"));
-        highLight.setText(bundle.getString("highlight"));
         plugLoad.setText(bundle.getString("plugLoad"));
         plugDown.setText(bundle.getString("plugDown"));
         plugSubmit.setText(bundle.getString("plugSubmit"));
@@ -568,7 +581,6 @@ public class MainWindowUI extends JFrame{
 
                         System.out.println(title);
                     }
-
 
 
                 }
@@ -812,7 +824,7 @@ public class MainWindowUI extends JFrame{
                 //Throws an exception
                 //Not the good catch, just to test
                 try{
-                    Desktop.getDesktop().browse(new URI("http://honeycode.kevinmaarek.fr/"));
+                    Desktop.getDesktop().browse(new URI("http://honeycode.kevinmaarek.fr/pages/plugins/"));
                 } catch (URISyntaxException | IOException ex){
                     JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(plugDown), ex.getMessage(),"Erreur", JOptionPane.ERROR_MESSAGE,null);
                 }

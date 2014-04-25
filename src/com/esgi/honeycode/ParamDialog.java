@@ -29,11 +29,9 @@ public class ParamDialog extends ModalDialog{
     protected JButton cancelButton;
     protected JPanel buttonPane;
     private JPanel settingsPane;
-    private JLabel themes;
     private JComboBox<String> themesListComboBox;
     private JComboBox<String> userLanguage;
     private JComboBox<String> userFont;
-    private JScrollPane listScrollPane;
     private JSeparator sep;
 
     public ParamDialog(Frame parent)
