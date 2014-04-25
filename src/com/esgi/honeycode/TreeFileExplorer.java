@@ -1,5 +1,6 @@
 package com.esgi.honeycode;
 
+import com.sun.istack.internal.Nullable;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -37,7 +38,7 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
     {
         removeAll();
         this.root = projectPath;
-        listFiles();
+        listFiles(null,null);
         ((DefaultTreeModel) getModel()).setRoot(this.rootNode);
         setCellRenderer(new TreeFileRenderer());
         setToggleClickCount(2);
@@ -48,10 +49,18 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         JMenuItem newClass = new JMenuItem("New class");
         newClass.addActionListener(this);
         newClass.setActionCommand("Newclass");
+        JMenuItem newDir = new JMenuItem("New directory");
+        newDir.setActionCommand("newDir");
+        newDir.addActionListener(this);
+        JMenuItem renameDir = new JMenuItem("Rename directory");
+        renameDir.setActionCommand("renameDir");
+        renameDir.addActionListener(this);
         JMenuItem deleteDir = new JMenuItem("Delete directory");
         deleteDir.setActionCommand("DeleteDir");
         deleteDir.addActionListener(this);
         popupMenuDir.add(newClass);
+        popupMenuDir.add(newDir);
+        popupMenuDir.add(renameDir);
         popupMenuDir.add(deleteDir);
 
         final JPopupMenu popupMenuFile = new JPopupMenu();
@@ -158,10 +167,47 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
 
             }
         }
+
+        if (e.getActionCommand().equals("newDir"))
+        {
+            String newDirInput = JOptionPane.showInputDialog(null,"Nom du dossier :", "Nouveau dossier", JOptionPane.QUESTION_MESSAGE);
+            if (newDirInput!=null)
+            {
+                File newDir = new File(fileSelected.getAbsolutePath()+PropertiesShared.SEPARATOR+newDirInput);
+                    boolean created = newDir.mkdir();
+                    if (!created && !newDir.exists())
+                    {
+                        JOptionPane.showMessageDialog(null, "Impossible de créer le dossier : "+newDirInput);
+                    }
+                    else {
+                        node = new DefaultMutableTreeNode(newDir);
+                        dmtn.add(node);
+                        ((DefaultTreeModel)getModel()).nodeStructureChanged(dmtn);
+                    }
+            }
+        }
+        if (e.getActionCommand().equals("renameDir"))
+        {
+            String renamedDir = JOptionPane.showInputDialog(JOptionPane.getFrameForComponent(this),"Rename directory "+fileSelected.getName()+" to :");
+            if (renamedDir!=null)
+            {
+                File rename = new File(fileSelected.getParent()+PropertiesShared.SEPARATOR+renamedDir);
+                if (fileSelected.renameTo(rename)){
+                    dmtn.removeFromParent();
+                    ((DefaultTreeModel)getModel()).nodeStructureChanged(dmtn);
+
+                    node = ((DefaultMutableTreeNode)path.getParentPath().getLastPathComponent());
+                    listFiles(rename,node );
+                    ((DefaultTreeModel)getModel()).nodeStructureChanged(node);
+                }
+            }
+        }
+
+
+
         if (e.getActionCommand().equals("DeleteDir"))
         {
             int res = JOptionPane.showConfirmDialog(null, "Delete this directory with all his sub directories and files ?", "Delete confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-
             if (res == JOptionPane.YES_OPTION)
             {
                 try {
@@ -174,9 +220,7 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
                 }catch (IOException ex)
                 {
                     JOptionPane.showMessageDialog(null,ex.getMessage());
-
                 }
-
             }
         }
 
@@ -236,11 +280,28 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
 
     }
 
-    private void listFiles()
+    private void listFiles(@Nullable File dirRenamed, @Nullable DefaultMutableTreeNode renameDirNode)
     {
-        this.rootNode = new DefaultMutableTreeNode();
+        if (renameDirNode!=null)
+        {
+            this.rootNode = renameDirNode;
+        }
+        else
+        {
+            this.rootNode = new DefaultMutableTreeNode();
+        }
 
-        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(this.root);
+
+        DefaultMutableTreeNode newNode;
+        if (dirRenamed!=null)
+        {
+            newNode = new DefaultMutableTreeNode(dirRenamed);
+        }
+        else
+        {
+            newNode = new DefaultMutableTreeNode(this.root);
+        }
+
 
             try {
                 //File filter not to list 'out' folder with classes
@@ -251,8 +312,15 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
                     }
                 };
 
+                File files[];
 
-                File files[] = this.root.listFiles(ff);
+                if (renameDirNode!=null && dirRenamed!= null)
+                {
+                    files = dirRenamed.listFiles(ff);
+                }
+                else {
+                    files = this.root.listFiles(ff);
+                }
                 Arrays.sort(files, new Comparator<File>() {
                     @Override
                     public int compare(File o1, File o2) {

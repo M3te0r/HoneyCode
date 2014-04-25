@@ -806,8 +806,6 @@ public class MainWindowUI extends JFrame{
                     catch(MalformedURLException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ex){
                         ex.printStackTrace();
                     }
-
-
                 }
             }
             if(e.getSource() == plugDown){
