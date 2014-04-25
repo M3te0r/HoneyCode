@@ -12,8 +12,9 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.*;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.text.DateFormat;
@@ -724,8 +725,15 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == about){
-                JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), "HoneyCode est un projet étudiant développé au sein de l'ESGI, et est libre de droits.\n Développeurs :" +
-                        "\n-Kevin MAAREK \n-Mathieu PEQUIN \n-Alexandre FAYETTE \n Promotion 3iAL ", "A propos", JOptionPane.INFORMATION_MESSAGE);
+                ClassLoader cl = ClassLoader.getSystemClassLoader();
+
+                URL[] urls = ((URLClassLoader)cl).getURLs();
+                String classpath="";
+                for(URL url: urls){
+                    classpath += "\n"+url.getFile();
+                }
+
+                JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), classpath, "A propos", JOptionPane.INFORMATION_MESSAGE);
             }
 
             if(e.getSource() == open){
@@ -775,6 +783,17 @@ public class MainWindowUI extends JFrame{
                 if(returnVal == JFileChooser.APPROVE_OPTION){
 
                     File chosenPlugin = pluginChooser.getSelectedFile();
+                    try{
+                    URL[] urls = new URL[] { chosenPlugin.toURI().toURL() };
+                    ClassLoader loader = new URLClassLoader(urls);
+                    Class c = loader.loadClass("Plugmessage");
+                    Method method = c.getMethod("main");
+                    method.invoke(c);
+                    }
+                    catch(MalformedURLException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ex){
+                        ex.printStackTrace();
+                    }
+
 
                 }
             }

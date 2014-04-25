@@ -4,8 +4,11 @@ import org.fife.io.UnicodeWriter;
 
 import javax.swing.*;
 import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
 
 /**
  *
@@ -44,6 +47,7 @@ public class HoneyCodeMain {
             JOptionPane.showMessageDialog(null, "Impossible de créer le répertoire de projet : "+projectPath);
         }
         System.out.println(System.getProperty("java.library.path").split(";")[0]);
+
         System.setProperty(UnicodeWriter.PROPERTY_WRITE_UTF8_BOM, "false");
 
         SwingUtilities.invokeLater(new Runnable() {
