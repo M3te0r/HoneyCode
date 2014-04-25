@@ -434,6 +434,19 @@ public class MainWindowUI extends JFrame{
 
     }
 
+    protected static void setNewTabTextRenamedFile(String oldTitle, String newTitle, String tooltip)
+    {
+        for (int i = 0; i<tabFile.getTabCount();i++ )
+        {
+            if (oldTitle.equals(((JLabel)((JPanel)tabFile.getTabComponentAt(tabFile.getSelectedIndex())).getComponent(0)).getText()))
+            {
+                ((JLabel)((JPanel)tabFile.getTabComponentAt(i)).getComponent(0)).setText(newTitle);
+                tabFile.setToolTipTextAt(i,tooltip);
+                break;
+            }
+        }
+    }
+
     protected static void setNewTabText(String title, String tooltip)
     {
         ((JLabel)((JPanel)tabFile.getTabComponentAt(tabFile.getSelectedIndex())).getComponent(0)).setText(title);

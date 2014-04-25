@@ -33,7 +33,7 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         super(new String[] {"Nothing to show"});
     }
 
-    public void init(File projectPath)
+    public void init(final File projectPath)
     {
         removeAll();
         this.root = projectPath;
@@ -58,6 +58,10 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         JMenuItem deleteFile = new JMenuItem("Delete file");
         deleteFile.setActionCommand("DeleteFile");
         deleteFile.addActionListener(this);
+        JMenuItem renameFile = new JMenuItem("Rename file");
+        renameFile.setActionCommand("renameFile");
+        renameFile.addActionListener(this);
+        popupMenuFile.add(renameFile);
         popupMenuFile.add(deleteFile);
 
         addMouseListener(new MouseInputAdapter() {
@@ -189,6 +193,24 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
                         dmtn.removeFromParent();
                         ((DefaultTreeModel)getModel()).nodeStructureChanged(dmtn);
                     }
+                }
+            }
+        }
+
+        if (e.getActionCommand().equals("renameFile"))
+        {
+            String name = JOptionPane.showInputDialog(JOptionPane.getFrameForComponent(this), "Rename file "+fileSelected.getName()+" to :",fileSelected.getName());
+            if (name!=null)
+            {
+                File renamedFile = new File(fileSelected.getParent()+PropertiesShared.SEPARATOR+name);
+                if (fileSelected.renameTo(renamedFile))
+                {
+                    dmtn.removeFromParent();
+                    ((DefaultTreeModel)getModel()).nodeStructureChanged(dmtn);
+                    node = ((DefaultMutableTreeNode)path.getParentPath().getLastPathComponent());
+                    node.add(new DefaultMutableTreeNode(renamedFile));
+                    ((DefaultTreeModel)getModel()).nodeStructureChanged(node);
+                    MainWindowUI.setNewTabTextRenamedFile(fileSelected.getName(),renamedFile.getName(),renamedFile.getAbsolutePath());
                 }
             }
         }
