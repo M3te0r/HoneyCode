@@ -9,6 +9,7 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -58,10 +59,14 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         JMenuItem deleteDir = new JMenuItem("Delete directory");
         deleteDir.setActionCommand("DeleteDir");
         deleteDir.addActionListener(this);
+        JMenuItem showDirExplorer = new JMenuItem("Show directory in explorer");
+        showDirExplorer.setActionCommand("showFileExplorer");
+        showDirExplorer.addActionListener(this);
         popupMenuDir.add(newClass);
         popupMenuDir.add(newDir);
         popupMenuDir.add(renameDir);
         popupMenuDir.add(deleteDir);
+        popupMenuDir.add(showDirExplorer);
 
         final JPopupMenu popupMenuFile = new JPopupMenu();
         JMenuItem deleteFile = new JMenuItem("Delete file");
@@ -70,8 +75,12 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         JMenuItem renameFile = new JMenuItem("Rename file");
         renameFile.setActionCommand("renameFile");
         renameFile.addActionListener(this);
+        JMenuItem showFileExplorer = new JMenuItem("Show file in explorer");
+        showFileExplorer.setActionCommand("showFileExplorer");
+        showFileExplorer.addActionListener(this);
         popupMenuFile.add(renameFile);
         popupMenuFile.add(deleteFile);
+        popupMenuFile.add(showFileExplorer);
 
         addMouseListener(new MouseInputAdapter() {
             @Override
@@ -92,16 +101,12 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
                         popupMenuFile.show(e.getComponent(), e.getX(), e.getY());
                     }
 
-                }
-
-                else if (e.getClickCount()==2)
-                {
+                } else if (e.getClickCount() == 2) {
 
                     File selectedFileOnTree = (File) ((DefaultMutableTreeNode) selPath.getLastPathComponent()).getUserObject();
-                    if (selectedFileOnTree.isFile())
-                    {
+                    if (selectedFileOnTree.isFile()) {
                         FileHandler fileHandler = new FileHandler(selectedFileOnTree);
-                        MainWindowUI.addCloseableTab(new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())),selectedFileOnTree.getName(), selectedFileOnTree.getAbsolutePath());
+                        MainWindowUI.addCloseableTab(new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())), selectedFileOnTree.getName(), selectedFileOnTree.getAbsolutePath());
                     }
 
                 }
@@ -257,6 +262,25 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
                     MainWindowUI.setNewTabTextRenamedFile(fileSelected.getName(),renamedFile.getName(),renamedFile.getAbsolutePath());
                 }
             }
+        }
+        if (e.getActionCommand().equals("showFileExplorer"))
+        {
+            try
+            {
+                if (fileSelected.isDirectory())
+                {
+                    Desktop.getDesktop().open(fileSelected);
+                }
+                else if (fileSelected.isFile())
+                {
+                    Desktop.getDesktop().open(fileSelected.getParentFile());
+                }
+
+            }catch (IOException ex)
+            {
+                JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(this), "Could not open file with explorer","Error while showing file", JOptionPane.ERROR_MESSAGE);
+            }
+
         }
     }
 
