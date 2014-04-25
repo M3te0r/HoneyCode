@@ -809,13 +809,18 @@ public class MainWindowUI extends JFrame{
 
                     File chosenPlugin = pluginChooser.getSelectedFile();
                     try{
-                    URL[] urls = new URL[] { chosenPlugin.toURI().toURL() };
-                    ClassLoader loader = new URLClassLoader(urls);
-                    Class c = loader.loadClass("Plugmessage");
-                    Method method = c.getMethod("main");
-                    method.invoke(c);
+                        URL[] urls = new URL[] { chosenPlugin.toURI().toURL() };
+                        ClassLoader loader = new URLClassLoader(urls);
+                        Class c = loader.loadClass("Plugmessage");
+                        Class instance = c.forName("Plugmessage", true, loader);
+                        System.out.println(c.toString());
+                        System.out.println(instance.toString());
+
+                        Method[] methods = c.getMethods();
+                        System.out.println(methods[0].toString()+"  "+methods[1].toString());
+                        methods[0].invoke(c);
                     }
-                    catch(MalformedURLException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ex){
+                    catch(MalformedURLException | ClassNotFoundException | IllegalAccessException | InvocationTargetException  ex){
                         ex.printStackTrace();
                     }
                 }
