@@ -299,7 +299,7 @@ public class MainWindowUI extends JFrame{
 
                 if (e.getStateChange() == ItemEvent.SELECTED)
                 {
-                    System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+                    System.setOut(outDef);
                     System.setIn(inDef);
                 }
                 else

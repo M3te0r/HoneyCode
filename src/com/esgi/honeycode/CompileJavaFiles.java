@@ -8,16 +8,11 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 /**
  * Class that compiles given java files
  */
 public class CompileJavaFiles {
-
-
-    
-    private static final Logger logger = Logger.getLogger(CompileJavaFiles.class.getName());
 
     //Instanciating the java compiler
     private static JavaCompiler compiler;

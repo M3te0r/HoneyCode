@@ -14,7 +14,7 @@ public class CustomRun {
     public static void run(String args, final String projectOut) throws IOException {
 
         System.out.flush();
-
+        
 
         if (args != null && projectOut != null) {
 
@@ -24,6 +24,7 @@ public class CustomRun {
 
             builder.redirectErrorStream(true);
             final Process process = builder.start();
+
 
             // Consommation de la sortie standard de de la console
             Thread outThread = new Thread()
@@ -49,16 +50,21 @@ public class CustomRun {
                 @Override
                 public void run() {
 
+
                     Scanner s = new Scanner(System.in);
                     //Need to control in before !!
 
                     while (true) {
-                        String input = s.nextLine();
+                        //while(s.hasNextLine())
+                       // {
+                            String input = s.nextLine();
 
-                        try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(process.getOutputStream()))) {
-                            pw.write(input);
-                            pw.flush();
-                        }
+                            try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(process.getOutputStream()))) {
+                                pw.write(input);
+                                pw.flush();
+                            }
+                       // }
+
 
                     }
                 }
