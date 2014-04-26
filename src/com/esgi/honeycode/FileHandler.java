@@ -36,6 +36,10 @@ public class FileHandler {
         try(UnicodeWriter unicodeWriter = new UnicodeWriter(new BufferedOutputStream(new FileOutputStream(this.sourceFile)),"UTF-8")){
 
             unicodeWriter.write(document.getText(document.getStartPosition().getOffset(), document.getLength()));
+            if (document.getProperty("stateChange")==1)
+            {
+                document.putProperty("stateChange",0);
+            }
         }catch (FileNotFoundException ex)
         {
             JOptionPane.showMessageDialog(null, "Could not open such file : "+sourceFile.getName());

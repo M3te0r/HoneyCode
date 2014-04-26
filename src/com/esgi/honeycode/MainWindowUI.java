@@ -7,6 +7,8 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -68,7 +70,7 @@ public class MainWindowUI extends JFrame{
     private JMenuItem openProject;
     private JMenuItem newFile;
     private JMenuItem open;
-    private JMenuItem saveFile;
+    private static JMenuItem saveFile;
     private JMenuItem saveFileAS;
     private JMenuItem settings;
     private JMenuItem exitApp;
@@ -176,7 +178,7 @@ public class MainWindowUI extends JFrame{
 
         //height of the task bar
         Insets scnMax = tkMain.getScreenInsets(getGraphicsConfiguration());
-        int taskBarSize = scnMax.bottom;
+        final int taskBarSize = scnMax.bottom;
 
         //Récupération de la touche utilisée pour les raccourcis clavier du système
         shortcutKey = tkMain.getMenuShortcutKeyMask();
@@ -335,21 +337,20 @@ public class MainWindowUI extends JFrame{
             public void windowClosing(WindowEvent e) {
                 int confirm = JOptionPane.showConfirmDialog(JOptionPane.getFrameForComponent(exitApp), exitMessage, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    /*
-                    TODO :
-                          Check des fichiers ouverts et demandes si sauvegarde, avec Oui -> entraine sauvegarde puis fermeture
-                          avec Non --> Fichier non sauvegardé puis fermeture
-                          avec Annuler --> Annule la fermeure de l'application
-                     */
+                    if (tabFile.getTabCount()>0)
+                    {
+                        tabFile.setSelectedIndex(0);
+                        while (tabFile.getTabCount()>0)
+                        {
+                            ((JButton)((JPanel)tabFile.getTabComponentAt(0)).getComponent(1)).doClick();
+                        }
+                    }
                     System.exit(0);
                 }
             }
         });
 
-
-
     }
-
 
     private void setUILanguage()
     {
@@ -488,8 +489,6 @@ public class MainWindowUI extends JFrame{
 
     protected static void addCloseableTab(final RTextScrollPane c, final String title, final String tooltip)
     {
-
-
         try {
             //Themes will be modifiable in settings
             Theme theme = Theme.load(MainWindowUI.class.getResourceAsStream("/themes/"+globalPreferences.getTheme()+".xml"));
@@ -508,6 +507,27 @@ public class MainWindowUI extends JFrame{
         ac.setAutoCompleteEnabled(true);
         ac.setAutoActivationEnabled(true);
         ac.install((RSyntaxTextArea)c.getTextArea());
+        ((RSyntaxDocument)((RSyntaxTextArea)c.getTextArea()).getDocument()).putProperty("stateChange", 0);
+        ((RSyntaxDocument)((RSyntaxTextArea)c.getTextArea()).getDocument()).addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+
+            }
+
+            @Override
+             public void removeUpdate(DocumentEvent e) {
+
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+                if (e.getDocument().getProperty("stateChange") == 0)
+                {
+                    e.getDocument().putProperty("stateChange",1);
+                }
+            }
+        });
 
         final int tabCount = tabFile.getTabCount();
         boolean showingTab = false;
@@ -585,6 +605,15 @@ public class MainWindowUI extends JFrame{
             buttonClose.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    if (((RSyntaxDocument)((RSyntaxTextArea)c.getTextArea()).getDocument()).getProperty("stateChange")==1)
+                    {
+                        int res = JOptionPane.showConfirmDialog(JOptionPane.getFrameForComponent(tabFile),"Voulez vous enregistrez les modifications ?", "Enregistrer les modifications ?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (res == JOptionPane.YES_OPTION)
+                        {
+                            saveFile.doClick();
+                        }
+                    }
+
                     tabFile.remove(c);
                 }
             });
@@ -612,9 +641,6 @@ public class MainWindowUI extends JFrame{
         }
 
     }
-
-
-
     private class ActionListenerMenuBar implements ActionListener {
         public void actionPerformed (ActionEvent e){
 
@@ -655,8 +681,6 @@ public class MainWindowUI extends JFrame{
             }
 
             if (e.getSource() == openProject) {
-
-
                 int returnVal = fileChooserMain.showOpenDialog(JOptionPane.getFrameForComponent(openProject));
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -687,8 +711,6 @@ public class MainWindowUI extends JFrame{
                     }
                 }
             }
-
-
             if(e.getSource() == newFile){
                 if (homeMessage.isShowing())
                 {
@@ -716,9 +738,8 @@ public class MainWindowUI extends JFrame{
                 {
                     FileHandler file = new FileHandler(fileChooserMain.getSelectedFile());
                     RTextScrollPane rTextScrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
-                    RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
+                    RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getTextArea();
                     file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
-                    //Can't figure why the fuck it only sets the text at the second attempt with save file as
                     setNewTabText(fileChooserMain.getSelectedFile().getName(), fileChooserMain.getSelectedFile().getAbsolutePath());
                 }
             }
@@ -726,8 +747,9 @@ public class MainWindowUI extends JFrame{
             if (e.getSource() == saveFile)
             {
                 RTextScrollPane rTextScrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
-                RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
-                if (tabFile.getToolTipTextAt(tabFile.getSelectedIndex())==null)
+                RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getTextArea();
+                File file1 = new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex()));
+                if (!file1.exists())
                 {
                     fileChooserMain.setCurrentDirectory(new File(globalPreferences.getProjetPath()));
 
@@ -756,7 +778,6 @@ public class MainWindowUI extends JFrame{
 
                 JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), classpath, "A propos", JOptionPane.INFORMATION_MESSAGE);
             }
-
             if(e.getSource() == open){
                 int returnVal = fileChooserMain.showOpenDialog(JOptionPane.getFrameForComponent(open));
 
@@ -770,8 +791,6 @@ public class MainWindowUI extends JFrame{
                         editorPanel.add(tabFile);
                         editorPanel.updateUI();
                     }
-
-
                    addCloseableTab(new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())), chosenFile.getName(), chosenFile.getAbsolutePath());
                     tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),chosenFile.getAbsolutePath());
 
@@ -783,21 +802,22 @@ public class MainWindowUI extends JFrame{
 
                 }
             }
-
             if(e.getSource() == exitApp){
                 int confirm = JOptionPane.showConfirmDialog(JOptionPane.getFrameForComponent(exitApp), "Etes-vous sûr de vouloir quitter HoneyCode ?", "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (confirm == JOptionPane.YES_OPTION){
-                    /*
-                    TODO :
-                    Same as Window Closing
-                     */
+                    if (tabFile.getTabCount()>0)
+                    {
+                        tabFile.setSelectedIndex(0);
+                        while (tabFile.getTabCount()>0)
+                        {
+                            ((JButton)((JPanel)tabFile.getTabComponentAt(0)).getComponent(1)).doClick();
+                        }
+                    }
                     System.exit(0);
                 }
             }
 
             if(e.getSource() == plugLoad){
-
-
 
                 int returnVal = pluginChooser.showOpenDialog(JOptionPane.getFrameForComponent(plugLoad));
 
@@ -846,7 +866,6 @@ public class MainWindowUI extends JFrame{
                 } catch (URISyntaxException | IOException ex){
                     JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(forum), "Could not open HoneyCode forum Web Page", "Erreur", JOptionPane.ERROR_MESSAGE, null);
                 }
-
             }
 
             if(e.getSource() == copy){
@@ -912,9 +931,6 @@ public class MainWindowUI extends JFrame{
                     globalPreferences.setFontChanged(0);
                 }
 
-                /*Explication du comportement, dispose() --> la Window et tous ses composants seront marqués comme non displayable
-                * la mémoire sera rendu à l'OS, mais l'on peut recréer cette Window avec le même état qu'avant via l'appel de pack() et setVisible()
-                * */
                 if (globalPreferences.getStateChange() == 1){
                     globalPreferences.setStateChange(0);
                     dispose();
