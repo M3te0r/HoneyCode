@@ -278,14 +278,11 @@ public class MainWindowUI extends JFrame{
         help.add(forum);
         help.add(checkUpdate);
 
-
         saveFile.setEnabled(false);
         saveFileAS.setEnabled(false);
-
         setJMenuBar(menuBarMain);
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
 
         consoleOutputArea.setEditable(false);
         consoleSroll = new JScrollPane(consoleOutputArea);
@@ -303,13 +300,10 @@ public class MainWindowUI extends JFrame{
             @Override
             public void itemStateChanged(ItemEvent e) {
 
-                if (e.getStateChange() == ItemEvent.SELECTED)
-                {
-                    System.setOut(outDef);
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
                     System.setIn(inDef);
-                }
-                else
-                {
+                } else {
                     System.setOut(new PrintStream(out));
                     System.setIn(fieldStreamer);
                 }
@@ -526,7 +520,7 @@ public class MainWindowUI extends JFrame{
         AutoCompletion ac = new AutoCompletion(provider);
         ac.setAutoCompleteEnabled(true);
         ac.setAutoActivationEnabled(true);
-        ac.install((RSyntaxTextArea)c.getTextArea());
+        ac.install((RSyntaxTextArea) c.getTextArea());
         ((RSyntaxDocument)((RSyntaxTextArea)c.getTextArea()).getDocument()).putProperty("stateChange", 0);
         ((RSyntaxDocument)((RSyntaxTextArea)c.getTextArea()).getDocument()).addDocumentListener(new DocumentListener() {
             @Override
@@ -535,16 +529,15 @@ public class MainWindowUI extends JFrame{
             }
 
             @Override
-             public void removeUpdate(DocumentEvent e) {
+            public void removeUpdate(DocumentEvent e) {
 
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
 
-                if (e.getDocument().getProperty("stateChange") == 0)
-                {
-                    e.getDocument().putProperty("stateChange",1);
+                if (e.getDocument().getProperty("stateChange") == 0) {
+                    e.getDocument().putProperty("stateChange", 1);
                 }
             }
         });
@@ -689,8 +682,11 @@ public class MainWindowUI extends JFrame{
                             saveFileAS.setEnabled(true);
                         }
                         editorPanel.remove(homeMessage);
+
                         editorPanel.add(tabFile);
-                        editorPanel.revalidate();
+                        editorPanel.updateUI();
+
+
                     }
 
                 }
@@ -785,15 +781,8 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == about){
-                ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-                URL[] urls = ((URLClassLoader)cl).getURLs();
-                String classpath="";
-                for(URL url: urls){
-                    classpath += "\n"+url.getFile();
-                }
-
-                JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), classpath, "A propos", JOptionPane.INFORMATION_MESSAGE);
+                 JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), "HoneyCode est un projet étudiant développé dans le cadre de l'ESGI" +
+                        "\n PEQUIN Mathieu \n MAAREK Kevin \n FAYETTE Alexandre", "A propos", JOptionPane.INFORMATION_MESSAGE);
             }
             if(e.getSource() == open){
                 int returnVal = fileChooserMain.showOpenDialog(JOptionPane.getFrameForComponent(open));
@@ -844,14 +833,11 @@ public class MainWindowUI extends JFrame{
                     try{
                         URL[] urls = new URL[] { chosenPlugin.toURI().toURL() };
                         ClassLoader loader = new URLClassLoader(urls);
-                        Class c = loader.loadClass("Plugmessage");
-                        Class instance = c.forName("Plugmessage", true, loader);
-                        System.out.println(c.toString());
-                        System.out.println(instance.toString());
+                        Class<?> c = loader.loadClass("Plugmessage");
 
-                        Method[] methods = c.getMethods();
-                        System.out.println(methods[0].toString()+"  "+methods[1].toString());
-                        methods[0].invoke(c);
+                        Method[] method = c.getMethods();
+                        method[0].invoke(c, getJMenuBar());
+
                     }
                     catch(MalformedURLException | ClassNotFoundException | IllegalAccessException | InvocationTargetException  ex){
                         ex.printStackTrace();
@@ -943,8 +929,11 @@ public class MainWindowUI extends JFrame{
 
                 if (globalPreferences.getStateChange() == 1){
                     globalPreferences.setStateChange(0);
+                    dispose();
+                    pack();
                     setUILanguage();
-                    revalidate();
+                    setVisible(true);
+
                 }
 
             }
