@@ -274,14 +274,11 @@ public class MainWindowUI extends JFrame{
         help.add(forum);
         help.add(checkUpdate);
 
-
         saveFile.setEnabled(false);
         saveFileAS.setEnabled(false);
-
         setJMenuBar(menuBarMain);
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
 
         consoleOutputArea.setEditable(false);
         consoleSroll = new JScrollPane(consoleOutputArea);
@@ -299,13 +296,10 @@ public class MainWindowUI extends JFrame{
             @Override
             public void itemStateChanged(ItemEvent e) {
 
-                if (e.getStateChange() == ItemEvent.SELECTED)
-                {
-                    System.setOut(outDef);
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
                     System.setIn(inDef);
-                }
-                else
-                {
+                } else {
                     System.setOut(new PrintStream(out));
                     System.setIn(fieldStreamer);
                 }
@@ -649,8 +643,11 @@ public class MainWindowUI extends JFrame{
                             saveFileAS.setEnabled(true);
                         }
                         editorPanel.remove(homeMessage);
+
                         editorPanel.add(tabFile);
-                        editorPanel.revalidate();
+                        editorPanel.updateUI();
+
+
                     }
 
                 }
@@ -810,16 +807,23 @@ public class MainWindowUI extends JFrame{
                     try{
                         URL[] urls = new URL[] { chosenPlugin.toURI().toURL() };
                         ClassLoader loader = new URLClassLoader(urls);
-                        Class c = loader.loadClass("Plugmessage");
-                        Class instance = c.forName("Plugmessage", true, loader);
-                        System.out.println(c.toString());
-                        System.out.println(instance.toString());
+                        Class<?> c = loader.loadClass("Plugmessage");
 
-                        Method[] methods = c.getMethods();
-                        System.out.println(methods[0].toString()+"  "+methods[1].toString());
-                        methods[0].invoke(c);
+                        Object instance = c.newInstance();
+
+                        Method[] method = c.getMethods();
+                        for(int i=0; i<method.length; i++){
+                                System.out.println(method[i].toString()+" === "+i);
+                        }
+                        method[0].invoke(c, getJMenuBar());
+                        MenuElement[] sub = getJMenuBar().getSubElements();
+                        for(int j=0; j<sub.length; j++){
+                            System.out.println(sub[j].toString());
+                        }
+                        getJMenuBar().revalidate();
+
                     }
-                    catch(MalformedURLException | ClassNotFoundException | IllegalAccessException | InvocationTargetException  ex){
+                    catch(MalformedURLException | ClassNotFoundException | IllegalAccessException | InvocationTargetException |InstantiationException  ex){
                         ex.printStackTrace();
                     }
                 }
@@ -913,8 +917,11 @@ public class MainWindowUI extends JFrame{
                 * */
                 if (globalPreferences.getStateChange() == 1){
                     globalPreferences.setStateChange(0);
+                    dispose();
+                    pack();
                     setUILanguage();
-                    revalidate();
+                    setVisible(true);
+
                 }
 
             }
