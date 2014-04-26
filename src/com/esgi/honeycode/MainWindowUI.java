@@ -506,7 +506,7 @@ public class MainWindowUI extends JFrame{
         AutoCompletion ac = new AutoCompletion(provider);
         ac.setAutoCompleteEnabled(true);
         ac.setAutoActivationEnabled(true);
-        ac.install((RSyntaxTextArea)c.getTextArea());
+        ac.install((RSyntaxTextArea) c.getTextArea());
         ((RSyntaxDocument)((RSyntaxTextArea)c.getTextArea()).getDocument()).putProperty("stateChange", 0);
         ((RSyntaxDocument)((RSyntaxTextArea)c.getTextArea()).getDocument()).addDocumentListener(new DocumentListener() {
             @Override
@@ -515,16 +515,15 @@ public class MainWindowUI extends JFrame{
             }
 
             @Override
-             public void removeUpdate(DocumentEvent e) {
+            public void removeUpdate(DocumentEvent e) {
 
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
 
-                if (e.getDocument().getProperty("stateChange") == 0)
-                {
-                    e.getDocument().putProperty("stateChange",1);
+                if (e.getDocument().getProperty("stateChange") == 0) {
+                    e.getDocument().putProperty("stateChange", 1);
                 }
             }
         });
@@ -768,15 +767,8 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == about){
-                ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-                URL[] urls = ((URLClassLoader)cl).getURLs();
-                String classpath="";
-                for(URL url: urls){
-                    classpath += "\n"+url.getFile();
-                }
-
-                JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), classpath, "A propos", JOptionPane.INFORMATION_MESSAGE);
+                 JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), "HoneyCode est un projet étudiant développé dans le cadre de l'ESGI" +
+                        "\n PEQUIN Mathieu \n MAAREK Kevin \n FAYETTE Alexandre", "A propos", JOptionPane.INFORMATION_MESSAGE);
             }
             if(e.getSource() == open){
                 int returnVal = fileChooserMain.showOpenDialog(JOptionPane.getFrameForComponent(open));
@@ -829,21 +821,11 @@ public class MainWindowUI extends JFrame{
                         ClassLoader loader = new URLClassLoader(urls);
                         Class<?> c = loader.loadClass("Plugmessage");
 
-                        Object instance = c.newInstance();
-
                         Method[] method = c.getMethods();
-                        for(int i=0; i<method.length; i++){
-                                System.out.println(method[i].toString()+" === "+i);
-                        }
                         method[0].invoke(c, getJMenuBar());
-                        MenuElement[] sub = getJMenuBar().getSubElements();
-                        for(int j=0; j<sub.length; j++){
-                            System.out.println(sub[j].toString());
-                        }
-                        getJMenuBar().revalidate();
 
                     }
-                    catch(MalformedURLException | ClassNotFoundException | IllegalAccessException | InvocationTargetException |InstantiationException  ex){
+                    catch(MalformedURLException | ClassNotFoundException | IllegalAccessException | InvocationTargetException  ex){
                         ex.printStackTrace();
                     }
                 }
