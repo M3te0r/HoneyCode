@@ -274,12 +274,14 @@ public class MainWindowUI extends JFrame{
         help.add(forum);
         help.add(checkUpdate);
 
+
         saveFile.setEnabled(false);
         saveFileAS.setEnabled(false);
 
         setJMenuBar(menuBarMain);
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
 
         consoleOutputArea.setEditable(false);
         consoleSroll = new JScrollPane(consoleOutputArea);
@@ -647,11 +649,8 @@ public class MainWindowUI extends JFrame{
                             saveFileAS.setEnabled(true);
                         }
                         editorPanel.remove(homeMessage);
-
                         editorPanel.add(tabFile);
-                        editorPanel.updateUI();
-
-
+                        editorPanel.revalidate();
                     }
 
                 }
@@ -914,11 +913,8 @@ public class MainWindowUI extends JFrame{
                 * */
                 if (globalPreferences.getStateChange() == 1){
                     globalPreferences.setStateChange(0);
-                    dispose();
-                    pack();
                     setUILanguage();
-                    setVisible(true);
-
+                    revalidate();
                 }
 
             }
