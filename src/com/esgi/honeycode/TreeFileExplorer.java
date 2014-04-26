@@ -10,6 +10,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -62,11 +64,19 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         JMenuItem showDirExplorer = new JMenuItem("Show directory in explorer");
         showDirExplorer.setActionCommand("showFileExplorer");
         showDirExplorer.addActionListener(this);
+        JMenuItem copyRef = new JMenuItem("Copy reference");
+        copyRef.setActionCommand("copyRef");
+        copyRef.addActionListener(this);
+        JMenuItem copyPathDir = new JMenuItem("Copy path");
+        copyPathDir.setActionCommand("copyPath");
+        copyPathDir.addActionListener(this);
         popupMenuDir.add(newClass);
         popupMenuDir.add(newDir);
         popupMenuDir.add(renameDir);
         popupMenuDir.add(deleteDir);
         popupMenuDir.add(showDirExplorer);
+        popupMenuDir.add(copyRef);
+        popupMenuDir.add(copyPathDir);
 
         final JPopupMenu popupMenuFile = new JPopupMenu();
         JMenuItem deleteFile = new JMenuItem("Delete file");
@@ -78,9 +88,17 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         JMenuItem showFileExplorer = new JMenuItem("Show file in explorer");
         showFileExplorer.setActionCommand("showFileExplorer");
         showFileExplorer.addActionListener(this);
+        JMenuItem copyRefFile = new JMenuItem("Copy reference");
+        copyRefFile.setActionCommand("copyRef");
+        copyRefFile.addActionListener(this);
+        JMenuItem copyPathFile = new JMenuItem("Copy path");
+        copyPathFile.setActionCommand("Copy path");
+        copyPathFile.addActionListener(this);
         popupMenuFile.add(renameFile);
         popupMenuFile.add(deleteFile);
         popupMenuFile.add(showFileExplorer);
+        popupMenuFile.add(copyRefFile);
+        popupMenuFile.add(copyPathFile);
 
         addMouseListener(new MouseInputAdapter() {
             @Override
@@ -288,6 +306,20 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
                 JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(this), "Sorry, your system does not support Desktop API,\nplease consider browsing your project manually", "Desktop API not supported",JOptionPane.ERROR_MESSAGE);
             }
 
+        }
+
+        if (e.getActionCommand().equals("copyRef"))
+        {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection stringSelection = new StringSelection(fileSelected.getName());
+            clipboard.setContents(stringSelection,null);
+        }
+
+        if (e.getActionCommand().equals("copyPath"))
+        {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection stringSelection = new StringSelection(fileSelected.getAbsolutePath());
+            clipboard.setContents(stringSelection,null);
         }
     }
 

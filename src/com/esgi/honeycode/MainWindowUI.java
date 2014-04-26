@@ -835,14 +835,14 @@ public class MainWindowUI extends JFrame{
 
             if(e.getSource() == copy){
                 RTextScrollPane RSrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
-                RSyntaxTextArea ed = (RSyntaxTextArea)RSrollPane.getViewport().getView();
+                RSyntaxTextArea ed = (RSyntaxTextArea)RSrollPane.getTextArea();
                 StringSelection selectedText = new StringSelection(ed.getSelectedText());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(selectedText,null);
             }
             if(e.getSource() == cut){
                 RTextScrollPane RSrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
-                RSyntaxTextArea ed = (RSyntaxTextArea)RSrollPane.getViewport().getView();
+                RSyntaxTextArea ed = (RSyntaxTextArea)RSrollPane.getTextArea();
 
                 StringSelection selectedText = new StringSelection(ed.getSelectedText());
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -854,7 +854,7 @@ public class MainWindowUI extends JFrame{
             {
                 String result;
                 RTextScrollPane RSrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
-                RSyntaxTextArea ed = (RSyntaxTextArea)RSrollPane.getViewport().getView();
+                RSyntaxTextArea ed = (RSyntaxTextArea)RSrollPane.getTextArea();
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 Transferable contents = clipboard.getContents(null);
                 boolean hasTransferableText = (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
@@ -909,7 +909,7 @@ public class MainWindowUI extends JFrame{
 
             if (e.getSource() == runButton)
             {
-                if (tabFile.isVisible() && tabFile.isShowing() && tabFile.isFocusable())
+                if (tabFile.isVisible() && tabFile.isShowing() && tabFile.isFocusable() && project instanceof ProjectMaker)
                 {
                     String askedClassToRun = JOptionPane.showInputDialog(JOptionPane.getFrameForComponent(runButton),"Nom de la classe à exécuter\nUsage :\nMyNewClass \nor\n com.program.test\n","Classe à executer",JOptionPane.QUESTION_MESSAGE);
                     if (askedClassToRun!=null)
