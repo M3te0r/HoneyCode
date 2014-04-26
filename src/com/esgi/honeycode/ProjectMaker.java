@@ -91,7 +91,8 @@ public class ProjectMaker implements Serializable{
         }
         catch (IOException e)
         {
-            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Error while opening your project\n"+e.getStackTrace(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Error while opening your project\n", "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
 
         this.projectFiles = new Files(this.projectPath);
@@ -110,15 +111,18 @@ public class ProjectMaker implements Serializable{
 
         }catch (FileNotFoundException ex)
         {
-            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Error while opening your project\n"+ex.getStackTrace(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Error while opening your project\n", "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
         catch (ClassNotFoundException ex)
         {
-            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Error while opening your project\n"+ex.getStackTrace(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Error while opening your project\n", "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
         catch (IOException ex)
         {
-            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Error while opening your project\n"+ex.getStackTrace(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Error while opening your project\n", "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
 
     }

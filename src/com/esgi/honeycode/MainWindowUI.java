@@ -7,6 +7,8 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -329,6 +331,18 @@ public class MainWindowUI extends JFrame{
 
         treePanel.add(scrollTree, BorderLayout.CENTER);
         mainPanel.add(wholeSplit, BorderLayout.CENTER);
+
+        tabFile.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (tabFile.getTabCount()==0)
+                {
+                    editorPanel.remove(tabFile);
+                    editorPanel.add(homeMessage);
+                    editorPanel.repaint();
+                }
+            }
+        });
 
         //Set prefrered size before pack, then pack will adapt with the prefered size
         setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), dimScreenSize.height - taskBarSize));
@@ -710,7 +724,7 @@ public class MainWindowUI extends JFrame{
                         }
                         editorPanel.remove(homeMessage);
                         editorPanel.add(tabFile);
-                        editorPanel.updateUI();
+                        editorPanel.revalidate();
                     }
                 }
             }
@@ -726,7 +740,7 @@ public class MainWindowUI extends JFrame{
                     editorPanel.remove(homeMessage);
 
                     editorPanel.add(tabFile);
-                    editorPanel.updateUI();
+                    editorPanel.revalidate();
                 }
                 newFileNumber += 1;
 
@@ -792,7 +806,7 @@ public class MainWindowUI extends JFrame{
                         editorPanel.remove(homeMessage);
 
                         editorPanel.add(tabFile);
-                        editorPanel.updateUI();
+                        editorPanel.revalidate();
                     }
                    addCloseableTab(new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())), chosenFile.getName(), chosenFile.getAbsolutePath());
                     tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),chosenFile.getAbsolutePath());

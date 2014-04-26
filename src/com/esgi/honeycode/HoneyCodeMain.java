@@ -37,7 +37,8 @@ public class HoneyCodeMain {
 
         }catch (BackingStoreException ex)
         {
-            JOptionPane.showMessageDialog(null, "Could not create node in registry\n"+ex.getStackTrace());
+            JOptionPane.showMessageDialog(null, "Could not create node in registry\n");
+            ex.printStackTrace();
         }
 
        File projectPath = new File(globalPreferences.getProjetPath());
