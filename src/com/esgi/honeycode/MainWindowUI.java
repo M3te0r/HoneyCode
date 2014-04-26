@@ -278,6 +278,9 @@ public class MainWindowUI extends JFrame{
         help.add(forum);
         help.add(checkUpdate);
 
+        cut.setEnabled(false);
+        past.setEnabled(false);
+        copy.setEnabled(false);
         saveFile.setEnabled(false);
         saveFileAS.setEnabled(false);
         setJMenuBar(menuBarMain);
@@ -333,7 +336,27 @@ public class MainWindowUI extends JFrame{
                 {
                     editorPanel.remove(tabFile);
                     editorPanel.add(homeMessage);
+                    saveFile.setEnabled(false);
+                    saveFileAS.setEnabled(false);
+                    cut.setEnabled(false);
+                    copy.setEnabled(false);
+                    past.setEnabled(false);
                     editorPanel.repaint();
+                }
+                else if (tabFile.getTabCount()>0)
+                {
+                    if (!cut.isEnabled() && !past.isEnabled() && !copy.isEnabled() && !saveFileAS.isEnabled() && !saveFile.isEnabled())
+                    {
+                        saveFile.setEnabled(true);
+                        saveFileAS.setEnabled(true);
+                        cut.setEnabled(true);
+                        copy.setEnabled(true);
+                        past.setEnabled(true);
+                        editorPanel.remove(homeMessage);
+                        editorPanel.add(tabFile);
+                        editorPanel.repaint();
+                    }
+
                 }
             }
         });
@@ -673,21 +696,6 @@ public class MainWindowUI extends JFrame{
                     treeMain.init(new File(globalPreferences.getProjetPath()+PropertiesShared.SEPARATOR+projectFrame.getProjectName()));
                     setTitle(project.getProjectName()+" - ["+project.getProjectPath()+"] - "+ "HoneyCode");
 
-                    if (homeMessage.isShowing())
-                    {
-
-                        if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
-                        {
-                            saveFile.setEnabled(true);
-                            saveFileAS.setEnabled(true);
-                        }
-                        editorPanel.remove(homeMessage);
-
-                        editorPanel.add(tabFile);
-                        editorPanel.updateUI();
-
-
-                    }
 
                 }
 
@@ -710,34 +718,9 @@ public class MainWindowUI extends JFrame{
                     project = new ProjectMaker(chosenFile);
                     treeMain.init(project.getProjectFiles().getProjectPath());
                     setTitle(project.getProjectName()+" - ["+project.getProjectPath()+"] - "+ "HoneyCode");
-
-                    if (homeMessage.isShowing())
-                    {
-                        if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
-                        {
-                            saveFile.setEnabled(true);
-                            saveFileAS.setEnabled(true);
-                        }
-                        editorPanel.remove(homeMessage);
-                        editorPanel.add(tabFile);
-                        editorPanel.revalidate();
-                    }
                 }
             }
             if(e.getSource() == newFile){
-                if (homeMessage.isShowing())
-                {
-                    if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
-                    {
-                        saveFile.setEnabled(true);
-                        saveFileAS.setEnabled(true);
-                    }
-
-                    editorPanel.remove(homeMessage);
-
-                    editorPanel.add(tabFile);
-                    editorPanel.revalidate();
-                }
                 newFileNumber += 1;
 
                 addCloseableTab(new RTextScrollPane(new RSyntaxTextArea()),"new "+newFileNumber,"new "+newFileNumber);
@@ -790,22 +773,8 @@ public class MainWindowUI extends JFrame{
                 if (returnVal == JFileChooser.APPROVE_OPTION){
                     File chosenFile = fileChooserMain.getSelectedFile();
                     FileHandler fileHandler = new FileHandler(chosenFile);
-                    if (homeMessage.isShowing())
-                    {
-                        editorPanel.remove(homeMessage);
-
-                        editorPanel.add(tabFile);
-                        editorPanel.revalidate();
-                    }
                    addCloseableTab(new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())), chosenFile.getName(), chosenFile.getAbsolutePath());
                     tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),chosenFile.getAbsolutePath());
-
-                    if (!saveFileAS.isEnabled() && !saveFile.isEnabled())
-                    {
-                        saveFile.setEnabled(true);
-                        saveFileAS.setEnabled(true);
-                    }
-
                 }
             }
             if(e.getSource() == exitApp){
