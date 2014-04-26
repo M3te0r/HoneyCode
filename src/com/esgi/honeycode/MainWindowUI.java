@@ -7,6 +7,8 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -68,7 +70,7 @@ public class MainWindowUI extends JFrame{
     private JMenuItem openProject;
     private JMenuItem newFile;
     private JMenuItem open;
-    private JMenuItem saveFile;
+    private static JMenuItem saveFile;
     private JMenuItem saveFileAS;
     private JMenuItem settings;
     private JMenuItem exitApp;
@@ -176,7 +178,7 @@ public class MainWindowUI extends JFrame{
 
         //height of the task bar
         Insets scnMax = tkMain.getScreenInsets(getGraphicsConfiguration());
-        int taskBarSize = scnMax.bottom;
+        final int taskBarSize = scnMax.bottom;
 
         //Récupération de la touche utilisée pour les raccourcis clavier du système
         shortcutKey = tkMain.getMenuShortcutKeyMask();
@@ -347,6 +349,14 @@ public class MainWindowUI extends JFrame{
                           avec Non --> Fichier non sauvegardé puis fermeture
                           avec Annuler --> Annule la fermeure de l'application
                      */
+                    if (tabFile.getTabCount()>0)
+                    {
+                        tabFile.setSelectedIndex(0);
+                        while (tabFile.getTabCount()>0)
+                        {
+                            ((JButton)((JPanel)tabFile.getTabComponentAt(0)).getComponent(1)).doClick();
+                        }
+                    }
                     System.exit(0);
                 }
             }
@@ -514,6 +524,27 @@ public class MainWindowUI extends JFrame{
         ac.setAutoCompleteEnabled(true);
         ac.setAutoActivationEnabled(true);
         ac.install((RSyntaxTextArea)c.getTextArea());
+        ((RSyntaxDocument)((RSyntaxTextArea)c.getTextArea()).getDocument()).putProperty("stateChange", 0);
+        ((RSyntaxDocument)((RSyntaxTextArea)c.getTextArea()).getDocument()).addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+
+            }
+
+            @Override
+             public void removeUpdate(DocumentEvent e) {
+
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+                if (e.getDocument().getProperty("stateChange") == 0)
+                {
+                    e.getDocument().putProperty("stateChange",1);
+                }
+            }
+        });
 
         final int tabCount = tabFile.getTabCount();
         boolean showingTab = false;
@@ -591,6 +622,15 @@ public class MainWindowUI extends JFrame{
             buttonClose.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    if (((RSyntaxDocument)((RSyntaxTextArea)c.getTextArea()).getDocument()).getProperty("stateChange")==1)
+                    {
+                        int res = JOptionPane.showConfirmDialog(JOptionPane.getFrameForComponent(tabFile),"Voulez vous enregistrez les modifications ?", "Enregistrer les modifications ?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (res == JOptionPane.YES_OPTION)
+                        {
+                            saveFile.doClick();
+                        }
+                    }
+
                     tabFile.remove(c);
                 }
             });
@@ -719,9 +759,8 @@ public class MainWindowUI extends JFrame{
                 {
                     FileHandler file = new FileHandler(fileChooserMain.getSelectedFile());
                     RTextScrollPane rTextScrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
-                    RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
+                    RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getTextArea();
                     file.writeFile((RSyntaxDocument)rSyntaxTextArea.getDocument());
-                    //Can't figure why the fuck it only sets the text at the second attempt with save file as
                     setNewTabText(fileChooserMain.getSelectedFile().getName(), fileChooserMain.getSelectedFile().getAbsolutePath());
                 }
             }
@@ -729,8 +768,9 @@ public class MainWindowUI extends JFrame{
             if (e.getSource() == saveFile)
             {
                 RTextScrollPane rTextScrollPane = (RTextScrollPane)tabFile.getSelectedComponent();
-                RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getViewport().getView();
-                if (tabFile.getToolTipTextAt(tabFile.getSelectedIndex())==null)
+                RSyntaxTextArea rSyntaxTextArea = (RSyntaxTextArea)rTextScrollPane.getTextArea();
+                File file1 = new File(tabFile.getToolTipTextAt(tabFile.getSelectedIndex()));
+                if (!file1.exists())
                 {
                     fileChooserMain.setCurrentDirectory(new File(globalPreferences.getProjetPath()));
 
