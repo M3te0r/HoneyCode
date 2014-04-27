@@ -13,7 +13,7 @@ public class ModalDialog extends JDialog implements ComponentListener, WindowLis
     private static final long serialVersionUID = 1L;
     private Component mOwner;
     private boolean mParentOnly = false;
-    private static final Image MAIN_IMAGE = new ImageIcon(ModalDialog.class.getResource("/icons/main.png")).getImage();
+    private static final Image MAIN_IMAGE = new ImageIcon(ModalDialog.class.getResource("/icons/logo.png")).getImage();
 
     public ModalDialog() throws HeadlessException
     {
