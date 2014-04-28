@@ -11,16 +11,16 @@ import java.util.Scanner;
 public class CustomRun {
 
 
-    public static void run(String args, final String projectOut) throws IOException {
+    public static void run(String classToBuild, String args, final String projectOut) throws IOException {
 
         System.out.flush();
         
 
-        if (args != null && projectOut != null) {
+        if (classToBuild != null && projectOut != null) {
 
             //With ProcessBuilder the err output can be redirected to te standard output
             //Only 2 threads instead of 3 for the err
-            ProcessBuilder builder = new ProcessBuilder("java", "-classpath", System.getProperty("java.class.path") + System.getProperty("path.separator") + projectOut + PropertiesShared.SEPARATOR + "out", args);
+            ProcessBuilder builder = new ProcessBuilder("java", "-classpath", System.getProperty("java.class.path") + System.getProperty("path.separator") + projectOut + PropertiesShared.SEPARATOR + "out", classToBuild, args);
 
             builder.redirectErrorStream(true);
             final Process process = builder.start();

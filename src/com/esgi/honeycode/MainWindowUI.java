@@ -59,7 +59,7 @@ public class MainWindowUI extends JFrame{
     private JLabel explorerLabel;
     private JButton buildButton;
     private JButton runButton;
-    private JButton buildOptionsButton;
+    private JButton runOptionsButton;
     private InputStream inDef;
     private PrintStream outDef;
     private JMenuBar menuBarMain;
@@ -143,7 +143,7 @@ public class MainWindowUI extends JFrame{
         checkUpdate = new JMenuItem();
         runButton = new JButton();
         buildButton = new JButton();
-        buildOptionsButton = new JButton();
+        runOptionsButton = new JButton();
         consoleOutputArea = new JTextArea();
         out = new CustomConsoleOutputStream(consoleOutputArea);
         outDef = System.out;
@@ -319,7 +319,7 @@ public class MainWindowUI extends JFrame{
         consolePane.add(consoleSroll, BorderLayout.CENTER);
 
         subConsolePane.add(lastBuildLabel);
-        subConsolePane.add(buildOptionsButton);
+        subConsolePane.add(runOptionsButton);
         subConsolePane.add(buildButton);
         subConsolePane.add(runButton);
         consoleOutputArea.setBackground(Color.DARK_GRAY);
@@ -470,7 +470,7 @@ public class MainWindowUI extends JFrame{
         checkUpdate.setText(bundle.getString("checkUpdate"));
         runButton.setText(bundle.getString("runButton"));
         buildButton.setText(bundle.getString("buidButton"));
-        buildOptionsButton.setText(bundle.getString("buildOptionsButton"));
+        runOptionsButton.setText(bundle.getString("runOptionsButton"));
         consoleOutputArea.setText(bundle.getString("consoleOutputArea"));
         exitMessage = bundle.getString("exitMessage");
         homeMessage.setText(bundle.getString("homeMessage"));
@@ -917,12 +917,21 @@ public class MainWindowUI extends JFrame{
                     if (askedClassToRun!=null)
                     {
                         try{
-                            CustomRun.run(askedClassToRun, project.getProjectPath().getAbsolutePath());
-
+                            CustomRun.run(askedClassToRun, "arg_test", project.getProjectPath().getAbsolutePath());
                         }catch (IOException ex)
                         {
                             System.out.println("error running file\n");
                         }
+                    }
+
+                }
+            }
+
+            if(e.getSource() == runOptionsButton){
+                if (tabFile.isVisible() && tabFile.isShowing() && tabFile.isFocusable() && project instanceof ProjectMaker){
+                    String inputRunOptions = JOptionPane.showInputDialog(JOptionPane.getFrameForComponent(runOptionsButton),"Entrez les options d'éxécution","args:",JOptionPane.QUESTION_MESSAGE);
+                    if (inputRunOptions!=null){
+                        System.out.println(inputRunOptions);
                     }
 
                 }
