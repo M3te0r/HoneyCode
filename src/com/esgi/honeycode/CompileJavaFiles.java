@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.TreeSet;
 
 /**
  * Class that compiles given java files
@@ -20,6 +21,38 @@ public class CompileJavaFiles {
 
 
     private static DiagnosticCollector<JavaFileObject> diagnosticCollector;
+
+
+    private static File[] listFilesDirs(File dir)
+    {
+        if (!dir.exists() || !dir.isDirectory())
+        {
+            throw new IllegalArgumentException(dir+" inconnu");
+        }
+
+        TreeSet<File> sortedFiles = new TreeSet<>();
+        listFilesDirs(sortedFiles, dir);
+
+        File[] fichiers = new File[sortedFiles.size()];
+        sortedFiles.toArray(fichiers);
+        return fichiers;
+    }
+
+    private static void listFilesDirs(TreeSet<File> fichiers, File cheminDossier)
+    {
+        for (File chemin : cheminDossier.listFiles())
+        {
+            if (chemin.isDirectory())
+            {
+                listFilesDirs(fichiers,chemin);
+            }
+            else if (chemin.getName().endsWith("java"))
+            {
+                fichiers.add(chemin);
+            }
+        }
+
+    }
 
     public static boolean doCompilation(String projectSourcePath, String projectPath)
     {
@@ -36,18 +69,13 @@ public class CompileJavaFiles {
         Easier and simpler than compiling each java source
         when there is class dependencies
         */
-            File ff = new File(projectSourcePath);
-            FilenameFilter javaFileNameFilter = new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith("java");
-                }
-            };
 
-            List<File> files = Arrays.asList(ff.listFiles(javaFileNameFilter));
+
+            File ff = new File(projectSourcePath);
+
+            List<File> files = Arrays.asList(listFilesDirs(ff));
 
             //System.out.flush();
-
 
             diagnosticCollector = new DiagnosticCollector<>();
             StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnosticCollector, Locale.getDefault(), Charset.defaultCharset());

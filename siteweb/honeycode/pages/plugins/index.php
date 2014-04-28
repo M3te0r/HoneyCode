@@ -86,7 +86,6 @@
             <table>
             <?php try{
                 $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-                //$bdd = new PDO('mysql:host=db422390412.db.1and1.com;dbname=db422390412', 'dbo422390412', '2611261100', $pdo_options);
                 $bdd = new PDO('mysql:host=localhost;dbname=honeycode', 'root', '', $pdo_options);
                             $bdd->exec("set names utf8");
                 }catch (Exception $e){

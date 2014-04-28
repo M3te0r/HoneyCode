@@ -92,7 +92,7 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         copyRefFile.setActionCommand("copyRef");
         copyRefFile.addActionListener(this);
         JMenuItem copyPathFile = new JMenuItem("Copy path");
-        copyPathFile.setActionCommand("Copy path");
+        copyPathFile.setActionCommand("CopyPath");
         copyPathFile.addActionListener(this);
         popupMenuFile.add(renameFile);
         popupMenuFile.add(deleteFile);
