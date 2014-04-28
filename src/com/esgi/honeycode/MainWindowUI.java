@@ -201,13 +201,14 @@ public class MainWindowUI extends JFrame{
 
         homeMessage.setFont(new Font("Courier new", Font.PLAIN, 24));
         editorPanel.add(homeMessage);
-        editorPanel.setPreferredSize(new Dimension(600, 500));
+
 
         //Qu'on me redonne la définition de vertical et horizontal
         splited = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,treePanel,editorPanel);
         splited.setDividerSize(2);
         wholeSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splited,consolePane);
         wholeSplit.setDividerSize(3);
+        wholeSplit.setDividerLocation(wholeSplit.getInsets().top+650);
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newProject.addActionListener(test);
@@ -227,9 +228,6 @@ public class MainWindowUI extends JFrame{
         runButton.addActionListener(test);
         buildButton.addActionListener(test);
         past.addActionListener(test);
-
-        consolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 250));
-        subConsolePane.setPreferredSize(new Dimension(dimScreenSize.width - getWidth(), 30));
 
         treePanel.setLayout(new BorderLayout());
         consolePane.setLayout(new BorderLayout());
