@@ -6,6 +6,8 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import sun.tools.jar.resources.jar;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -24,6 +26,8 @@ import java.util.ResourceBundle;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 
 /**
@@ -387,6 +391,9 @@ public class MainWindowUI extends JFrame{
             }
         });
 
+        //Load des plugins
+        loadPlugins();
+
     }
 
     private void setUILanguage()
@@ -679,6 +686,60 @@ public class MainWindowUI extends JFrame{
         }
 
     }
+
+    private void loadPlugins(){
+        File pluginDirectory = new File(System.getProperty("user.home")+PropertiesShared.SEPARATOR+"HoneyPlugins");
+        boolean created = pluginDirectory.mkdir();
+        if (!created &&  !pluginDirectory.exists())
+        {
+            JOptionPane.showMessageDialog(null, "Impossible de créer le répertoire de plugins : "+ pluginDirectory);
+        }
+        else{
+            File[] filelist = pluginDirectory.listFiles(new FileFilter() {
+                public boolean accept(File file) {
+                    if (file.getName().endsWith(".jar")) {
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            if(filelist.length>0){
+                try{
+                    for (File f : filelist){
+
+                        JarInputStream jarFile = new JarInputStream(new FileInputStream(f));
+                        JarEntry jarElement;
+                        String classname="";
+                        do{
+                            jarElement = jarFile.getNextJarEntry();
+                            if (jarElement != null && !jarElement.getName().contains("$") && jarElement.getName().contains(".class")){
+                                classname = jarElement.getName().replace(".class", "");
+                                System.out.println(classname);
+                            }
+                        }while(jarElement != null);
+                        try{
+                            URL[] urls = new URL[] { f.toURI().toURL() };
+                            ClassLoader loader = new URLClassLoader(urls);
+                            Class<?> c = loader.loadClass(classname);
+
+                            Method[] method = c.getMethods();
+                            method[0].invoke(c, getJMenuBar());
+
+                        }
+                        catch(MalformedURLException | ClassNotFoundException | IllegalAccessException | InvocationTargetException  ex){
+                            ex.printStackTrace();
+                        }
+                        jarFile.close();
+                    }
+
+                }
+                catch(IOException e){
+                   e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private class ActionListenerMenuBar implements ActionListener {
         public void actionPerformed (ActionEvent e){
 
