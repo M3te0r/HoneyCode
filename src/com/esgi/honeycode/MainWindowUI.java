@@ -21,6 +21,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
+import java.nio.channels.FileChannel;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.text.DateFormat;
@@ -202,7 +203,7 @@ public class MainWindowUI extends JFrame{
         splited.setDividerSize(2);
         wholeSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splited,consolePane);
         wholeSplit.setDividerSize(3);
-        wholeSplit.setDividerLocation(wholeSplit.getInsets().top+650);
+        wholeSplit.setDividerLocation(wholeSplit.getInsets().top + 650);
 
         ActionListenerMenuBar test = new ActionListenerMenuBar();
         newProject.addActionListener(test);
@@ -699,7 +700,6 @@ public class MainWindowUI extends JFrame{
                             jarElement = jarFile.getNextJarEntry();
                             if (jarElement != null && !jarElement.getName().contains("$") && jarElement.getName().contains(".class")){
                                 classname = jarElement.getName().replace(".class", "");
-                                System.out.println(classname);
                             }
                         }while(jarElement != null);
                         try{
@@ -845,19 +845,45 @@ public class MainWindowUI extends JFrame{
                 int returnVal = pluginChooser.showOpenDialog(JOptionPane.getFrameForComponent(plugLoad));
 
                 if(returnVal == JFileChooser.APPROVE_OPTION){
-
-                    File chosenPlugin = pluginChooser.getSelectedFile();
-                    try{
-                        URL[] urls = new URL[] { chosenPlugin.toURI().toURL() };
-                        ClassLoader loader = new URLClassLoader(urls);
-                        Class<?> c = loader.loadClass("Plugmessage");
-
-                        Method[] method = c.getMethods();
-                        method[0].invoke(c, getJMenuBar());
-
+                    File pluginDirectory = new File(System.getProperty("user.home")+PropertiesShared.SEPARATOR+"HoneyPlugins");
+                    boolean created = pluginDirectory.mkdir();
+                    if (!created &&  !pluginDirectory.exists())
+                    {
+                        JOptionPane.showMessageDialog(null, "Impossible de créer le répertoire de plugins : "+ pluginDirectory);
                     }
-                    catch(MalformedURLException | ClassNotFoundException | IllegalAccessException | InvocationTargetException  ex){
-                        ex.printStackTrace();
+                    else{
+                        File chosenPlugin = pluginChooser.getSelectedFile();
+                        FileChannel in = null; // canal d'entrée
+                        FileChannel out = null; // canal de sortie
+
+                        try {
+                            in = new FileInputStream(chosenPlugin).getChannel();
+                            out = new FileOutputStream(System.getProperty("user.home")+PropertiesShared.SEPARATOR+"HoneyPlugins"+
+                                    PropertiesShared.SEPARATOR+chosenPlugin.getName()).getChannel();
+                            in.transferTo(0, in.size(), out);
+                            JOptionPane.showMessageDialog(null, "Le plugin a été copié dans le dossier plugin de l'application, veuillez relancer l'application pour le charger");
+                        }
+                        catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        finally {
+                            if(in != null) {
+                                try {
+                                    in.close();
+                                }
+                                catch(IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                            if(out != null) {
+                                try {
+                                    out.close();
+                                }
+                                catch(IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                        }
                     }
                 }
             }
