@@ -707,11 +707,21 @@ public class MainWindowUI extends JFrame{
                             ClassLoader loader = new URLClassLoader(urls);
                             Class<?> c = loader.loadClass(classname);
 
-                            Method[] method = c.getMethods();
-                            method[0].invoke(c, getJMenuBar());
+                            Method[] methods = c.getMethods();
+                            methods[0].invoke(c, getJMenuBar());
+                            methods[1].invoke(c, tabFile);
+                            methods[2].invoke(c, consolePane);
+                            /*
+                            Method menuModifier = c.getMethod("hc_Plugin_MenuBar", JMenuBar.class);
+                            menuModifier.invoke(c, getMenuBar());
+                            Method editorModifier = c.getMethod("hc_Plugin_Editor", JTabbedPane.class);
+                            editorModifier.invoke(c, tabFile);
+                            Method consoleModifier = c.getMethod("hc_Plugin_Console", JPanel.class);
+                            consoleModifier.invoke(c, consolePane);
+                            */
 
                         }
-                        catch(MalformedURLException | ClassNotFoundException | IllegalAccessException | InvocationTargetException  ex){
+                        catch(MalformedURLException | ClassNotFoundException | IllegalAccessException | InvocationTargetException /*| NoSuchMethodException*/  ex){
                             ex.printStackTrace();
                         }
                         jarFile.close();
