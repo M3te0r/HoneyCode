@@ -83,15 +83,12 @@ public class MainWindowUI extends JFrame{
     private JMenuItem copy;
     private JMenuItem cut;
     private JMenuItem past;
-    private JMenuItem encoding;
     private JCheckBoxMenuItem consoleView;
-    private JMenuItem previewShow;
     private JMenuItem plugLoad;
     private JMenuItem plugDown;
     private JMenuItem plugSubmit;
     private JMenuItem about;
     private JMenuItem docHC;
-    private JMenuItem forum;
     private JMenuItem checkUpdate;
     private String exitMessage;
     final JFileChooser fileChooserMain;
@@ -135,15 +132,12 @@ public class MainWindowUI extends JFrame{
         copy = new JMenuItem();
         cut = new JMenuItem();
         past = new JMenuItem();
-        encoding = new JMenuItem();
         consoleView = new JCheckBoxMenuItem();
-        previewShow = new JMenuItem();
         plugLoad = new JMenuItem();
         plugDown = new JMenuItem();
         plugSubmit = new JMenuItem();
         about = new JMenuItem();
         docHC = new JMenuItem();
-        forum = new JMenuItem();
         checkUpdate = new JMenuItem();
         runButton = new JButton();
         buildButton = new JButton();
@@ -219,7 +213,6 @@ public class MainWindowUI extends JFrame{
         exitApp.addActionListener(test);
         plugLoad.addActionListener(test);
         plugDown.addActionListener(test);
-        forum.addActionListener(test);
         copy.addActionListener(test);
         cut.addActionListener(test);
         saveFile.addActionListener(test);
@@ -266,10 +259,8 @@ public class MainWindowUI extends JFrame{
         edit.add(copy);
         edit.add(cut);
         edit.add(past);
-        edit.add(encoding);
         menuBarMain.add(view);
         view.add(consoleView);
-        view.add(previewShow);
         menuBarMain.add(plugin);
         plugin.add(plugLoad);
         plugin.add(plugDown);
@@ -277,7 +268,6 @@ public class MainWindowUI extends JFrame{
         menuBarMain.add(help);
         help.add(about);
         help.add(docHC);
-        help.add(forum);
         help.add(checkUpdate);
 
         cut.setEnabled(false);
@@ -463,15 +453,12 @@ public class MainWindowUI extends JFrame{
         copy.setText(bundle.getString("copy"));
         cut.setText(bundle.getString("cut"));
         past.setText(bundle.getString("past"));
-        encoding.setText(bundle.getString("encoding"));
         consoleView.setText(bundle.getString("consoleView"));
-        previewShow.setText(bundle.getString("previewShow"));
         plugLoad.setText(bundle.getString("plugLoad"));
         plugDown.setText(bundle.getString("plugDown"));
         plugSubmit.setText(bundle.getString("plugSubmit"));
         about.setText(bundle.getString("about"));
         docHC.setText(bundle.getString("docHC"));
-        forum.setText(bundle.getString("forum"));
         checkUpdate.setText(bundle.getString("checkUpdate"));
         runButton.setText(bundle.getString("runButton"));
         buildButton.setText(bundle.getString("buidButton"));
@@ -883,15 +870,6 @@ public class MainWindowUI extends JFrame{
                     JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(plugDown), ex.getMessage(),"Erreur", JOptionPane.ERROR_MESSAGE,null);
                 }
 
-            }
-
-            if(e.getSource() == forum){
-                //Not the good catch, just to test
-                try{
-                    Desktop.getDesktop().browse(new URI("http://honeycode.kevinmaarek.fr/"));
-                } catch (URISyntaxException | IOException ex){
-                    JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(forum), "Could not open HoneyCode forum Web Page", "Erreur", JOptionPane.ERROR_MESSAGE, null);
-                }
             }
 
             if(e.getSource() == copy){
