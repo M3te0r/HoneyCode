@@ -12,6 +12,10 @@ public class CustomConsoleOutputStream extends OutputStream {
 
     private JTextArea consoleArea;
 
+    /**
+     * Constructeur
+     * @param consoleArea JTextArea où effectuer la sortie console
+     */
     public CustomConsoleOutputStream(JTextArea consoleArea) {
         this.consoleArea = consoleArea;
     }

@@ -22,7 +22,11 @@ public class CompileJavaFiles {
 
     private static DiagnosticCollector<JavaFileObject> diagnosticCollector;
 
-
+    /**
+     *Liste les fichiers à partir d'un répertoire
+     * @param dir le répertoire à lister
+     * @return File[]
+     */
     private static File[] listFilesDirs(File dir)
     {
         if (!dir.exists() || !dir.isDirectory())
@@ -38,6 +42,11 @@ public class CompileJavaFiles {
         return fichiers;
     }
 
+    /**
+     * Liste les fichiers en arbre
+     * @param fichiers TreeSet
+     * @param cheminDossier File
+     */
     private static void listFilesDirs(TreeSet<File> fichiers, File cheminDossier)
     {
         for (File chemin : cheminDossier.listFiles())
@@ -54,6 +63,12 @@ public class CompileJavaFiles {
 
     }
 
+    /**
+     * Compile le projet passé en paramètre
+     * @param projectSourcePath Racine projet
+     * @param projectPath Racine fichiers projet
+     * @return boolean résulat
+     */
     public static boolean doCompilation(String projectSourcePath, String projectPath)
     {
         compiler = ToolProvider.getSystemJavaCompiler();

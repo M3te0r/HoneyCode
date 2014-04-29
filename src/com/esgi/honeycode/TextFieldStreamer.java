@@ -5,18 +5,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
 
-
+/**
+ * Classe de gestion de buffer pour TextField
+ */
 public class TextFieldStreamer extends InputStream implements ActionListener {
 
     private JTextField tf;
     private String str = null;
     private int pos = 0;
 
+    /**
+     * Constructeur
+     * @param jtf TextField à initialiser
+     */
     public TextFieldStreamer(JTextField jtf) {
         tf = jtf;
     }
 
-    //gets triggered everytime that "Enter" is pressed on the textfield
+    /**
+     * Gère la touche "entrée" sur le TextField
+     * @param e evenement
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         str = tf.getText() + "\n";
@@ -28,7 +37,10 @@ public class TextFieldStreamer extends InputStream implements ActionListener {
     }
 
 
-
+    /**
+     * Lit le contenu du textField
+     * @return int
+     */
     @Override
     public int read() {
         //test if the available input has reached its end

@@ -11,15 +11,28 @@ public class CustomCompletionProvider {
 
     private CompletionProvider provider;
 
+    /**
+     * Constructeur de la classe pour le langage précisé
+     * @param languageType langage à compléter
+     */
     public CustomCompletionProvider(String languageType) {
 
         this.provider = createProvider(languageType);
     }
 
+    /**
+     * Retourne le fournisseur de complétion
+     * @return this
+     */
     public CompletionProvider getProvider() {
         return this.provider;
     }
 
+    /**
+     * Créer un fournisseur de complétion par défaut, personnalisé pour Java
+     * @param languageType langage
+     * @return le fournisseur
+     */
     private DefaultCompletionProvider createProvider(String languageType)
     {
         DefaultCompletionProvider provider = new DefaultCompletionProvider();

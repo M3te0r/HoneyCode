@@ -12,11 +12,18 @@ public enum PropertiesShared {
 
     private String name = "";
 
-    //Constructeur
+    /**
+     * Constructeur
+     * @param name Chaine à utiliser
+     */
     PropertiesShared(String name){
         this.name = name;
     }
 
+    /**
+     * Retourne la chaine correspondante
+     * @return String
+     */
     @Override
     public String toString() {
         return name;

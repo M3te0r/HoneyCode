@@ -15,12 +15,21 @@ public class ModalDialog extends JDialog implements ComponentListener, WindowLis
     private boolean mParentOnly = false;
     private static final Image MAIN_IMAGE = new ImageIcon(ModalDialog.class.getResource("/icons/logo.png")).getImage();
 
+    /**
+     * Constructeur par défaut
+     * @throws HeadlessException
+     */
     public ModalDialog() throws HeadlessException
     {
         super();
         init(null);
     }
 
+    /**
+     * Constructeur sur la Frame
+     * @param a Frame
+     * @throws HeadlessException
+     */
     public ModalDialog(Frame a) throws HeadlessException
     {
         super(a, "Configuration");
@@ -28,6 +37,10 @@ public class ModalDialog extends JDialog implements ComponentListener, WindowLis
 
     }
 
+    /**
+     * Initialisation de la fenêtre et de ses listeners
+     * @param c Component
+     */
     private void init(Component c)
     {
         setIconImage(MAIN_IMAGE);
@@ -96,6 +109,10 @@ public class ModalDialog extends JDialog implements ComponentListener, WindowLis
 
     }
 
+    /**
+     * Renvoie la parenté exclusive
+     * @return boolean
+     */
     public boolean isParentOnly()
     {
         return mParentOnly;
@@ -107,6 +124,7 @@ public class ModalDialog extends JDialog implements ComponentListener, WindowLis
         super.setModal(modal);
         makeModal();
     }
+
 
     @Override
     public boolean isModal() {
