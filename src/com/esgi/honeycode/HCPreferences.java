@@ -29,9 +29,11 @@ public class HCPreferences {
     private int fontChanged = 0;
 
 
+    /**
+     * Constructeur
+     */
 
     public HCPreferences() {
-
 
         //Préférences de registre par utilisateur
         this.prefs = Preferences.userNodeForPackage(this.getClass());
@@ -43,6 +45,9 @@ public class HCPreferences {
         this.javaDev = System.getProperty("java.home");
     }
 
+    /**
+     * Définit le langage, le chemin du projet, la police, le thème et le jdk
+     */
     public void setPreferences()
     {
         //Lowercase name only
@@ -52,43 +57,75 @@ public class HCPreferences {
         this.prefs.put("theme", this.theme);
         this.prefs.put("javadev", this.javaDev);
     }
-
+    /**
+     * Définit le jdk et l'ajoute à la suite des préférences
+     */
     public void setJavaDev(String jdk)
     {
         this.javaDev = jdk;
         this.prefs.put("javadev", this.javaDev);
     }
 
+    /**
+     * Retourne le jdk
+     * @return String
+     */
     public String getJavaDev()
     {
         return this.prefs.get("javadev", this.javaDev);
     }
 
+    /**
+     * Retourne le changement d'état
+     * @return int code de changement
+     */
     public int getStateChange()
     {
         return this.stateChange;
     }
 
+    /**
+     * Définit le changement d'état
+     * @param stateChange L'état prend cette valeur
+     */
     public void setStateChange(int stateChange) {
         this.stateChange = stateChange;
     }
 
+    /**
+     * Définit le changement de police
+     * @param fontChanged La valeur qui sera comparée
+     */
     public void setFontChanged(int fontChanged) {
         this.fontChanged = fontChanged;
     }
-
+    /**
+     * Retourne le changement de police
+     * @return int Le code du changement
+     */
     public int getFontChanged() {
         return this.fontChanged;
     }
 
+    /**
+     * Récupère le changement de thème
+     * @return int Le code de changement de thème
+     */
     public int getThemeChanged() {
         return this.themeChanged;
     }
-
+    /**
+     * Définit le changement de thème
+     * @param themeChanged La valeur qui sera comparée
+     */
     public void setThemeChanged(int themeChanged) {
         this.themeChanged = themeChanged;
     }
 
+    /**
+     * Nettoie la liste des préférences
+     *
+     */
     public void clear()
     {
         try {

@@ -27,11 +27,11 @@ public class Files implements Serializable{
         this.filesSet = new HashSet<>();
     }
 
+    /**
+     *  Crée la structure du projet, arborescence etc à partir des fichiers
+     */
     public void createProjectStructure()
     {
-        /**
-         *  Crée la structure du projet, arborescence etc à partir des fichiers
-         */
         boolean created = projectPath.mkdir();
         if (!created && !projectPath.exists())
         {
@@ -54,47 +54,45 @@ public class Files implements Serializable{
         }
     }
 
+    /**
+     * Retourne le chemin absolu du projet
+     * @return File
+     */
     public File getProjectPath() {
-        /**
-         * Retourne le chemin absolu du projet
-         * @return File
-         */
         return projectPath;
     }
 
-
+    /**
+     * Retourne une table des fichiers
+     * @return HashSet
+     */
     public HashSet<File> getFilesArray() {
-        /**
-         * Retourne une table des fichiers
-         * @return HashSet
-         */
         return filesSet;
     }
 
-
+    /**
+     * Ajoute un fichier à la table de fichiers
+     * @param file Fichier à ajouter
+     */
     public void addFile(@NotNull File file)
     {
-        /**
-         * Ajoute un fichier à la table de fichiers
-         * @param file Fichier à ajouter
-         */
         this.filesSet.add(file);
     }
 
+    /**
+     * Retire le fichier spécifié de la table de fichiers
+     * @param file Fichier à retirer
+     */
     public void removeFile(@NotNull File file)
     {
-        /**
-         * Retire le fichier spécifié de la table de fichiers
-         * @param file Fichier à retirer
-         */
         this.filesSet.remove(file);
     }
 
+    /**
+     * Nettoie le tableau de fichiers de toutes ses entrées
+     */
     public void clearSet()
     {
-        /**
-         * Nettoie le tableau de fichiers de toutes ses entrées
-         */
         this.filesSet.clear();
     }
 }

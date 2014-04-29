@@ -24,11 +24,11 @@ public class ProjectTypeCustomDialog extends JDialog{
     private boolean flagOption;
     private boolean flagProjectName;
 
+    /**
+     * Creer un nouveau ProjectTypeCustomDialog
+     */
     public ProjectTypeCustomDialog()
     {
-        /**
-         * Creer un nouveau ProjectTypeCustomDialog
-         */
         //will do internationalization later
         setResizable(false);
         setIconImage(MAIN_IMAGE);
@@ -160,19 +160,19 @@ public class ProjectTypeCustomDialog extends JDialog{
         });
     }
 
+    /**
+     * Récupère le langage de l'interface courante
+     * @return String désignation du langage
+     */
     public String getLanguage() {
-        /**
-         * Récupère le langage de l'interface courante
-         * @return String désignation du langage
-         */
         return languagesComboBox.getSelectedItem().toString();
     }
 
+    /**
+     * Récupère le nom du projet courant
+     * @return String
+     */
     public String getProjectName() {
-        /**
-         * Récupère le nom du projet courant
-         * @return String
-         */
         return projectName.getText();
     }
 
