@@ -22,7 +22,7 @@ public class CustomRun {
      *     @param projectOut
      *                Chemin du repertoir out
      */
-public static void run(String classToBuild,  List<String> args, final String projectOut) throws IOException {
+    public static void run(String classToBuild,  List<String> args, final String projectOut) throws IOException {
 
         System.out.flush();
         if (classToBuild != null && projectOut != null) {
@@ -73,14 +73,14 @@ public static void run(String classToBuild,  List<String> args, final String pro
 
                     while (true) {
                         //while(s.hasNextLine())
-                       // {
-                            String input = s.nextLine();
+                        // {
+                        String input = s.nextLine();
 
-                            try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(process.getOutputStream()))) {
-                                pw.write(input);
-                                pw.flush();
-                            }
-                       // }
+                        try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(process.getOutputStream()))) {
+                            pw.write(input);
+                            pw.flush();
+                        }
+                        // }
 
 
                     }

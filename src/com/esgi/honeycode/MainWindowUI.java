@@ -22,11 +22,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.nio.channels.FileChannel;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -99,6 +98,8 @@ public class MainWindowUI extends JFrame{
     private static int shortcutKey;
     private ProjectMaker project;
     private JTextArea consoleOutputArea;
+
+    String[] args = {" "};
 
     protected static HCPreferences globalPreferences;
 
@@ -223,6 +224,7 @@ public class MainWindowUI extends JFrame{
         saveFileAS.addActionListener(test);
         settings.addActionListener(test);
         runButton.addActionListener(test);
+        runOptionsButton.addActionListener(test);
         buildButton.addActionListener(test);
         past.addActionListener(test);
 
@@ -319,7 +321,7 @@ public class MainWindowUI extends JFrame{
         subConsolePane.add(buildButton);
         subConsolePane.add(runButton);
         consoleOutputArea.setBackground(Color.DARK_GRAY);
-       consoleOutputArea.setForeground(Color.WHITE);
+        consoleOutputArea.setForeground(Color.WHITE);
 
 
         treePanel.add(scrollTree, BorderLayout.CENTER);
@@ -772,10 +774,18 @@ public class MainWindowUI extends JFrame{
 
                 }
                 catch(IOException e){
-                   e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
         }
+    }
+
+    public void setArgs(String[] argsTab){
+        this.args = argsTab;
+    }
+
+    public String[] getArgs(){
+        return this.args;
     }
 
     private class ActionListenerMenuBar implements ActionListener {
@@ -785,6 +795,7 @@ public class MainWindowUI extends JFrame{
              * @param e
              * Servira, utilisé comme e.getSource(), à localiser l'endroit du clic, et à effectuer les actions voulues
              */
+
 
             if (e.getSource() == newProject)
             {
@@ -870,7 +881,7 @@ public class MainWindowUI extends JFrame{
             }
 
             if(e.getSource() == about){
-                 JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), "HoneyCode est un projet étudiant développé dans le cadre de l'ESGI" +
+                JOptionPane.showMessageDialog(JOptionPane.getFrameForComponent(about), "HoneyCode est un projet étudiant développé dans le cadre de l'ESGI" +
                         "\n PEQUIN Mathieu \n MAAREK Kevin \n FAYETTE Alexandre", "A propos", JOptionPane.INFORMATION_MESSAGE);
             }
             if(e.getSource() == open){
@@ -879,7 +890,7 @@ public class MainWindowUI extends JFrame{
                 if (returnVal == JFileChooser.APPROVE_OPTION){
                     File chosenFile = fileChooserMain.getSelectedFile();
                     FileHandler fileHandler = new FileHandler(chosenFile);
-                   addCloseableTab(new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())), chosenFile.getName(), chosenFile.getAbsolutePath());
+                    addCloseableTab(new RTextScrollPane(new RSyntaxTextArea(fileHandler.readFile())), chosenFile.getName(), chosenFile.getAbsolutePath());
                     tabFile.setToolTipTextAt(tabFile.getSelectedIndex(),chosenFile.getAbsolutePath());
                 }
             }
@@ -1038,7 +1049,8 @@ public class MainWindowUI extends JFrame{
                     if (askedClassToRun!=null)
                     {
                         try{
-                            CustomRun.run(askedClassToRun, "arg_test", project.getProjectPath().getAbsolutePath());
+                            List<String> argsList = new ArrayList<String>(Arrays.asList(getArgs()));
+                            CustomRun.run(askedClassToRun, argsList, project.getProjectPath().getAbsolutePath());
                         }catch (IOException ex)
                         {
                             System.out.println("error running file\n");
@@ -1050,20 +1062,20 @@ public class MainWindowUI extends JFrame{
 
             if(e.getSource() == runOptionsButton){
                 if (tabFile.isVisible() && tabFile.isShowing() && tabFile.isFocusable() && project instanceof ProjectMaker){
-                    String inputRunOptions = JOptionPane.showInputDialog(JOptionPane.getFrameForComponent(runOptionsButton),"Entrez les options d'éxécution","args:",JOptionPane.QUESTION_MESSAGE);
+                    String inputRunOptions = JOptionPane.showInputDialog(JOptionPane.getFrameForComponent(runOptionsButton),"Entrez les options d'éxécution","Options d'éxécution",JOptionPane.QUESTION_MESSAGE);
                     if (inputRunOptions!=null){
-                        System.out.println(inputRunOptions);
+                        String[] runOptions = inputRunOptions.split(" ");
+                        setArgs(runOptions);
                     }
 
                 }
             }
 
             if(e.getSource() == buildButton){
-            if (project instanceof ProjectMaker)
-            {
-                if (tabFile.isShowing() && project.getProjectType().equals("Java project"))
+                if (project instanceof ProjectMaker)
                 {
-
+                    if (tabFile.isShowing() && project.getProjectType().equals("Java project"))
+                    {
                         boolean compiled = CompileJavaFiles.doCompilation(project.getProjectPath().getAbsolutePath()+PropertiesShared.SEPARATOR+"src", project.getProjectPath().getAbsolutePath());
                         if (compiled)
                         {
@@ -1075,7 +1087,7 @@ public class MainWindowUI extends JFrame{
                     }
 
 
-            }
+                }
             }
         }
     }
