@@ -223,6 +223,7 @@ public class MainWindowUI extends JFrame{
         saveFileAS.addActionListener(test);
         settings.addActionListener(test);
         runButton.addActionListener(test);
+        runOptionsButton.addActionListener(test);
         buildButton.addActionListener(test);
         past.addActionListener(test);
 
