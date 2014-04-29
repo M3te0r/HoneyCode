@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 
 /**
- * Created by Mathieu on 16/03/14.
  * This Class create an HashSet of files object
  * Useful to project, can be used for a Hashmap of project
  *

@@ -32,8 +32,8 @@ import java.util.jar.JarInputStream;
 
 /**
  *
- * Crée la fenêtre pricipale d'HoneyCode avec ses composants
- * Les éléments de la fenêtre sont adaptés à la langue par défaut de l'utilisateur
+ * Cr&eacute;e la fen&ecirc;tre pricipale d'HoneyCode avec ses composants
+ * Les &eacute;l&eacute;ments de la fen&ecirc;tre sont adapt&eacute;s &agrave; la langue par d&eacute;faut de l'utilisateur
  */
 
 public class MainWindowUI extends JFrame{

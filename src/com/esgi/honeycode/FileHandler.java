@@ -10,7 +10,6 @@ import javax.swing.text.BadLocationException;
 import java.io.*;
 
 /**
- * Created by Mathieu on 10/03/14.
  * This class manage to open a file
  * Get the content of this file char by char and,
  * build a StringBuffer to insert into a new DefaultStyledDocument and returns it

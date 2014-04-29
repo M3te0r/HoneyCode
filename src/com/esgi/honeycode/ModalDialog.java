@@ -7,7 +7,9 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-
+/**
+ * Classe étendant JDialog et implémentant ComponentListener et WindoWListener
+ */
 public class ModalDialog extends JDialog implements ComponentListener, WindowListener {
 
     private static final long serialVersionUID = 1L;
