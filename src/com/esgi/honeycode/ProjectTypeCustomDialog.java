@@ -26,6 +26,9 @@ public class ProjectTypeCustomDialog extends JDialog{
 
     public ProjectTypeCustomDialog()
     {
+        /**
+         * Creer un nouveau ProjectTypeCustomDialog
+         */
         //will do internationalization later
         setResizable(false);
         setIconImage(MAIN_IMAGE);
@@ -158,10 +161,18 @@ public class ProjectTypeCustomDialog extends JDialog{
     }
 
     public String getLanguage() {
+        /**
+         * Récupère le langage de l'interface courante
+         * @return String désignation du langage
+         */
         return languagesComboBox.getSelectedItem().toString();
     }
 
     public String getProjectName() {
+        /**
+         * Récupère le nom du projet courant
+         * @return String
+         */
         return projectName.getText();
     }
 
