@@ -32,11 +32,18 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
     private File root;
     private DefaultMutableTreeNode rootNode;
 
+    /**
+     * Constructeur
+     */
     public TreeFileExplorer()
     {
         super(new String[] {"Nothing to show"});
     }
 
+    /**
+     * Initialise le Jtree à partir du chemin du projet, et crée ses noeuds dès la racine
+     * @param projectPath chemin du projet à projeter sur l'arborescence
+     */
     public void init(final File projectPath)
     {
         removeAll();
@@ -101,6 +108,10 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         popupMenuFile.add(copyPathFile);
 
         addMouseListener(new MouseInputAdapter() {
+            /**
+             * Fonction de gestion des clics sur l'arbre
+             * @param e clic
+             */
             @Override
             public void mousePressed(MouseEvent e) {
                 TreePath selPath = getPathForLocation(e.getX(), e.getY());
@@ -130,6 +141,10 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
                 }
             }
 
+            /**
+             * Fonction gérant le retrait du clic souris
+             * @param e
+             */
             @Override
             public void mouseReleased(MouseEvent e) {
                 TreePath selPath = getPathForLocation(e.getX(), e.getY());
@@ -155,6 +170,10 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
     }
 
 
+    /**
+     * Fonction de gestion d'évenements (right click sur noeud ou dossier)
+     * @param e evenement
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         DefaultMutableTreeNode dmtn,node;
@@ -323,6 +342,11 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
         }
     }
 
+    /**
+     * Supprime tous les fichiers d'un répertoire
+     * @param f répertoire à vider
+     * @throws IOException
+     */
     private void  deleteAll(File f) throws IOException
     {
         if (f.isDirectory())
@@ -343,6 +367,11 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
 
     }
 
+    /**
+     * Affichage des noeuds et fichiers d'un dossier renommé
+     * @param dirRenamed dossier renommé
+     * @param renameDirNode noeud correspondant renommé
+     */
     private void listFiles(@Nullable File dirRenamed, @Nullable DefaultMutableTreeNode renameDirNode)
     {
         if (renameDirNode!=null)
@@ -410,6 +439,12 @@ public class TreeFileExplorer extends JTree implements TreeSelectionListener, Ac
 
     }
 
+    /**
+     * Listing des noms de fichiers par retour d'un node
+     * @param file
+     * @param node
+     * @return DefaultMutableTreeNode
+     */
     private DefaultMutableTreeNode listFile(File file, DefaultMutableTreeNode node)
     {
         if (file.isFile())
