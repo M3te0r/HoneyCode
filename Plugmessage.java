@@ -10,11 +10,11 @@ public class Plugmessage {
     private static JMenu newMenu;
     private static JMenuItem newItem;
 
-    public static void run(JMenuBar bar){
+    public static void hc_Plugin_MenuBar(JMenuBar bar){
 
         ActionListen act = new ActionListen();
-        newMenu = new JMenu("Importation");
-        newItem = new JMenuItem("yoloswag");
+        newMenu = new JMenu("Plugin1");
+        newItem = new JMenuItem("Afficher message");
 
         bar.add(newMenu);
         newMenu.add(newItem);
@@ -22,8 +22,12 @@ public class Plugmessage {
         bar.revalidate();
     }
 
-    public static void message(int i){
-            System.out.println("YOLOOOOOOOOOO"+i);
+    public static void hc_Plugin_Editor(JTabbedPane editor){
+        //Modification de l'éditeur, actions getComponent() possibles
+    }
+
+    public static void hc_Plugin_Console(JPanel console){
+        //Modification de la console, actions getComponent() possibles
     }
 
     private static class ActionListen implements ActionListener {
