@@ -105,10 +105,11 @@ public class MainWindowUI extends JFrame{
 
     private CustomConsoleOutputStream out;
 
+    /**
+     * Initialise l'interface graphique et tous ses composants
+     */
     public MainWindowUI(){
-        /**
-         * Initialise l'interface graphique et tous ses composants
-         */
+
 
         setIconImage(MAIN_IMAGE);
         globalPreferences = new HCPreferences();
@@ -369,10 +370,12 @@ public class MainWindowUI extends JFrame{
         //Listener sur la fermeture de la fenetre
         addWindowListener(new WindowAdapter() {
             @Override
+            /**
+             * Fonction de fermeture de la fenêtre, via le bouton de base
+             * @param e WindoWEvent
+             */
             public void windowClosing(WindowEvent e) {
-                /**
-                 * Fonction de fermeture de la fenêtre, via le bouton de base
-                 */
+
                 int confirm = JOptionPane.showConfirmDialog(JOptionPane.getFrameForComponent(exitApp), exitMessage, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (confirm == JOptionPane.YES_OPTION) {
                     if (tabFile.getTabCount()>0)
@@ -393,12 +396,13 @@ public class MainWindowUI extends JFrame{
 
     }
 
+    /**
+     * Définit le langage de l'interface et initialise les composants textuels dans la langue choisie/par défaut,
+     * grâce aux fichiers de propriétés du Resource Bundle
+     */
     private void setUILanguage()
     {
-        /**
-         * Définit le langage de l'interface et initialise les composants textuels dans la langue choisie/par défaut,
-         * grâce aux fichiers de propriétés du Resource Bundle
-         */
+
         //Maybe moving it to class field if using other reg key ?
 
 
@@ -486,14 +490,15 @@ public class MainWindowUI extends JFrame{
 
     }
 
+    /**
+     * Renomme un TabbedText avec le titre choisi
+     * @param oldTitle Ancien titre du TabbedText
+     * @param newTitle Nouveau titre
+     * @param tooltip chemin absolu du fichier édité dans le TabbedText
+     */
     protected static void setNewTabTextRenamedFile(String oldTitle, String newTitle, String tooltip)
     {
-        /**
-         * Renomme un TabbedText avec le titre choisi
-         * @param oldTitle Ancien titre du TabbedText
-         * @param newTitle Nouveau titre
-         * @param tooltip chemin absolu du fichier édité dans le TabbedText
-         */
+
         for (int i = 0; i<tabFile.getTabCount();i++ )
         {
             if (oldTitle.equals(((JLabel)((JPanel)tabFile.getTabComponentAt(tabFile.getSelectedIndex())).getComponent(0)).getText()))
@@ -505,34 +510,37 @@ public class MainWindowUI extends JFrame{
         }
     }
 
+    /**
+     * Cree un nouveau TabbedText avec le titre choisi
+     * @param title Titre du nouveau fichier choisi
+     *@param tooltip Chemin absolu du fichier
+     */
     protected static void setNewTabText(String title, String tooltip)
     {
-        /**
-         * Cree un nouveau TabbedText avec le titre choisi
-         * @param title Titre du nouveau fichier choisi
-         *@param tootip Chemin absolu du fichier
-         */
+
 
         ((JLabel)((JPanel)tabFile.getTabComponentAt(tabFile.getSelectedIndex())).getComponent(0)).setText(title);
         tabFile.setToolTipTextAt(tabFile.getSelectedIndex(), tooltip);
     }
 
+    /**
+     * Change la police actuelle de l'éditeur
+     */
     private void changeFontCurrentTab()
     {
-        /**
-         * Change la police actuelle de l'éditeur
-         */
+
         for(int i = 0;i<tabFile.getTabCount();i++)
         {
             ((RTextScrollPane)tabFile.getComponentAt(i)).getTextArea().setFont(new Font(globalPreferences.getFont(),Font.PLAIN,13));
         }
     }
 
+    /**
+     * Change le theme actuel de l'editeur
+     */
     private void changeThemeCurrentTab()
     {
-        /**
-         * Change le theme actuel de l'editeur
-         */
+
         try {
             //Themes will be modifiable in settings
             Theme theme = Theme.load(MainWindowUI.class.getResourceAsStream("/themes/"+globalPreferences.getTheme()+".xml"));
@@ -547,18 +555,19 @@ public class MainWindowUI extends JFrame{
 
     }
 
+    /**
+     * Ajoute un onglet fermable d'edition a la barre d'onglets
+     * @param c
+     * RTextScrollPane courant, sert au lien
+     * @param title
+     * Titre de l'onglet
+     * @param tooltip
+     * Chemin absolu du fichier correspondant
+     *
+     */
     protected static void addCloseableTab(final RTextScrollPane c, final String title, final String tooltip)
     {
-        /**
-         * Ajoute un onglet fermable d'edition a la barre d'onglets
-         * @param c
-         * RTextScrollPane courant, sert au lien
-         * @param title
-         * Titre de l'onglet
-         * @param tooltip
-         * Chemin absolu du fichier correspondant
-         *
-         */
+
         try {
             //Themes will be modifiable in settings
             Theme theme = Theme.load(MainWindowUI.class.getResourceAsStream("/themes/"+globalPreferences.getTheme()+".xml"));
@@ -713,12 +722,13 @@ public class MainWindowUI extends JFrame{
 
     }
 
+    /**
+     * Charge tous les plugins .jar du dossier "plugins" et invoque les 3 premières méthodes de chacun,
+     * en leur transmettant respectivement la JMenuBar, le JTabbedPane et le JPanel de la console
+     * (modèle de développement souhaité)
+     */
     private void loadPlugins(){
-        /**
-         * Charge tous les plugins .jar du dossier "plugins" et invoque les 3 premières méthodes de chacun,
-         * en leur transmettant respectivement la JMenuBar, le JTabbedPane et le JPanel de la console
-         * (modèle de développement souhaité)
-         */
+
         File pluginDirectory = new File(System.getProperty("user.home")+PropertiesShared.SEPARATOR+"HoneyPlugins");
         boolean created = pluginDirectory.mkdir();
         if (!created &&  !pluginDirectory.exists())
@@ -780,21 +790,33 @@ public class MainWindowUI extends JFrame{
         }
     }
 
+    /**
+     * Définit les arguments
+     * @param argsTab Tableau d'arguments à passer
+     */
     public void setArgs(String[] argsTab){
         this.args = argsTab;
     }
 
+    /**
+     * Retourn les arguments
+     * @return String[] tableau d'arguments
+     */
     public String[] getArgs(){
         return this.args;
     }
 
+    /**
+     * Classe privée de gestion d'évenements
+     */
     private class ActionListenerMenuBar implements ActionListener {
+        /**
+         * Fonction principale de déclenchement d'évenement
+         * @param e
+         * Servira, utilisé comme e.getSource(), à localiser l'endroit du clic, et à effectuer les actions voulues
+         */
         public void actionPerformed (ActionEvent e){
-            /**
-             * Fonction principale de déclenchement d'évenement
-             * @param e
-             * Servira, utilisé comme e.getSource(), à localiser l'endroit du clic, et à effectuer les actions voulues
-             */
+
 
 
             if (e.getSource() == newProject)
