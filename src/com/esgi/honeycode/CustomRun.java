@@ -12,12 +12,19 @@ import java.util.Scanner;
  */
 public class CustomRun {
 
-
-    public static void run(String classToBuild,  List<String> args, final String projectOut) throws IOException {
+    /**
+     *     Lancement d'un process
+     *
+     *     @param classToBuild
+     *                Classe Java à lancer
+     *     @param args
+     *                Arguments d'éxecution
+     *     @param projectOut
+     *                Chemin du repertoir out
+     */
+public static void run(String classToBuild,  List<String> args, final String projectOut) throws IOException {
 
         System.out.flush();
-        
-
         if (classToBuild != null && projectOut != null) {
 
             //With ProcessBuilder the err output can be redirected to te standard output
