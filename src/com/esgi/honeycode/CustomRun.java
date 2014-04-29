@@ -2,6 +2,8 @@ package com.esgi.honeycode;
 
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -10,17 +12,32 @@ import java.util.Scanner;
  */
 public class CustomRun {
 
-
-    public static void run(String classToBuild, String args, final String projectOut) throws IOException {
+    /**
+     *     Lancement d'un process
+     *
+     *     @param classToBuild
+     *                Classe Java à lancer
+     *     @param args
+     *                Arguments d'éxecution
+     *     @param projectOut
+     *                Chemin du repertoir out
+     */
+public static void run(String classToBuild,  List<String> args, final String projectOut) throws IOException {
 
         System.out.flush();
-        
-
         if (classToBuild != null && projectOut != null) {
 
             //With ProcessBuilder the err output can be redirected to te standard output
             //Only 2 threads instead of 3 for the err
-            ProcessBuilder builder = new ProcessBuilder("java", "-classpath", System.getProperty("java.class.path") + System.getProperty("path.separator") + projectOut + PropertiesShared.SEPARATOR + "out", classToBuild, args);
+            List<String> commands = new ArrayList<String>();
+            commands.add("Java");
+            commands.add("-classpath");
+            commands.add(System.getProperty("java.class.path") + System.getProperty("path.separator") + projectOut + PropertiesShared.SEPARATOR + "out");
+            commands.add(classToBuild);
+            for(int i = 0 ; i < args.size() ; i++){
+                commands.add(args.get(i));
+            }
+            ProcessBuilder builder = new ProcessBuilder(commands);
 
             builder.redirectErrorStream(true);
             final Process process = builder.start();
