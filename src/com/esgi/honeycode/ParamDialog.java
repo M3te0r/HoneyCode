@@ -34,12 +34,19 @@ public class ParamDialog extends ModalDialog{
     private JComboBox<String> userFont;
     private JSeparator sep;
 
+    /**
+     * Constructeur
+     * @param parent Parent de la fenêtre
+     */
     public ParamDialog(Frame parent)
     {
         super(parent);
         _init();
     }
 
+    /**
+     * Initialisation des interfaces de dialogue
+     */
     protected void _init()
     {
 
@@ -117,6 +124,9 @@ public class ParamDialog extends ModalDialog{
         c.add(settingsPane, BorderLayout.CENTER);
     }
 
+    /**
+     * Récupération des settings user
+     */
     private void getSettings() {
         String[] languages = {"fr", "en"};
         userLanguage = new JComboBox<>(languages);
@@ -181,6 +191,9 @@ public class ParamDialog extends ModalDialog{
     }
 
 
+    /**
+     * ok
+     */
     public void ok()
     {
         cancelState = OK;
@@ -188,6 +201,9 @@ public class ParamDialog extends ModalDialog{
         close();
     }
 
+    /**
+     * Application des préférences globales à la fenêtre, etc
+     */
     public void apply()
     {
         if (!MainWindowUI.globalPreferences.getFont().equals(userFont.getSelectedItem()))
@@ -215,19 +231,27 @@ public class ParamDialog extends ModalDialog{
         System.setProperty("java.library.path",l );
     }
 
+    /**
+     * Annulation d'état
+     */
     public void cancel()
     {
         cancelState = CANCEL;
         close();
     }
 
+    /**
+     * Fermeture, appel de dispose()
+     */
     public void close()
     {
         dispose();
     }
 
 
-
+    /**
+     * Classe interne de gestions des JButton
+     */
     protected class ButtonListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {

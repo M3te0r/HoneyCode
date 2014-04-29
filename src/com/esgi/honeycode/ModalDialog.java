@@ -139,6 +139,10 @@ public class ModalDialog extends JDialog implements ComponentListener, WindowLis
         addListeners();
     }
 
+    /**
+     * Ajout des listeners à la fenêtre de dialogue
+     * @return boolean Si ok
+     */
     private boolean addListeners()
     {
         WindowListener[] listeners = this.getWindowListeners();
