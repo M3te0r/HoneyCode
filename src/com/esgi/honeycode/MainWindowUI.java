@@ -195,6 +195,7 @@ public class MainWindowUI extends JFrame{
 
         treeMain = new TreeFileExplorer();
 
+        
         scrollTree = new JScrollPane(treeMain);
         explorerLabel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         scrollTree.setColumnHeaderView(explorerLabel);
